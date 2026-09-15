@@ -1,0 +1,84 @@
+# Compile le site et le publie sur GitHub Pages a chaque envoi sur la branche main.
+#
+# Securite :
+# - permissions minimales, accordees job par job (lecture seule par defaut) ;
+# - Actions officielles de GitHub uniquement, figees sur l'empreinte exacte d'un
+#   commit (un tag peut etre deplace, une empreinte non). Dependabot les met a jour ;
+# - aucun secret : l'adresse de l'API est publique par nature (elle se retrouve
+#   dans le JavaScript du site). Elle se regle dans Settings > Secrets and
+#   variables > Actions > onglet Variables, sous le nom VITE_API_URL ;
+# - declenche uniquement par un envoi sur main ou a la main : jamais par une
+#   pull request venant d'un fork, donc aucun code exterieur n'est execute ici.
+name: Publier sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+# Une seule publication a la fois ; une publication en cours n'est pas coupee.
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Compiler
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read # lire le code
+      pages: read # lire la configuration Pages (chemin de base du site)
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Installer Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Lire la configuration GitHub Pages
+        id: pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      # Versions exactes du package-lock.json. --ignore-scripts : aucun script
+      # d'installation de paquet n'est execute (protection de la chaine d'approvisionnement).
+      - name: Installer les dependances
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      # Bloque la publication si une vulnerabilite elevee ou critique est connue.
+      - name: Verifier les vulnerabilites connues
+        run: npm audit --audit-level=high
+
+      - name: Compiler le site
+        env:
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        run: npm run build
+
+      - name: Preparer les fichiers pour Pages
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+
+  deploy:
+    name: Publier
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write # publier sur GitHub Pages
+      id-token: write # authentification de la publication aupres de Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publier sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

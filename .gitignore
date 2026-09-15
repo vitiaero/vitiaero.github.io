@@ -1,0 +1,23 @@
+# Dependances et compilation (recreees par npm install et npm run build)
+node_modules
+dist
+
+# Sources, archives et outils : hors du site publie (voir _hors-projet/LISEZ-MOI.md)
+_hors-projet/
+
+# Reglages locaux de l'editeur et de Claude
+.claude/
+.vscode/
+
+# Secrets : ne jamais publier
+.env
+.env.*
+
+# Base locale et pieces jointes des demandes de devis (donnees clients)
+server/data/
+
+# Systeme
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

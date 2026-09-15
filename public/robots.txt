@@ -1,0 +1,27 @@
+# ------------------------------------------------------------------
+# PHASE DE LANCEMENT : l'indexation est bloquee.
+# Le site reste accessible par son adresse, mais ne remonte pas dans
+# les moteurs de recherche.
+#
+# LE JOUR DU LANCEMENT : supprimer les deux lignes "Disallow: /" et
+# "User-agent: *" ci-dessous, puis retirer le commentaire des lignes
+# de la section suivante. A faire en meme temps que preLaunch = false
+# dans src/content.js.
+# ------------------------------------------------------------------
+User-agent: *
+Disallow: /
+
+# ------------------------------------------------------------------
+# Regles a activer le jour du lancement :
+#
+# User-agent: *
+# Allow: /
+# # Espaces prives et etapes de tunnel : inutiles a indexer
+# Disallow: /admin
+# Disallow: /espace-client
+# Disallow: /connexion
+# Disallow: /inscription
+# Disallow: /confirmation
+# ------------------------------------------------------------------
+
+Sitemap: https://www.vitiaero.ch/sitemap.xml

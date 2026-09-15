@@ -1,0 +1,25 @@
+# Dependabot propose chaque semaine une mise a jour des dependances npm et des
+# GitHub Actions (empreintes de commit comprises), sous forme de pull request.
+# A relire avant de fusionner : une mise a jour peut aussi apporter un probleme.
+# Le delai d'attente (cooldown) laisse le temps de detecter une version piegee
+# avant de la proposer. Les correctifs de securite ne sont pas retardes.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      outils-de-compilation:
+        dependency-type: development
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
