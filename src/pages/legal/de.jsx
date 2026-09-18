@@ -47,7 +47,7 @@ function Confidentialite() {
         <li>Parzellen: der Umriss und die Fläche, die Sie auf der Karte einzeichnen.</li>
         <li>Ihre Anfrage: Art der Behandlung, Zeitraum, Nachricht, allfälliger Aktionscode.</li>
         <li>Konto: E-Mail-Adresse und Passwort (nur in gehashter Form gespeichert).</li>
-        <li>Treueprogramm: Anzahl Punkte und Verlauf Ihrer Anfragen.</li>
+        <li>Nachverfolgung: durchgeführte oder geplante Einsätze auf Ihren Parzellen (Datum, Fläche, Behandlung, Bemerkungen).</li>
         <li>
           Technische Daten: Bei Ihrem Besuch werden Ihre IP-Adresse und technische Angaben
           (Art des Browsers) vorübergehend bearbeitet, um die Sicherheit des Dienstes zu
@@ -58,7 +58,7 @@ function Confidentialite() {
       <h2 className="h3">3. Zwecke</h2>
       <p>
         Ihre Anfrage für eine Schätzung bearbeiten und eine Offerte erstellen, Ihr Konto und
-        das Treueprogramm verwalten, mit Ihnen darüber kommunizieren, die Sicherheit des
+        die Einsätze auf Ihren Parzellen nachführen, mit Ihnen darüber kommunizieren, die Sicherheit des
         Dienstes gewährleisten und unsere gesetzlichen Pflichten erfüllen. Ihre Daten werden
         nicht für Werbung verwendet und es findet kein Profiling statt.
       </p>
@@ -368,10 +368,10 @@ function Conditions() {
         zu behandeln. Sie sind für die Aktivitäten in Ihrem Konto verantwortlich.
       </p>
 
-      <h2 className="h3">3. Treueprogramm</h2>
+      <h2 className="h3">3. Nachverfolgung der Einsätze</h2>
       <p>
-        Die Treuepunkte werden zur Orientierung vergeben. Sie haben keinen Geldwert und
-        können nicht gegen Geld eingetauscht werden.
+        Ihr Kundenbereich zeigt die von unserem Team erfassten Einsätze. Diese Angaben dienen
+        der Nachverfolgung. Bei Abweichungen von Offerte oder Rechnung gelten diese Dokumente.
       </p>
 
       <h2 className="h3">4. Personendaten</h2>

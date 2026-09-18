@@ -43,9 +43,6 @@ export default function Confirmation() {
                       </span>
                     </div>
                   )}
-                  {state.connected && state.pointsEarned > 0 && (
-                    <div className="line"><span className="k">{c.points}</span><span className="v">+{state.pointsEarned}</span></div>
-                  )}
                 </div>
               </div>
             )}

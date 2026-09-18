@@ -48,7 +48,7 @@ function Confidentialite() {
         <li>Parcelles : le tracé et la surface que vous dessinez sur la carte.</li>
         <li>Votre demande : type de traitement, période, message, code promo éventuel.</li>
         <li>Compte : adresse e-mail et mot de passe (conservé uniquement sous forme hachée).</li>
-        <li>Fidélité : nombre de points et historique de vos demandes.</li>
+        <li>Suivi : interventions réalisées ou planifiées sur vos parcelles (date, surface, traitement, remarques).</li>
         <li>
           Données techniques : lors de votre visite, votre adresse IP et des informations
           techniques (type de navigateur) sont traitées de façon temporaire pour assurer
@@ -59,8 +59,8 @@ function Confidentialite() {
       <h2 className="h3">3. Finalités</h2>
       <p>
         Traiter votre demande d'estimation et établir un devis, gérer votre compte et le
-        programme de fidélité, communiquer avec vous à ce sujet, assurer la sécurité du
-        service et respecter nos obligations légales. Vos données ne servent pas à de la
+        suivi des interventions sur vos parcelles, communiquer avec vous à ce sujet, assurer
+        la sécurité du service et respecter nos obligations légales. Vos données ne servent pas à de la
         publicité et ne font l'objet d'aucun profilage.
       </p>
 
@@ -372,10 +372,11 @@ function Conditions() {
         confidentiels. Vous êtes responsable de l'activité réalisée depuis votre compte.
       </p>
 
-      <h2 className="h3">3. Programme de fidélité</h2>
+      <h2 className="h3">3. Suivi des interventions</h2>
       <p>
-        Les points de fidélité sont attribués à titre indicatif, n'ont pas de valeur monétaire
-        et ne peuvent être échangés contre de l'argent.
+        Votre espace client affiche les interventions enregistrées par notre équipe. Ces
+        informations sont fournies à titre de suivi. En cas de différence avec le devis ou
+        la facture, ce sont ces documents qui font foi.
       </p>
 
       <h2 className="h3">4. Données personnelles</h2>

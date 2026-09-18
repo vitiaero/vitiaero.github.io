@@ -128,21 +128,6 @@ const safe = (handler) => (req, res, next) => Promise.resolve(handler(req, res, 
 // Texte obligatoire : chaine nettoyee, ou chaine vide si la valeur n'est pas un texte.
 const str = (value) => (typeof value === 'string' ? value.trim() : '');
 
-// Paliers de fidelite (partages avec le client via /api/config)
-const TIERS = [
-  { name: 'Bronze', min: 0 },
-  { name: 'Argent', min: 200 },
-  { name: 'Or', min: 500 },
-];
-const WELCOME_BONUS = 100;
-const ESTIMATION_POINTS = 50;
-
-function tierForPoints(points) {
-  let current = TIERS[0];
-  for (const t of TIERS) if (points >= t.min) current = t;
-  return current.name;
-}
-
 function publicUser(u) {
   if (!u) return null;
   return {
@@ -150,8 +135,6 @@ function publicUser(u) {
     name: u.name,
     email: u.email,
     role: u.role,
-    points: u.points,
-    tier: tierForPoints(u.points),
     created_at: u.created_at,
   };
 }
@@ -211,8 +194,10 @@ function newToken() {
 // =========================================================================
 //  Configuration publique
 // =========================================================================
+// Etat du service, utile a l'hebergeur pour verifier que l'API repond.
+// Aucune donnee interne n'y figure.
 app.get('/api/config', (req, res) => {
-  res.json({ tiers: TIERS, welcomeBonus: WELCOME_BONUS, estimationPoints: ESTIMATION_POINTS });
+  res.json({ ok: true });
 });
 
 // =========================================================================
@@ -242,12 +227,9 @@ app.post('/api/auth/register', registerLimiter, async (req, res, next) => {
     const hash = await hashPasswordAsync(password);
     const now = new Date().toISOString();
     const id = run(
-      'INSERT INTO users (name, email, password, role, points, created_at) VALUES (?,?,?,?,?,?)',
-      [name, email, hash, 'client', WELCOME_BONUS, now]
+      'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
+      [name, email, hash, 'client', now]
     );
-    run('INSERT INTO points_history (user_id, delta, reason, created_at) VALUES (?,?,?,?)', [
-      id, WELCOME_BONUS, 'Bonus de bienvenue', now,
-    ]);
 
     const token = openSession(id);
     const user = get('SELECT * FROM users WHERE id = ?', [id]);
@@ -287,25 +269,119 @@ app.get('/api/auth/me', requireAuth, (req, res) => {
 });
 
 // =========================================================================
-//  Fidelite
+//  Interventions : suivi des traitements realises sur les parcelles
 // =========================================================================
-app.get('/api/loyalty', requireAuth, (req, res) => {
-  const history = all(
-    'SELECT delta, reason, created_at FROM points_history WHERE user_id = ? ORDER BY id DESC',
+// Chaque intervention est saisie par l'equipe dans l'administration. Rien n'est
+// cree automatiquement : le client ne voit que ce qui a reellement ete fait ou
+// planifie pour lui.
+const INTERVENTION_STATUSES = ['Planifiee', 'Realisee', 'Annulee'];
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// Verifie et nettoie les champs recus. Renvoie { error } ou { value }.
+function cleanIntervention(body, { partial = false } = {}) {
+  const b = body || {};
+  const value = {};
+
+  if (!partial || b.date !== undefined) {
+    const date = str(b.date);
+    if (!DATE_RE.test(date) || Number.isNaN(Date.parse(date))) return { error: 'La date n\'est pas valide.' };
+    value.date = date;
+  }
+  if (!partial || b.status !== undefined) {
+    const status = str(b.status) || 'Planifiee';
+    if (!INTERVENTION_STATUSES.includes(status)) return { error: 'Statut inconnu.' };
+    value.status = status;
+  }
+  const texts = { commune: 120, parcel_label: 160, treatment: 160, product: 160, conditions: 200, notes: 2000 };
+  for (const [field, max] of Object.entries(texts)) {
+    if (partial && b[field] === undefined) continue;
+    const text = optionalText(b[field], max);
+    if (text === undefined) return { error: 'Un des champs est trop long.' };
+    value[field] = text;
+  }
+  if (!partial || b.area_ha !== undefined) {
+    const area = b.area_ha === '' || b.area_ha === null || b.area_ha === undefined
+      ? null : Number(String(b.area_ha).replace(',', '.'));
+    if (area !== null && (!Number.isFinite(area) || area <= 0 || area >= 1000)) return { error: 'Requete invalide.' };
+    value.area_ha = area;
+  }
+  if (!partial || b.passes !== undefined) {
+    const passes = b.passes === '' || b.passes === null || b.passes === undefined ? null : Number(b.passes);
+    if (passes !== null && (!Number.isInteger(passes) || passes < 1 || passes > 20)) return { error: 'Requete invalide.' };
+    value.passes = passes;
+  }
+  if (!partial || b.duration_min !== undefined) {
+    const duration = b.duration_min === '' || b.duration_min === null || b.duration_min === undefined
+      ? null : Number(b.duration_min);
+    if (duration !== null && (!Number.isInteger(duration) || duration < 0 || duration > 5000)) {
+      return { error: 'Requete invalide.' };
+    }
+    value.duration_min = duration;
+  }
+  return { value };
+}
+
+// Suivi du client connecte : ses interventions et ses parcelles connues.
+app.get('/api/interventions/mine', requireAuth, (req, res) => {
+  const rows = all(
+    'SELECT * FROM interventions WHERE user_id = ? ORDER BY date DESC, id DESC',
     [req.user.id]
   );
-  const points = req.user.points;
-  const tier = tierForPoints(points);
-  // Points requis pour le palier suivant (le cas echeant)
-  const next = TIERS.find((t) => t.min > points);
-  res.json({
-    points,
-    tier,
-    tiers: TIERS,
-    nextTier: next ? next.name : null,
-    pointsToNext: next ? next.min - points : 0,
-    history,
-  });
+  res.json(rows);
+});
+
+app.get('/api/admin/interventions', requireAdmin, (req, res) => {
+  const rows = all(
+    `SELECT i.*, u.name AS client_name, u.email AS client_email
+       FROM interventions i JOIN users u ON u.id = i.user_id
+      ORDER BY i.date DESC, i.id DESC`
+  );
+  res.json(rows);
+});
+
+app.post('/api/admin/interventions', requireAdmin, (req, res) => {
+  const userId = Number(req.body?.user_id);
+  const client = Number.isInteger(userId) ? get('SELECT id FROM users WHERE id = ?', [userId]) : null;
+  if (!client) return res.status(400).json({ error: 'Client introuvable.' });
+
+  const estimationId = req.body?.estimation_id ? Number(req.body.estimation_id) : null;
+  if (estimationId !== null && !get('SELECT id FROM estimations WHERE id = ? AND user_id = ?', [estimationId, userId])) {
+    return res.status(400).json({ error: 'Demande introuvable.' });
+  }
+
+  const { error, value } = cleanIntervention(req.body);
+  if (error) return res.status(400).json({ error });
+
+  const id = run(
+    `INSERT INTO interventions
+      (user_id, estimation_id, date, commune, parcel_label, area_ha, passes, treatment, product, conditions, duration_min, notes, status, created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [userId, estimationId, value.date, value.commune, value.parcel_label, value.area_ha, value.passes,
+     value.treatment, value.product, value.conditions, value.duration_min, value.notes, value.status,
+     new Date().toISOString()]
+  );
+  res.json(get('SELECT * FROM interventions WHERE id = ?', [id]));
+});
+
+app.patch('/api/admin/interventions/:id', requireAdmin, (req, res) => {
+  const row = get('SELECT * FROM interventions WHERE id = ?', [req.params.id]);
+  if (!row) return res.status(404).json({ error: 'Intervention introuvable.' });
+
+  const { error, value } = cleanIntervention(req.body, { partial: true });
+  if (error) return res.status(400).json({ error });
+  const fields = Object.keys(value);
+  if (fields.length === 0) return res.json(row);
+
+  run(
+    `UPDATE interventions SET ${fields.map((f) => `${f} = ?`).join(', ')} WHERE id = ?`,
+    [...fields.map((f) => value[f]), row.id]
+  );
+  res.json(get('SELECT * FROM interventions WHERE id = ?', [row.id]));
+});
+
+app.delete('/api/admin/interventions/:id', requireAdmin, (req, res) => {
+  run('DELETE FROM interventions WHERE id = ?', [req.params.id]);
+  res.json({ ok: true });
 });
 
 // =========================================================================
@@ -527,7 +603,7 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
   // Champ piege (honeypot) : invisible pour un humain, souvent rempli par les
   // robots. S'il est rempli, on ignore la demande en simulant un succes.
   if (b.website) {
-    return res.json({ id: 0, area_m2: 0, pointsEarned: 0 });
+    return res.json({ id: 0, area_m2: 0, connected: false });
   }
   const name = str(b.name);
   const email = str(b.email);
@@ -603,15 +679,7 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
     ]
   );
 
-  // Attribue des points de fidelite aux clients connectes
-  if (user) {
-    run('UPDATE users SET points = points + ? WHERE id = ?', [ESTIMATION_POINTS, user.id]);
-    run('INSERT INTO points_history (user_id, delta, reason, created_at) VALUES (?,?,?,?)', [
-      user.id, ESTIMATION_POINTS, 'Demande d\'estimation', now,
-    ]);
-  }
-
-  res.json({ id, area_m2: area, pointsEarned: user ? ESTIMATION_POINTS : 0, estimate, distance });
+  res.json({ id, area_m2: area, connected: !!user, estimate, distance });
 }));
 
 // Demande telle que renvoyee au navigateur (champs JSON decodes).
@@ -671,10 +739,13 @@ app.get('/api/admin/estimations/:id/geojson', requireAdmin, (req, res) => {
 
 app.get('/api/admin/clients', requireAdmin, (req, res) => {
   const rows = all(
-    "SELECT id, name, email, role, points, created_at FROM users WHERE role = 'client' ORDER BY id DESC"
+    `SELECT u.id, u.name, u.email, u.role, u.created_at,
+            (SELECT COUNT(*) FROM estimations e WHERE e.user_id = u.id) AS requests,
+            (SELECT COUNT(*) FROM interventions i WHERE i.user_id = u.id AND i.status = 'Realisee') AS interventions,
+            (SELECT MAX(i.date) FROM interventions i WHERE i.user_id = u.id AND i.status = 'Realisee') AS last_intervention
+       FROM users u WHERE u.role = 'client' ORDER BY u.id DESC`
   );
-  const withTier = rows.map((r) => ({ ...r, tier: tierForPoints(r.points) }));
-  res.json(withTier);
+  res.json(rows);
 });
 
 // -- Messages recus par le formulaire de contact --

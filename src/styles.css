@@ -905,10 +905,10 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ------------------------------ Badges ------------------------------ */
 .badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.7rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
-.badge-bronze { background: #f3e7db; color: #8a5a2b; }
-.badge-argent { background: #eceef0; color: #5c6670; }
-.badge-or { background: #f7efcf; color: #8a6d13; }
 .badge-status { background: var(--bg-warm); color: var(--ink-soft); }
+.badge-Planifiee, .badge-Planifiée { background: #e7eef6; color: #2f5a86; }
+.badge-Realisee, .badge-Réalisée { background: #dff2e3; color: #2f7a43; }
+.badge-Annulee, .badge-Annulée { background: #f1f0ec; color: var(--muted); }
 .badge-Nouvelle { background: #e7eef6; color: #2f5a86; }
 .badge-Enetude, .badge-Enétude { background: #f7efcf; color: #8a6d13; }
 .badge-Devisenvoye, .badge-Devisenvoyé { background: var(--accent-soft); color: var(--accent-dark); }
@@ -917,7 +917,8 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ------------------------------ Tableaux ------------------------------ */
 .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
-table.data { width: 100%; border-collapse: collapse; font-size: 0.92rem; min-width: 640px; }
+/* Chiffres a chasse fixe : les dates et les surfaces s'alignent en colonne. */
+table.data { width: 100%; border-collapse: collapse; font-size: 0.92rem; min-width: 640px; font-variant-numeric: tabular-nums; }
 table.data th, table.data td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid var(--line); }
 table.data th { background: var(--bg-soft); font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
 table.data tr:last-child td { border-bottom: none; }
@@ -936,15 +937,77 @@ table.data tr.clickable:hover td { background: var(--bg-soft); }
 .msg-contact { margin: 0.3rem 0 0.7rem; font-size: 0.9rem; color: var(--muted); }
 .msg-body { margin: 0; white-space: pre-wrap; line-height: 1.6; }
 
-/* Fidelite */
-.tier-track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; }
-.tier-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem; text-align: center; }
-.tier-card.current { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.tier-card .name { font-weight: 800; font-size: 1.1rem; }
-.tier-card .req { color: var(--muted); font-size: 0.85rem; margin-top: 0.2rem; }
-.points-big { font-family: var(--serif); font-size: clamp(2.6rem, 6vw, 3.6rem); font-weight: 900; letter-spacing: -0.02em; color: var(--accent); }
-.progress { height: 8px; background: var(--bg-warm); border-radius: 999px; overflow: hidden; margin: 0.8rem 0; }
-.progress > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.6s var(--ease); }
+/* =========================================================================
+   Espace client : resume, historique des interventions, parcelles
+   ========================================================================= */
+.acc-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 1.6rem; }
+.acc-tile {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.3rem;
+  box-shadow: var(--shadow-sm);
+}
+.acc-tile svg { color: var(--accent); }
+.acc-tile .num { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; margin-top: 0.5rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.acc-tile .lbl { color: var(--ink-soft); font-weight: 600; font-size: 0.92rem; margin-top: 0.2rem; }
+.acc-tile .note { color: var(--muted); font-size: 0.83rem; margin-top: 0.35rem; }
+
+.acc-block { margin-bottom: 1.6rem; }
+.acc-block:hover { transform: none; box-shadow: var(--shadow-sm); border-color: var(--line); }
+.acc-map .map-canvas { height: 340px; }
+
+.acc-filter { display: flex; gap: 0.3rem; }
+.acc-filter button {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+}
+.acc-filter button { transition: background 0.18s var(--ease), color 0.18s var(--ease), border-color 0.18s var(--ease); }
+.acc-filter button:hover { color: var(--ink); border-color: var(--ink); }
+.acc-filter button.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.acc-year { margin-top: 1.6rem; }
+.acc-year-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; }
+.acc-year-head h3 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em; }
+.acc-year-head span { font-size: 0.87rem; }
+
+.timeline { list-style: none; margin: 1.1rem 0 0; padding: 0 0 0 1.4rem; border-left: 2px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.7rem; }
+/* min-width: 0 : sans cela, le contenu impose sa largeur et deborde sur petit ecran. */
+.tl-item { position: relative; min-width: 0; }
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1.4rem - 6px);
+  top: 0.45rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+}
+.tl-item.tl-planifiee::before { background: #5b86b5; }
+.tl-item.tl-annulee::before { background: var(--line-strong); }
+.tl-date { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.tl-date .d { font-weight: 700; font-variant-numeric: tabular-nums; }
+.tl-body h4 { margin: 0.35rem 0 0; font-size: 1.02rem; font-weight: 700; }
+/* Les faits restent en colonnes lisibles : sur un grand ecran, ils ne
+   s'etirent pas d'un bord a l'autre de la carte. */
+.tl-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.7rem 1.6rem; margin: 0.6rem 0 0; width: 100%; max-width: 780px; }
+.tl-facts dt { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.tl-facts dd { margin: 0.1rem 0 0; font-weight: 600; font-size: 0.94rem; font-variant-numeric: tabular-nums; }
+.tl-notes { margin: 0.7rem 0 0; color: var(--ink-soft); font-size: 0.94rem; line-height: 1.6; white-space: pre-wrap; }
+
+@media (max-width: 900px) {
+  .acc-tiles { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .acc-tiles { grid-template-columns: 1fr; }
+}
 
 /* Recapitulatif */
 .recap { display: grid; gap: 0.6rem; }
@@ -1009,7 +1072,6 @@ table.data tr.clickable:hover td { background: var(--bg-soft); }
   .stats { grid-template-columns: 1fr 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
-  .tier-track { grid-template-columns: 1fr; }
   .wizard-step .label { display: none; }
 }
 @media (max-width: 420px) {
@@ -1099,7 +1161,7 @@ textarea:focus-visible,
 /* =======================================================================
    Effet verre depoli (liquid glass) adapte au theme clair
    ======================================================================= */
-.card, .auth-card, .map-panel, .tier-card, .glass {
+.card, .auth-card, .map-panel, .glass {
   background: rgba(255, 255, 255, 0.5);
   -webkit-backdrop-filter: blur(14px) saturate(150%);
   backdrop-filter: blur(14px) saturate(150%);
@@ -1108,7 +1170,7 @@ textarea:focus-visible,
   position: relative;
 }
 /* Lisere lumineux type verre (haut et bas plus clairs) */
-.card::before, .auth-card::before, .map-panel::before, .tier-card::before, .glass::before {
+.card::before, .auth-card::before, .map-panel::before, .glass::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -1121,7 +1183,7 @@ textarea:focus-visible,
   pointer-events: none;
   z-index: 1;
 }
-.card > *, .auth-card > *, .map-panel > *, .tier-card > * { position: relative; z-index: 2; }
+.card > *, .auth-card > *, .map-panel > * { position: relative; z-index: 2; }
 .card:hover { border-color: rgba(106, 168, 69, 0.5); box-shadow: 0 16px 40px rgba(30, 42, 23, 0.14); }
 
 /* Chiffres cles : bandeau de verre teinte */
@@ -1152,7 +1214,7 @@ textarea:focus-visible,
 
 /* Le lecteur qui reduit la transparence garde un fond lisible */
 @media (prefers-reduced-transparency: reduce) {
-  .card, .auth-card, .map-panel, .tier-card, .glass, .stat { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .card, .auth-card, .map-panel, .glass, .stat { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
 /* ================== Page Equipement (DJI Agras T50) ================== */
@@ -1350,7 +1412,7 @@ textarea:focus-visible,
   body { font-size: 11pt; color: #000; }
 
   /* Tout est masque, sauf le document et ses parents */
-  .header, .footer, .privacy-banner, .skip-link,
+  .header, .footer, .privacy-banner, .skip-link, .launch-notice, .mobile-cta,
   .wizard-steps, .no-print, .rates, .map-wrap, .est-summary,
   .section-head, .confirm-check { display: none !important; }
 

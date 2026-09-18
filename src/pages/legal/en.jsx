@@ -46,7 +46,7 @@ function Confidentialite() {
         <li>Plots: the outline and area you draw on the map.</li>
         <li>Your request: type of treatment, period, message, any promo code.</li>
         <li>Account: email address and password (stored only in hashed form).</li>
-        <li>Loyalty: number of points and history of your requests.</li>
+        <li>Record: treatments carried out or planned on your plots (date, area, treatment, notes).</li>
         <li>
           Technical data: during your visit, your IP address and technical information
           (type of browser) are processed temporarily to keep the service secure (for
@@ -57,7 +57,7 @@ function Confidentialite() {
       <h2 className="h3">3. Purposes</h2>
       <p>
         Handling your estimate request and preparing a quote, managing your account and the
-        loyalty programme, contacting you about them, keeping the service secure and meeting
+        record of the treatments on your plots, contacting you about them, keeping the service secure and meeting
         our legal obligations. Your data is not used for advertising and is not used for any
         profiling.
       </p>
@@ -359,10 +359,11 @@ function Conditions() {
         confidential. You are responsible for the activity carried out from your account.
       </p>
 
-      <h2 className="h3">3. Loyalty programme</h2>
+      <h2 className="h3">3. Treatment record</h2>
       <p>
-        Loyalty points are given for guidance only. They have no monetary value and cannot be
-        exchanged for money.
+        Your customer area shows the treatments recorded by our team. This information is
+        provided as a record. If it differs from the quote or the invoice, those documents
+        prevail.
       </p>
 
       <h2 className="h3">4. Personal data</h2>

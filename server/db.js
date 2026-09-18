@@ -112,7 +112,6 @@ function createSchema() {
       email TEXT NOT NULL UNIQUE,
       password TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'client',
-      points INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL
     );
 
@@ -149,11 +148,23 @@ function createSchema() {
       created_at TEXT NOT NULL
     );
 
-    CREATE TABLE IF NOT EXISTS points_history (
+    -- Interventions realisees sur les parcelles d'un client. Saisies par
+    -- l'equipe dans l'administration : rien n'est genere automatiquement.
+    CREATE TABLE IF NOT EXISTS interventions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      delta INTEGER NOT NULL,
-      reason TEXT NOT NULL,
+      estimation_id INTEGER,
+      date TEXT NOT NULL,
+      commune TEXT,
+      parcel_label TEXT,
+      area_ha REAL,
+      passes INTEGER,
+      treatment TEXT,
+      product TEXT,
+      conditions TEXT,
+      duration_min INTEGER,
+      notes TEXT,
+      status TEXT NOT NULL DEFAULT 'Planifiee',
       created_at TEXT NOT NULL
     );
 
@@ -193,6 +204,11 @@ function migrate() {
   // Sessions d'avant le stockage par empreinte (jetons en clair) : supprimees.
   // Les personnes concernees se reconnectent simplement.
   db.run('DELETE FROM sessions WHERE length(token) <> 64');
+
+  // Programme de fidelite retire (sans interet pour un service saisonnier) :
+  // l'espace client montre desormais les parcelles et les interventions.
+  // La colonne users.points des anciennes bases reste, inutilisee.
+  db.run('DROP TABLE IF EXISTS points_history');
 }
 
 // Aire d'un polygone (points = [[lat,lng], ...]) en m2, via Turf.
@@ -232,23 +248,17 @@ function seed() {
   // Compte administrateur
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@vitiaero.ch';
   run(
-    'INSERT INTO users (name, email, password, role, points, created_at) VALUES (?,?,?,?,?,?)',
-    ['Équipe VitiAero', adminEmail, hashPassword(demoPassword('ADMIN_PASSWORD', 'admin1234')), 'admin', 0, now]
+    'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
+    ['Équipe VitiAero', adminEmail, hashPassword(demoPassword('ADMIN_PASSWORD', 'admin1234')), 'admin', now]
   );
 
   if (!withDemoData) return;
 
-  // Client de demonstration avec un peu d'historique
+  // Client de demonstration
   const clientId = run(
-    'INSERT INTO users (name, email, password, role, points, created_at) VALUES (?,?,?,?,?,?)',
-    ['Marie Dupont', 'client@vitiaero.ch', hashPassword(demoPassword('CLIENT_PASSWORD', 'client1234')), 'client', 150, now]
+    'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
+    ['Marie Dupont', 'client@vitiaero.ch', hashPassword(demoPassword('CLIENT_PASSWORD', 'client1234')), 'client', now]
   );
-  run('INSERT INTO points_history (user_id, delta, reason, created_at) VALUES (?,?,?,?)', [
-    clientId, 100, 'Bonus de bienvenue', now,
-  ]);
-  run('INSERT INTO points_history (user_id, delta, reason, created_at) VALUES (?,?,?,?)', [
-    clientId, 50, 'Demande d\'estimation', now,
-  ]);
 
   // Codes promotionnels de demonstration
   run('INSERT INTO promo_codes (code, description, discount, active, created_at) VALUES (?,?,?,?,?)', [
@@ -267,7 +277,7 @@ function seed() {
     { points: [[46.4936, 6.7712], [46.4939, 6.7721], [46.4933, 6.7724], [46.4931, 6.7716]] },
   ].map((p) => ({ ...p, area_m2: polygonArea(p.points) }));
   const areaClient = parcelsClient.reduce((s, p) => s + p.area_m2, 0);
-  run(
+  const estimationClient = run(
     `INSERT INTO estimations
       (user_id, name, email, phone, commune, address, treatment, period, message, parcels, area_m2, promo_code, status, created_at)
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
@@ -276,6 +286,29 @@ function seed() {
      'Parcelles en terrasses, acces par le chemin du haut.',
      JSON.stringify(parcelsClient), areaClient, 'VIGNE10', 'En etude', now]
   );
+
+  // Interventions de demonstration, pour voir l'espace client rempli en local.
+  // Elles n'existent jamais en ligne (sauf DEMO_DATA=1) : rien n'est invente
+  // sur un vrai compte, l'equipe saisit chaque intervention a la main.
+  const year = new Date().getFullYear();
+  const demoInterventions = [
+    [`${year}-05-14`, 'Lutry', 'En Chatelard, parcelle 1', 0.71, 1, 'Protection de la vigne (traitement foliaire)',
+     'Produit fourni par le client', 'Vent faible, 17 degres, sol sec', 55,
+     'Survol rang par rang. Bordure du chemin traitee a vitesse reduite.', 'Realisee'],
+    [`${year}-06-04`, 'Lutry', 'En Chatelard, parcelles 1 et 2', 1.18, 1, 'Protection de la vigne (traitement foliaire)',
+     'Produit fourni par le client', 'Vent faible, 21 degres', 80,
+     'Deuxieme passage. Aucun obstacle nouveau signale.', 'Realisee'],
+    [`${year}-07-02`, 'Lutry', 'En Chatelard, parcelles 1 et 2', 1.18, 1, 'Protection de la vigne (traitement foliaire)',
+     null, null, null, 'Date a confirmer selon la meteo.', 'Planifiee'],
+  ];
+  for (const [date, commune, label, area, passes, treatment, product, conditions, duration, notes, status] of demoInterventions) {
+    run(
+      `INSERT INTO interventions
+        (user_id, estimation_id, date, commune, parcel_label, area_ha, passes, treatment, product, conditions, duration_min, notes, status, created_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [clientId, estimationClient, date, commune, label, area, passes, treatment, product, conditions, duration, notes, status, now]
+    );
+  }
 
   const parcelsGuest = [
     { points: [[46.4901, 6.7802], [46.4905, 6.7815], [46.4897, 6.7819], [46.4894, 6.7808]] },

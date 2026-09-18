@@ -323,7 +323,7 @@ export default function Estimation() {
       const payload = { ...form, parcels, promo_code: promo ? promo.code : null };
       const res = await api.post('/api/estimations', payload);
       navigate('/confirmation', {
-        state: { id: res.id, area_m2: res.area_m2, pointsEarned: res.pointsEarned, connected: !!user, estimate: res.estimate },
+        state: { id: res.id, area_m2: res.area_m2, connected: !!user, estimate: res.estimate },
       });
     } catch (err) {
       setError(err.message);

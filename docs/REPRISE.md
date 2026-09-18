@@ -105,10 +105,20 @@ le code avant de modifier, garde le style et les conventions, et ne casse rien.
   de confirmation. Il ouvre la fenêtre d'impression du navigateur ; la mise en page
   vient du bloc `@media print` de `src/styles.css` (en-tête `PrintHeader`, classes
   `.printable`, `.no-print` et `.print-only`). Aucune bibliothèque ajoutée.
-- **Comptes** : inscription/connexion, espace client, **fidélité** (Bronze/Argent/Or),
-  historique de points, **codes promo**.
+- **Comptes** : inscription/connexion, **codes promo**.
+- **Espace client** (`src/pages/Account.jsx`) : suivi d'exploitation. Tuiles de
+  résumé (parcelles suivies, surface, interventions réalisées, prochaine date),
+  **historique des interventions** en frise groupée par année avec filtres,
+  demandes d'estimation, carte des parcelles tracées, informations du compte et
+  impression en PDF. Le programme de fidélité a été retiré (sans intérêt pour un
+  service saisonnier).
+- **Interventions** (table `interventions`) : saisies **uniquement** par l'équipe
+  dans l'administration (onglet Interventions). Rien n'est généré automatiquement :
+  le client ne voit que ce qui a réellement été fait ou planifié. Statuts
+  `Planifiee`, `Realisee`, `Annulee`.
 - **Admin** : liste des demandes, détail (carte en lecture seule + **export GeoJSON**),
-  changement de statut, messages du formulaire de contact, clients, codes promo.
+  changement de statut, messages du formulaire de contact, interventions, clients,
+  codes promo.
 - **Page « Le service »** (`/le-service`, `src/pages/Service.jsx`) : déroulement en
   4 étapes, conditions d'intervention (relief, obstacles, météo, accès,
   réglementation), sécurité & réglementation suisse (`#reglementation`),

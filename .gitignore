@@ -21,3 +21,6 @@ server/data/
 Thumbs.db
 desktop.ini
 *.log
+
+# Cache du detecteur de design (recree automatiquement)
+.impeccable/hook.cache.json

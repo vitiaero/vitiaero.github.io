@@ -182,7 +182,7 @@ function ClientsTab() {
         <div className="table-wrap">
           <table className="data">
             <thead>
-              <tr><th>N&deg;</th><th>Nom</th><th>E-mail</th><th>Points</th><th>Palier</th><th>Inscription</th></tr>
+              <tr><th>N&deg;</th><th>Nom</th><th>E-mail</th><th>Demandes</th><th>Interventions</th><th>Derniere</th><th>Inscription</th></tr>
             </thead>
             <tbody>
               {rows.map((c) => (
@@ -190,8 +190,9 @@ function ClientsTab() {
                   <td>#{c.id}</td>
                   <td>{c.name}</td>
                   <td>{c.email}</td>
-                  <td>{c.points}</td>
-                  <td><span className={`badge badge-${c.tier.toLowerCase()}`}>{c.tier}</span></td>
+                  <td>{c.requests}</td>
+                  <td>{c.interventions}</td>
+                  <td>{c.last_intervention ? formatDate(c.last_intervention) : '-'}</td>
                   <td>{formatDate(c.created_at)}</td>
                 </tr>
               ))}
@@ -394,6 +395,198 @@ function PromosTab() {
   );
 }
 
+/* -------------------------- Onglet Interventions -------------------------- */
+// Suivi des traitements realises ou planifies, visible par le client dans son
+// espace. Tout est saisi ici : rien n'est cree automatiquement.
+const INTERVENTION_STATUSES = ['Planifiee', 'Realisee', 'Annulee'];
+const EMPTY_INTERVENTION = {
+  user_id: '', estimation_id: '', date: new Date().toISOString().slice(0, 10),
+  commune: '', parcel_label: '', area_ha: '', passes: 1, treatment: '', product: '',
+  conditions: '', duration_min: '', notes: '', status: 'Realisee',
+};
+
+function InterventionsTab() {
+  const [rows, setRows] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState(EMPTY_INTERVENTION);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  async function load() {
+    const [list, cls, reqs] = await Promise.all([
+      api.get('/api/admin/interventions'),
+      api.get('/api/admin/clients'),
+      api.get('/api/admin/estimations'),
+    ]);
+    setRows(list);
+    setClients(cls);
+    setRequests(reqs);
+    setLoading(false);
+  }
+  useEffect(() => { load(); }, []);
+
+  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  // Demandes du client choisi : sert a rattacher l'intervention et a pre-remplir.
+  const clientRequests = requests.filter((r) => String(r.user_id) === String(form.user_id));
+
+  function pickRequest(e) {
+    const id = e.target.value;
+    const req = requests.find((r) => String(r.id) === String(id));
+    setForm((f) => ({
+      ...f,
+      estimation_id: id,
+      commune: req?.commune || f.commune,
+      area_ha: req ? (req.area_m2 / 10000).toFixed(2) : f.area_ha,
+      treatment: req?.treatment || f.treatment,
+    }));
+  }
+
+  async function add(e) {
+    e.preventDefault();
+    setError('');
+    if (!form.user_id) { setError('Choisissez un client.'); return; }
+    setSaving(true);
+    try {
+      await api.post('/api/admin/interventions', form);
+      setForm({ ...EMPTY_INTERVENTION });
+      await load();
+    } catch (err) { setError(err.message); } finally { setSaving(false); }
+  }
+
+  async function setStatus(row, status) {
+    await api.patch(`/api/admin/interventions/${row.id}`, { status });
+    load();
+  }
+
+  async function remove(id) {
+    await api.del(`/api/admin/interventions/${id}`);
+    load();
+  }
+
+  if (loading) return <div className="loading-block"><div className="spinner" /> Chargement...</div>;
+
+  return (
+    <div className="grid grid-2" style={{ alignItems: 'start' }}>
+      <div>
+        <h2 className="h3 mb-3">Interventions ({rows.length})</h2>
+        {rows.length === 0 ? (
+          <p className="muted">Aucune intervention enregistree.</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="data">
+              <thead>
+                <tr><th>Date</th><th>Client</th><th>Parcelle</th><th>Surface</th><th>Statut</th><th></th></tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.id}>
+                    <td style={{ whiteSpace: 'nowrap' }}>{formatDate(r.date)}</td>
+                    <td>{r.client_name}</td>
+                    <td>{r.parcel_label || r.commune || '-'}</td>
+                    <td>{r.area_ha ? `${r.area_ha} ha` : '-'}</td>
+                    <td><span className={`badge badge-${r.status}`}>{r.status}</span></td>
+                    <td style={{ whiteSpace: 'nowrap' }}>
+                      {r.status !== 'Realisee' && (
+                        <button className="btn btn-ghost btn-sm" onClick={() => setStatus(r, 'Realisee')}>Realisee</button>
+                      )}
+                      {r.status !== 'Planifiee' && (
+                        <button className="btn btn-ghost btn-sm" onClick={() => setStatus(r, 'Planifiee')}>Planifiee</button>
+                      )}
+                      <button className="btn btn-ghost btn-sm" style={{ color: 'var(--danger)' }} onClick={() => remove(r.id)}>Supprimer</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <h3 className="h3 mb-2">Ajouter une intervention</h3>
+        {error && <div className="alert alert-error">{error}</div>}
+        <form onSubmit={add}>
+          <div className="field">
+            <label htmlFor="iv-client">Client</label>
+            <select id="iv-client" className="input" value={form.user_id} onChange={update('user_id')}>
+              <option value="">Choisir un client</option>
+              {clients.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="iv-request">Demande liee (facultatif)</label>
+            <select id="iv-request" className="input" value={form.estimation_id} onChange={pickRequest} disabled={!form.user_id}>
+              <option value="">Aucune</option>
+              {clientRequests.map((r) => (
+                <option key={r.id} value={r.id}>#{r.id} - {r.commune || 'sans commune'} - {(r.area_m2 / 10000).toFixed(2)} ha</option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-2" style={{ gap: '0.8rem' }}>
+            <div className="field">
+              <label htmlFor="iv-date">Date</label>
+              <input id="iv-date" className="input" type="date" value={form.date} onChange={update('date')} />
+            </div>
+            <div className="field">
+              <label htmlFor="iv-status">Statut</label>
+              <select id="iv-status" className="input" value={form.status} onChange={update('status')}>
+                {INTERVENTION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="field">
+            <label htmlFor="iv-parcel">Parcelle</label>
+            <input id="iv-parcel" className="input" maxLength={160} value={form.parcel_label} onChange={update('parcel_label')} placeholder="En Chatelard, parcelle 1" />
+          </div>
+          <div className="grid grid-2" style={{ gap: '0.8rem' }}>
+            <div className="field">
+              <label htmlFor="iv-commune">Commune</label>
+              <input id="iv-commune" className="input" maxLength={120} value={form.commune} onChange={update('commune')} />
+            </div>
+            <div className="field">
+              <label htmlFor="iv-area">Surface (ha)</label>
+              <input id="iv-area" className="input" inputMode="decimal" maxLength={10} value={form.area_ha} onChange={update('area_ha')} placeholder="0.71" />
+            </div>
+          </div>
+          <div className="grid grid-2" style={{ gap: '0.8rem' }}>
+            <div className="field">
+              <label htmlFor="iv-passes">Passages</label>
+              <input id="iv-passes" className="input" type="number" min="1" max="20" value={form.passes} onChange={update('passes')} />
+            </div>
+            <div className="field">
+              <label htmlFor="iv-duration">Duree (min)</label>
+              <input id="iv-duration" className="input" type="number" min="0" max="5000" value={form.duration_min} onChange={update('duration_min')} />
+            </div>
+          </div>
+          <div className="field">
+            <label htmlFor="iv-treatment">Traitement</label>
+            <input id="iv-treatment" className="input" maxLength={160} value={form.treatment} onChange={update('treatment')} />
+          </div>
+          <div className="field">
+            <label htmlFor="iv-product">Produit</label>
+            <input id="iv-product" className="input" maxLength={160} value={form.product} onChange={update('product')} placeholder="Produit fourni par le client" />
+          </div>
+          <div className="field">
+            <label htmlFor="iv-conditions">Conditions</label>
+            <input id="iv-conditions" className="input" maxLength={200} value={form.conditions} onChange={update('conditions')} placeholder="Vent faible, 18 degres" />
+          </div>
+          <div className="field">
+            <label htmlFor="iv-notes">Remarques (visibles par le client)</label>
+            <textarea id="iv-notes" className="textarea" maxLength={2000} value={form.notes} onChange={update('notes')} />
+          </div>
+          <button className="btn btn-primary btn-block" type="submit" disabled={saving}>
+            {saving ? 'Enregistrement...' : 'Enregistrer l\'intervention'}
+          </button>
+          <p className="hint mt-2">Ces informations apparaissent telles quelles dans l'espace du client.</p>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 /* --------------------------------- Page --------------------------------- */
 export default function Admin() {
   const [tab, setTab] = useState('demandes');
@@ -409,12 +602,14 @@ export default function Admin() {
           <div className="admin-tabs">
             <button className={tab === 'demandes' ? 'active' : ''} onClick={() => setTab('demandes')}>Demandes</button>
             <button className={tab === 'messages' ? 'active' : ''} onClick={() => setTab('messages')}>Messages</button>
+            <button className={tab === 'interventions' ? 'active' : ''} onClick={() => setTab('interventions')}>Interventions</button>
             <button className={tab === 'clients' ? 'active' : ''} onClick={() => setTab('clients')}>Clients</button>
             <button className={tab === 'promos' ? 'active' : ''} onClick={() => setTab('promos')}>Codes promo</button>
           </div>
 
           {tab === 'demandes' && <RequestsTab />}
           {tab === 'messages' && <MessagesTab />}
+          {tab === 'interventions' && <InterventionsTab />}
           {tab === 'clients' && <ClientsTab />}
           {tab === 'promos' && <PromosTab />}
         </div>

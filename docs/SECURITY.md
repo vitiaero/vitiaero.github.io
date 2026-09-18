@@ -26,7 +26,7 @@ Or plusieurs fonctions du site ont besoin d'un serveur :
 | Distance par la route (frais de déplacement) | **Non** | Appel au service d'itinéraire par le serveur |
 | Envoi d'une estimation, d'un message, d'une demande de devis | **Non** | Il faut valider, enregistrer et limiter les abus côté serveur |
 | Pièces jointes | **Non** | Stockage privé, contrôle du contenu |
-| Comptes, connexion, fidélité, administration | **Non** | Mots de passe, sessions, base de données |
+| Comptes, connexion, suivi des interventions, administration | **Non** | Mots de passe, sessions, base de données |
 
 **Architecture retenue**, qui garde toutes les fonctions :
 
