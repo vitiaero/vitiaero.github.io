@@ -24,9 +24,9 @@
     "sql.js": "^1.12.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "concurrently": "^9.1.2",
-    "vite": "^7.3.6"
+    "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.5",
+    "vite": "^8.3.0"
   },
   "engines": {
     "node": ">=20.19"
