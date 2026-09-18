@@ -52,6 +52,7 @@ export default {
     call: 'Appeler',
     createAccount: 'Créer un compte',
     genericError: 'Une erreur est survenue. Veuillez réessayer.',
+    staticNotice: (mail) => `L'envoi en ligne sera actif au lancement du service. En attendant, écrivez-nous à ${mail}, nous répondons sous 48 heures.`,
   },
 
   lang: { label: 'Langue du site' },
@@ -713,6 +714,20 @@ export default {
       since: 'Compte créé le',
       contact: 'Nous écrire',
     },
+  },
+
+  // Messages de validation des formulaires, affiches sous le champ concerne.
+  validation: {
+    consentLabel: 'Consentement',
+    summaryTitle: 'Merci de corriger les points suivants :',
+    nameRequired: 'Indiquez votre nom.',
+    emailRequired: 'Indiquez votre adresse e-mail.',
+    emailInvalid: 'Cette adresse e-mail ne semble pas valide.',
+    messageRequired: 'Écrivez votre message.',
+    communeRequired: 'Indiquez la commune de la parcelle.',
+    passwordShort: 'Le mot de passe doit contenir au moins 8 caractères.',
+    passwordMismatch: 'Les deux mots de passe ne correspondent pas.',
+    consentRequired: 'Merci d\'accepter la politique de confidentialité.',
   },
 
   notFound: {

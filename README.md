@@ -38,4 +38,5 @@ Autres commandes :
 - [docs/REPRISE.md](docs/REPRISE.md) : contexte complet, conventions et état du projet
 - [docs/MODIFIER.md](docs/MODIFIER.md) : où changer un texte, un tarif, une image, et comment publier
 - [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md) : mise en ligne gratuite, étape par étape
+- [docs/DESIGN.md](docs/DESIGN.md) : points de design à améliorer, avec leur effet et le temps que demande chaque correction
 - [docs/SECURITY.md](docs/SECURITY.md) : audit de sécurité, limites de GitHub Pages et réglages à faire

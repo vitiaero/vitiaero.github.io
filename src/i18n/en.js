@@ -51,6 +51,7 @@ export default {
     call: 'Call',
     createAccount: 'Create an account',
     genericError: 'Something went wrong. Please try again.',
+    staticNotice: (mail) => `Online sending will be active when the service launches. Until then, write to us at ${mail}, we reply within 48 hours.`,
   },
 
   lang: { label: 'Website language' },
@@ -705,6 +706,19 @@ export default {
       since: 'Account created on',
       contact: 'Write to us',
     },
+  },
+
+  validation: {
+    consentLabel: 'Consent',
+    summaryTitle: 'Please correct the following:',
+    nameRequired: 'Please enter your name.',
+    emailRequired: 'Please enter your email address.',
+    emailInvalid: 'This email address does not look valid.',
+    messageRequired: 'Please write your message.',
+    communeRequired: 'Please enter the municipality of the plot.',
+    passwordShort: 'The password must contain at least 8 characters.',
+    passwordMismatch: 'The two passwords do not match.',
+    consentRequired: 'Please accept the privacy policy.',
   },
 
   notFound: {

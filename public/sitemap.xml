@@ -2,57 +2,57 @@
 <!-- Plan du site. Remplacer le domaine par le domaine reel avant la mise en ligne. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.vitiaero.ch/</loc>
+    <loc>https://vitiaero.ch/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/estimation</loc>
+    <loc>https://vitiaero.ch/estimation</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/le-service</loc>
+    <loc>https://vitiaero.ch/le-service</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/devis</loc>
+    <loc>https://vitiaero.ch/devis</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/equipement</loc>
+    <loc>https://vitiaero.ch/equipement</loc>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/contact</loc>
+    <loc>https://vitiaero.ch/contact</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/a-propos</loc>
+    <loc>https://vitiaero.ch/a-propos</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/confidentialite</loc>
+    <loc>https://vitiaero.ch/confidentialite</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/mentions-legales</loc>
+    <loc>https://vitiaero.ch/mentions-legales</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/conditions-generales</loc>
+    <loc>https://vitiaero.ch/conditions-generales</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.vitiaero.ch/cookies</loc>
+    <loc>https://vitiaero.ch/cookies</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

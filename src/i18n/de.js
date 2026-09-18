@@ -51,6 +51,7 @@ export default {
     call: 'Anrufen',
     createAccount: 'Konto erstellen',
     genericError: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
+    staticNotice: (mail) => `Der Online-Versand wird zum Start des Dienstes aktiviert. Schreiben Sie uns bis dahin an ${mail}, wir antworten innert 48 Stunden.`,
   },
 
   lang: { label: 'Sprache der Website' },
@@ -705,6 +706,19 @@ export default {
       since: 'Konto erstellt am',
       contact: 'Schreiben Sie uns',
     },
+  },
+
+  validation: {
+    consentLabel: 'Einwilligung',
+    summaryTitle: 'Bitte korrigieren Sie folgende Punkte:',
+    nameRequired: 'Bitte geben Sie Ihren Namen an.',
+    emailRequired: 'Bitte geben Sie Ihre E-Mail-Adresse an.',
+    emailInvalid: 'Diese E-Mail-Adresse scheint nicht gültig zu sein.',
+    messageRequired: 'Bitte schreiben Sie Ihre Nachricht.',
+    communeRequired: 'Bitte geben Sie die Gemeinde der Parzelle an.',
+    passwordShort: 'Das Passwort muss mindestens 8 Zeichen enthalten.',
+    passwordMismatch: 'Die beiden Passwörter stimmen nicht überein.',
+    consentRequired: 'Bitte akzeptieren Sie die Datenschutzerklärung.',
   },
 
   notFound: {

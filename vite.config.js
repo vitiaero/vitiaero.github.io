@@ -69,6 +69,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), staticHosting(apiOrigin)],
     define: {
       'import.meta.env.VITE_API_ORIGIN': JSON.stringify(apiOrigin),
+      // Publie sans API : les formulaires affichent un message au lieu d'une erreur.
+      'import.meta.env.VITE_STATIC_ONLY': JSON.stringify(env.VITE_STATIC_ONLY === '1' ? '1' : ''),
     },
     build: {
       sourcemap: false, // le code source original n'est pas publie

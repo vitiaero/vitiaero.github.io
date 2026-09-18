@@ -4,11 +4,20 @@ import MapDraw from '../components/MapDraw.jsx';
 import PrintHeader from '../components/PrintHeader.jsx';
 import { useAuth } from '../auth.jsx';
 import { api } from '../api.js';
+import { useFormValidation, FieldError, FormErrorSummary, required, emailRule } from '../forms.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import {
   BASE, PRICE_PER_HA, REFERENCE_PRICE, TRAVEL_BANDS, TRAVEL_REDUCTIONS, MIN_PER_PASS,
   computeEstimate, formatCHF, parcelsCenter,
 } from '../../shared/pricing.js';
+
+// Champs obligatoires de la derniere etape : verifies a la sortie du champ et
+// a l'envoi. Les parcelles, elles, sont deja exigees pour passer l'etape 1.
+const EST_RULES = {
+  name: required((x) => x.nameRequired),
+  email: emailRule,
+  consent: (value, values, texts) => (values.consent ? null : texts.consentRequired),
+};
 
 // Valeurs enregistrees (en francais, lues par l'equipe dans l'administration).
 // Les libelles affiches viennent de t.estimation.treatments / periods, meme ordre.
@@ -233,6 +242,7 @@ export default function Estimation() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [consent, setConsent] = useState(false);
+  const { errors, validateAll, fieldProps, summaryRef, reset: resetErrors } = useFormValidation(EST_RULES);
 
   // Code promo
   const [promoInput, setPromoInput] = useState('');
@@ -419,11 +429,13 @@ export default function Estimation() {
                     <div className="form-row">
                       <div className="field">
                         <label htmlFor="est-name">{e.name}</label>
-                        <input id="est-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} placeholder="Marie Dupont" />
+                        <input id="est-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} placeholder="Marie Dupont" {...fieldProps('name', 'est-name', { ...form, consent })} />
+                        <FieldError id="est-name" message={errors.name} />
                       </div>
                       <div className="field">
                         <label htmlFor="est-email">{e.email}</label>
-                        <input id="est-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} placeholder="marie@exemple.ch" />
+                        <input id="est-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} placeholder="marie@exemple.ch" {...fieldProps('email', 'est-email', { ...form, consent })} />
+                        <FieldError id="est-email" message={errors.email} />
                       </div>
                     </div>
                     <div className="form-row">
@@ -527,9 +539,26 @@ export default function Estimation() {
               <div className="alert alert-info mt-3 no-print">{user ? e.infoUser : e.infoGuest}</div>
 
               <label className="consent mt-3 no-print">
-                <input type="checkbox" checked={consent} onChange={(ev) => setConsent(ev.target.checked)} />
+                <input
+                  id="est-consent"
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(ev) => { setConsent(ev.target.checked); if (ev.target.checked) resetErrors(); }}
+                  aria-invalid={errors.consent ? 'true' : undefined}
+                  aria-describedby={errors.consent ? 'est-consent-error' : undefined}
+                />
                 <span>{e.consentBefore}<Link to="/confidentialite" target="_blank" rel="noreferrer">{e.consentLink}</Link>{e.consentAfter}</span>
               </label>
+              <FieldError id="est-consent" message={errors.consent} />
+              <FormErrorSummary
+                errors={errors}
+                summaryRef={summaryRef}
+                fields={[
+                  { name: 'name', id: 'est-name', label: e.name },
+                  { name: 'email', id: 'est-email', label: e.email },
+                  { name: 'consent', id: 'est-consent', label: t.validation.consentLabel },
+                ]}
+              />
 
               <div className="wizard-nav no-print">
                 <button className="btn btn-ghost" onClick={() => go(3)} disabled={submitting}>{e.back}</button>

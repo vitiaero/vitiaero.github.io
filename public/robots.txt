@@ -24,4 +24,4 @@ Disallow: /
 # Disallow: /confirmation
 # ------------------------------------------------------------------
 
-Sitemap: https://www.vitiaero.ch/sitemap.xml
+Sitemap: https://vitiaero.ch/sitemap.xml

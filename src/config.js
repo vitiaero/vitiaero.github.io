@@ -17,3 +17,8 @@ export function asset(path) {
 // dans vite.config.js. Vide : l'API est servie a la meme adresse que le site
 // (developpement, ou serveur Node unique).
 export const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || '';
+
+// Site publie sans serveur (GitHub Pages sans API). Les formulaires, la
+// connexion et l'espace client restent visibles, mais au lieu d'echouer avec
+// une erreur technique, ils affichent un message clair au moment de l'envoi.
+export const STATIC_ONLY = import.meta.env.VITE_STATIC_ONLY === '1';

@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import fr from './fr.js';
 import de from './de.js';
 import en from './en.js';
+import { company } from '../content.js';
 
 export const LANGS = [
   { code: 'fr', label: 'FR', name: 'Français', locale: 'fr-CH', og: 'fr_CH' },
@@ -45,6 +46,12 @@ let current = detect();
 export function translateServerError(message) {
   if (!message) return DICTS[current].common.genericError;
   return DICTS[current].serverErrors[message] || message;
+}
+
+// Message affiche quand le site est publie sans serveur : l'envoi en ligne
+// n'est pas encore actif, on donne l'adresse e-mail a la place.
+export function staticNotice() {
+  return DICTS[current].common.staticNotice(company.email);
 }
 
 const LangContext = createContext(null);

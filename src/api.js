@@ -1,7 +1,7 @@
 // Petit client pour appeler l'API. Ajoute le jeton d'authentification
 // et transforme les erreurs en messages lisibles, dans la langue du site.
-import { translateServerError } from './i18n/index.jsx';
-import { API_ORIGIN } from './config.js';
+import { translateServerError, staticNotice } from './i18n/index.jsx';
+import { API_ORIGIN, STATIC_ONLY } from './config.js';
 
 const TOKEN_KEY = 'vitiaero_token';
 
@@ -21,6 +21,14 @@ export function setToken(token) {
 }
 
 async function request(method, url, body) {
+  // Site publie sans serveur : on n'appelle rien et on explique la situation,
+  // au lieu de laisser le visiteur devant une erreur reseau.
+  if (STATIC_ONLY) {
+    const err = new Error(staticNotice());
+    err.status = 0;
+    throw err;
+  }
+
   const headers = { 'Content-Type': 'application/json' };
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;

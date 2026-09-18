@@ -24,3 +24,7 @@ desktop.ini
 
 # Cache du detecteur de design (recree automatiquement)
 .impeccable/hook.cache.json
+
+# Outils d analyse locaux : resultats et reglages, hors du site publie
+.agentshield-baseline.json
+.impeccable/

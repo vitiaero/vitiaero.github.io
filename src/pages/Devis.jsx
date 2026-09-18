@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
 import { api } from '../api.js';
+import { useFormValidation, FieldError, FormErrorSummary, required, emailRule } from '../forms.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { PRICE_PER_HA } from '../../shared/pricing.js';
 
@@ -12,6 +13,14 @@ import { PRICE_PER_HA } from '../../shared/pricing.js';
 const MAX_FILES = 3;
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf'];
+
+// Champs obligatoires, verifies a la sortie du champ et a l'envoi.
+const RULES = {
+  name: required((x) => x.nameRequired),
+  email: emailRule,
+  commune: required((x) => x.communeRequired),
+  consent: (value, values, texts) => (values.consent ? null : texts.consentRequired),
+};
 
 const readAsDataUrl = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -34,6 +43,7 @@ export default function Devis() {
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState('');
   const [consent, setConsent] = useState(false);
+  const { errors, validateAll, fieldProps, summaryRef, reset: resetErrors } = useFormValidation(RULES);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -59,18 +69,7 @@ export default function Devis() {
   async function submit(ev) {
     ev.preventDefault();
     setError('');
-    if (!form.name.trim() || !form.email.trim() || !form.commune.trim()) {
-      setError(q.errRequired);
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      setError(q.errEmail);
-      return;
-    }
-    if (!consent) {
-      setError(q.errConsent);
-      return;
-    }
+    if (!validateAll({ ...form, consent })) return;
     setSending(true);
     try {
       const payload = {
@@ -120,11 +119,22 @@ export default function Devis() {
               ) : (
                 <form onSubmit={submit} noValidate>
                   {error && <div className="alert alert-error">{error}</div>}
+                  <FormErrorSummary
+                    errors={errors}
+                    summaryRef={summaryRef}
+                    fields={[
+                      { name: 'name', id: 'dv-name', label: q.name },
+                      { name: 'email', id: 'dv-email', label: q.email },
+                      { name: 'commune', id: 'dv-commune', label: q.commune },
+                      { name: 'consent', id: 'dv-consent', label: t.validation.consentLabel },
+                    ]}
+                  />
 
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="dv-name">{q.name}</label>
-                      <input id="dv-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} />
+                      <input id="dv-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} {...fieldProps('name', 'dv-name', { ...form, consent })} />
+                      <FieldError id="dv-name" message={errors.name} />
                     </div>
                     <div className="field">
                       <label htmlFor="dv-company">{q.company}</label>
@@ -135,7 +145,8 @@ export default function Devis() {
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="dv-email">{q.email}</label>
-                      <input id="dv-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} />
+                      <input id="dv-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} {...fieldProps('email', 'dv-email', { ...form, consent })} />
+                      <FieldError id="dv-email" message={errors.email} />
                     </div>
                     <div className="field">
                       <label htmlFor="dv-phone">{q.phone}</label>
@@ -146,7 +157,8 @@ export default function Devis() {
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="dv-commune">{q.commune}</label>
-                      <input id="dv-commune" maxLength={120} className="input" autoComplete="address-level2" value={form.commune} onChange={update('commune')} placeholder="Chexbres" />
+                      <input id="dv-commune" maxLength={120} className="input" autoComplete="address-level2" value={form.commune} onChange={update('commune')} placeholder="Chexbres" {...fieldProps('commune', 'dv-commune', { ...form, consent })} />
+                      <FieldError id="dv-commune" message={errors.commune} />
                     </div>
                     <div className="field">
                       <label htmlFor="dv-area">{q.area}</label>
@@ -207,13 +219,21 @@ export default function Devis() {
                   </div>
 
                   <label className="consent mt-2">
-                    <input type="checkbox" checked={consent} onChange={(ev) => setConsent(ev.target.checked)} />
+                    <input
+                      id="dv-consent"
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(ev) => { setConsent(ev.target.checked); if (ev.target.checked) resetErrors(); }}
+                      aria-invalid={errors.consent ? 'true' : undefined}
+                      aria-describedby={errors.consent ? 'dv-consent-error' : undefined}
+                    />
                     <span>
                       {t.contact.consentBefore}
                       <Link to="/confidentialite" target="_blank" rel="noreferrer">{t.contact.consentLink}</Link>
                       {t.contact.consentAfter}
                     </span>
                   </label>
+                  <FieldError id="dv-consent" message={errors.consent} />
 
                   <button className="btn btn-primary mt-3" type="submit" disabled={sending}>
                     {sending ? q.sending : q.send}

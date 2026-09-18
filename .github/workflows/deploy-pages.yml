@@ -56,10 +56,13 @@ jobs:
       - name: Verifier les vulnerabilites connues
         run: npm audit --audit-level=high
 
+      # Sans VITE_API_URL, le site est publie seul : les formulaires et la
+      # connexion affichent alors un message clair au lieu d'une erreur reseau.
       - name: Compiler le site
         env:
           VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_STATIC_ONLY: ${{ vars.VITE_API_URL == '' && '1' || '0' }}
         run: npm run build
 
       - name: Preparer les fichiers pour Pages

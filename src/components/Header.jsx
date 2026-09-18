@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -11,6 +11,8 @@ export default function Header() {
   const { user, logout } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
+  const headerRef = useRef(null);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -19,10 +21,30 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Empeche le defilement de l'arriere-plan quand le menu mobile est ouvert
+  // Empeche le defilement de l'arriere-plan quand le menu mobile est ouvert.
+  // La classe sur le corps de page sert aussi a masquer la barre fixe du bas,
+  // qui recouvrait sinon le dernier bouton du menu.
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    document.body.classList.toggle('menu-open', open);
+    return () => {
+      document.body.style.overflow = '';
+      document.body.classList.remove('menu-open');
+    };
+  }, [open]);
+
+  // Le menu part du bas reel de l'en-tete. Une hauteur fixe ne suffit pas :
+  // le bandeau de lancement pousse l'en-tete vers le bas, et le menu recouvrait
+  // alors le logo. La valeur est remesuree si la fenetre change de taille.
+  useEffect(() => {
+    if (!open) return undefined;
+    const place = () => {
+      const bottom = headerRef.current?.getBoundingClientRect().bottom;
+      if (bottom != null) menuRef.current?.style.setProperty('--menu-top', `${Math.max(0, Math.round(bottom))}px`);
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
   }, [open]);
 
   const close = () => setOpen(false);
@@ -47,7 +69,7 @@ export default function Header() {
   );
 
   return (
-    <header className={`header${scrolled ? ' scrolled' : ''}`}>
+    <header className={`header${scrolled ? ' scrolled' : ''}`} ref={headerRef}>
       <div className="container header-inner">
         <Link to="/" className="brand" onClick={close} aria-label={t.nav.brandHome}>
           <img src={asset('/images/logo-vitiaero.png')} alt="VitiAero" className="brand-logo" />
@@ -75,7 +97,7 @@ export default function Header() {
         </button>
       </div>
 
-      <div className={`mobile-menu${open ? ' open' : ''}`}>
+      <div className={`mobile-menu${open ? ' open' : ''}`} ref={menuRef} hidden={!open}>
         {navLinks}
         <LangSwitch variant="inline" />
         {user ? (

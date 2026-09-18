@@ -64,15 +64,45 @@ Noter l'adresse de l'API fournie par l'hébergeur (par exemple
 Le site est publié à `https://NOM.github.io/NOM-DU-DEPOT/`. Le chemin de base est
 détecté automatiquement.
 
-### 4. Domaine personnel (facultatif)
+### 4. Le domaine vitiaero.ch
 
-1. Vérifier le domaine dans les réglages du compte GitHub (Settings > Pages >
-   Add a domain), pour qu'aucun tiers ne puisse l'utiliser.
-2. Dépôt > Settings > Pages > Custom domain : `www.vitiaero.ch`, puis les
-   enregistrements DNS indiqués par GitHub, chez le registraire du domaine.
-3. Cocher **Enforce HTTPS** dès que le certificat est prêt.
-4. Mettre la nouvelle adresse dans `ALLOWED_ORIGINS` côté API, puis relancer le
-   workflow.
+Le fichier `public/CNAME` contient déjà `vitiaero.ch` : il part avec le site à
+chaque publication, le domaine ne se perd donc jamais.
+
+1. Chez le registraire du domaine, créer **huit enregistrements** qui pointent
+   vers GitHub :
+
+   | Type | Nom | Valeur |
+   |---|---|---|
+   | A | @ | 185.199.108.153 |
+   | A | @ | 185.199.109.153 |
+   | A | @ | 185.199.110.153 |
+   | A | @ | 185.199.111.153 |
+   | AAAA | @ | 2606:50c0:8000::153 |
+   | AAAA | @ | 2606:50c0:8001::153 |
+   | AAAA | @ | 2606:50c0:8002::153 |
+   | AAAA | @ | 2606:50c0:8003::153 |
+
+2. Recommandé : un enregistrement **CNAME** pour `www` vers `NOM.github.io`.
+   GitHub fait alors suivre `www.vitiaero.ch` vers `vitiaero.ch`.
+3. Dépôt > Settings > Pages > Custom domain : saisir `vitiaero.ch`.
+4. Attendre que le certificat soit prêt, de quelques minutes à quelques heures,
+   puis cocher **Enforce HTTPS**.
+5. Dans les réglages du compte GitHub, **vérifier le domaine** (Settings >
+   Pages > Add a domain) : personne d'autre ne pourra alors l'utiliser.
+
+### 5. Sans serveur : le message affiché à l'envoi
+
+Tant qu'aucune API n'est en ligne, le workflow compile le site en **mode
+statique** : les formulaires, la connexion et l'espace client restent visibles,
+mais un envoi affiche le message « L'envoi en ligne sera actif au lancement du
+service. En attendant, écrivez-nous à contact@vitiaero.ch », au lieu d'une
+erreur technique.
+
+Le jour où l'API est en ligne, il suffit de renseigner la variable
+`VITE_API_URL` (Settings > Secrets and variables > Actions > Variables) et de
+relancer le workflow : le mode statique se désactive tout seul et tout
+fonctionne. Côté API, mettre `https://vitiaero.ch` dans `ALLOWED_ORIGINS`.
 
 ### 5. Réglages de sécurité GitHub
 

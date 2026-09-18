@@ -26,7 +26,7 @@ import NotFound from './pages/NotFound.jsx';
 // Titre et description par page (application a page unique : on met a jour la
 // balise <title>, la meta description et le lien canonique a chaque navigation,
 // pour le referencement et le partage). Les textes sont dans src/i18n.
-const BASE_URL = 'https://www.vitiaero.ch';
+const BASE_URL = 'https://vitiaero.ch';
 
 function setMeta(name, content) {
   let el = document.querySelector(`meta[name="${name}"]`);
