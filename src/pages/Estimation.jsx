@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import MapDraw from '../components/MapDraw.jsx';
 import PrintHeader from '../components/PrintHeader.jsx';
@@ -233,6 +233,8 @@ export default function Estimation() {
 
   const [step, setStep] = useState(1);
   const [parcels, setParcels] = useState([]);
+  const mapRef = useRef(null);
+  const errorRef = useRef(null);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', commune: '', address: '',
     treatment: TREATMENTS[0], period: PERIODS[0], message: '',
@@ -273,6 +275,12 @@ export default function Estimation() {
     if (user) setForm((f) => ({ ...f, name: f.name || user.name, email: f.email || user.email }));
   }, [user]);
 
+  // Le message d'erreur s'affiche au-dessus de l'etape : on l'amene a l'ecran,
+  // sinon un clic sur "Continuer", sous la carte, semblerait sans effet.
+  useEffect(() => {
+    if (error) errorRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [error]);
+
   const totalArea = parcels.reduce((s, p) => s + (p.area_m2 || 0), 0);
   const fmt = formatArea(totalArea, locale);
   const treatmentLabel = (v) => e.treatments[TREATMENTS.indexOf(v)] || v;
@@ -298,7 +306,12 @@ export default function Estimation() {
   }
 
   function next() {
-    if (step === 1 && parcels.length === 0) { setError(e.errParcel); return; }
+    if (step === 1) {
+      // Un trace en cours se ferme tout seul : pas besoin de "Terminer" avant.
+      const list = mapRef.current ? mapRef.current.commitDraft() : parcels;
+      if (list === null) { setError(e.errDraft); return; }
+      if (list.length === 0) { setError(e.errParcel); return; }
+    }
     if (step === 3) {
       if (!form.name.trim() || !form.email.trim()) { setError(e.errRequired); return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { setError(e.errEmail); return; }
@@ -365,12 +378,12 @@ export default function Estimation() {
             })}
           </div>
 
-          {error && <div className="alert alert-error">{error}</div>}
+          {error && <div className="alert alert-error" role="alert" ref={errorRef}>{error}</div>}
 
           {/* Etape 1 : carte */}
           {step === 1 && (
             <div>
-              <MapDraw value={parcels} onChange={setParcels} />
+              <MapDraw ref={mapRef} value={parcels} onChange={setParcels} />
               <div className="wizard-nav">
                 <span />
                 <button className="btn btn-primary" onClick={next}>{e.next}</button>

@@ -50,7 +50,7 @@ function Conditions({ c }) {
             <p className="lead mt-2" style={{ maxWidth: '66ch', margin: '1rem auto 0' }}>{c.lead}</p>
           </Reveal>
         </div>
-        <div className="grid grid-3">
+        <div className="grid grid-3 grid-cards">
           {c.cards.map((card, i) => (
             <Reveal key={card.title} delay={i * 60}>
               <div className="card">
@@ -108,7 +108,7 @@ function Rules({ r, commitments }) {
               <h2 className="h2">{commitments.title}</h2>
             </Reveal>
           </div>
-          <div className="grid grid-4">
+          <div className="grid grid-4 grid-cards">
             {commitments.items.map((item, i) => (
               <Reveal key={item.title} delay={i * 60}>
                 <div className="card">

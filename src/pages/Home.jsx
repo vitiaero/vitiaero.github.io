@@ -94,7 +94,7 @@ function Advantages() {
             <h2 className="h2">{a.title}</h2>
           </Reveal>
         </div>
-        <div className="grid grid-3">
+        <div className="grid grid-3 grid-cards">
           {a.items.map((item, i) => (
             <Reveal key={i} delay={i * 60}>
               <div className="card">
@@ -122,14 +122,17 @@ function HowItWorks() {
             <h2 className="h2">{h.title}</h2>
           </Reveal>
         </div>
-        <div className="steps">
+        <div className="steps grid-cards">
           {h.steps.map((s, i) => (
             <Reveal key={i} delay={i * 80}>
               <div className="step">
-                <div className="no">{s.no}</div>
+                <div>
+                  {/* Barre remplie a 1/4, 2/4... : on voit ou l'on en est */}
+                  <div className="step-bar" style={{ '--progress': (i + 1) / h.steps.length }} aria-hidden="true" />
+                  <span className="no">{s.no}</span>
+                </div>
                 <h3 className="h3">{s.title}</h3>
                 <p>{s.text}</p>
-                <div className="step-line" />
               </div>
             </Reveal>
           ))}
@@ -248,8 +251,20 @@ function FaqItem({ item, open, onToggle }) {
 function Faq() {
   const { t } = useI18n();
   const f = t.home.faq;
-  // Une seule reponse ouverte a la fois, reperee par "groupe.question".
-  const [open, setOpen] = useState('0.0');
+  // Categories fermees au depart : le visiteur n'ouvre que ce qui l'interesse.
+  // Plusieurs categories peuvent etre ouvertes ensemble (rien ne saute sous ses
+  // yeux) ; une seule reponse a la fois, reperee par "categorie.question".
+  const [openCats, setOpenCats] = useState(() => new Set());
+  const [open, setOpen] = useState('');
+
+  function toggleCat(g) {
+    setOpenCats((prev) => {
+      const next = new Set(prev);
+      if (next.has(g)) next.delete(g); else next.add(g);
+      return next;
+    });
+  }
+
   return (
     <section className="section" id="faq">
       <div className="container">
@@ -259,30 +274,52 @@ function Faq() {
             <h2 className="h2">{f.title}</h2>
           </Reveal>
         </div>
-        {f.groups.map((group, g) => (
-          <div className="faq-group" key={group.title}>
-            <h3 className="faq-group-title">
-              <span className="faq-group-icon"><Icon name={group.icon} size={18} /></span>
-              {group.title}
-            </h3>
-            <Reveal className="faq">
-              {group.items.map((item, i) => {
-                const key = `${g}.${i}`;
-                return (
-                  <FaqItem
-                    key={key}
-                    item={item}
-                    open={open === key}
-                    onToggle={() => setOpen(open === key ? '' : key)}
-                  />
-                );
-              })}
-            </Reveal>
-          </div>
-        ))}
+        <Reveal className="faq-cats">
+          {f.groups.map((group, g) => {
+            const expanded = openCats.has(g);
+            const panelId = `faq-cat-${g}`;
+            return (
+              <div className={`faq-cat${expanded ? ' open' : ''}`} key={group.title}>
+                <h3 className="faq-cat-heading">
+                  <button
+                    type="button"
+                    className="faq-cat-toggle"
+                    aria-expanded={expanded}
+                    aria-controls={panelId}
+                    onClick={() => toggleCat(g)}
+                  >
+                    <span className="faq-cat-icon" aria-hidden="true"><Icon name={group.icon} size={20} /></span>
+                    <span className="faq-cat-title">{group.title}</span>
+                    <span className="faq-cat-count">{f.count(group.items.length)}</span>
+                    <span className="faq-cat-chev" aria-hidden="true"><Icon name="chevron" size={18} stroke={2.2} /></span>
+                  </button>
+                </h3>
+                <div className="faq-cat-panel" id={panelId}>
+                  <div className="faq">
+                    {group.items.map((item, i) => {
+                      const key = `${g}.${i}`;
+                      return (
+                        <FaqItem
+                          key={key}
+                          item={item}
+                          open={open === key}
+                          onToggle={() => setOpen(open === key ? '' : key)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </Reveal>
         <Reveal className="faq-more">
-          <p>{f.moreTitle}</p>
-          <Link to="/contact" className="btn btn-outline btn-sm">{f.moreCta}</Link>
+          <span className="faq-more-icon" aria-hidden="true"><Icon name="mail" size={22} /></span>
+          <div className="faq-more-text">
+            <p className="faq-more-title">{f.moreTitle}</p>
+            <p className="faq-more-sub">{f.moreText}</p>
+          </div>
+          <Link to="/contact" className="btn btn-primary btn-sm">{f.moreCta}</Link>
         </Reveal>
       </div>
     </section>

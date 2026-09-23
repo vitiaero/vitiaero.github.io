@@ -40,7 +40,7 @@ export default function About() {
           <div className="section-head center">
             <Reveal><h2 className="h2">{a.valuesTitle}</h2></Reveal>
           </div>
-          <div className="grid grid-3">
+          <div className="grid grid-3 grid-cards">
             {a.values.map((v, i) => (
               <Reveal key={i} delay={i * 60}>
                 <div className="card">

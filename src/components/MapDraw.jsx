@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { area as turfArea } from '@turf/turf';
@@ -125,7 +125,7 @@ function polygonArea(points) {
   }
 }
 
-export default function MapDraw({ value = [], onChange, readOnly = false }) {
+const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = false }, ref) {
   const { t, lang, locale } = useI18n();
   const m = t.map;
   const containerRef = useRef(null);
@@ -315,14 +315,31 @@ export default function MapDraw({ value = [], onChange, readOnly = false }) {
     containerRef.current.style.cursor = 'crosshair';
   }
 
+  // Ferme le trace en cours et l'ajoute aux parcelles s'il a au moins trois
+  // points. Renvoie la liste a jour des parcelles.
   function finishDrawing() {
     const pts = pointsRef.current;
+    let list = valueRef.current || [];
     if (pts.length >= 3) {
-      const parcel = { points: pts.slice(), area_m2: polygonArea(pts) };
-      onChangeRef.current?.([...(valueRef.current || []), parcel]);
+      list = [...list, { points: pts.slice(), area_m2: polygonArea(pts) }];
+      onChangeRef.current?.(list);
     }
     stopDrawing();
+    return list;
   }
+
+  // Appele par la page au clic sur "Continuer" : un trace en cours se ferme
+  // tout seul, comme avec "Terminer". Renvoie la liste a jour, ou null si le
+  // trace n'a qu'un ou deux points : ce n'est pas encore une parcelle, et on ne
+  // le jette pas sans prevenir.
+  useImperativeHandle(ref, () => ({
+    commitDraft() {
+      if (!drawingRef.current) return valueRef.current || [];
+      const n = pointsRef.current.length;
+      if (n === 1 || n === 2) return null;
+      return finishDrawing();
+    },
+  }));
 
   function stopDrawing() {
     drawingRef.current = false;
@@ -584,4 +601,6 @@ export default function MapDraw({ value = [], onChange, readOnly = false }) {
       </div>
     </div>
   );
-}
+});
+
+export default MapDraw;
