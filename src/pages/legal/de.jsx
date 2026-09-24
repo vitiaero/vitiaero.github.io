@@ -1,23 +1,30 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { company, linkStyle, clearSiteStorage } from './shared.js';
+import { company, filled, linkStyle, extLink, LINKS, clearSiteStorage } from './shared.js';
 
-// Pages légales en allemand (orthographe suisse). Traduction des modèles
-// français : la version française fait foi, mention à faire valider.
-const UPDATED = 'September 2026';
+// Pages légales en allemand (orthographe suisse), traduites de la version
+// française, qui fait foi. Sources vérifiées : docs/CONFORMITE.md.
+const UPDATED = '24. September 2026';
 const CANTON = company.canton === 'Vaud' ? 'Waadt' : company.canton;
 const ADDRESS_LINE = `${company.address}, ${company.npa} ${company.city}, Kanton ${CANTON}, Schweiz`;
 
-function Disclaimer() {
+function Dated() {
   return (
-    <div className="alert alert-info">
-      Mustervorlage, erstellt im Rahmen eines Studienprojekts (CPNV, PAE). Die Angaben in
-      eckigen Klammern sind zu ergänzen, und der Text muss vor jeder echten Verwendung von
-      einer Fachperson geprüft werden.
-      <br />
-      Diese Übersetzung dient der Information. Im Zweifel gilt die französische Fassung.
-      [VON EINER FACHPERSON ZU BESTÄTIGEN]
-    </div>
+    <p className="muted">
+      Letzte Aktualisierung: {UPDATED}. Diese Übersetzung dient der Information. Im Zweifel
+      gilt die französische Fassung.
+    </p>
+  );
+}
+
+function Contact() {
+  return (
+    <>
+      {company.name}<br />
+      {ADDRESS_LINE}<br />
+      E-Mail: <a href={`mailto:${company.email}`} style={linkStyle}>{company.email}</a>
+      {filled(company.phone) && <><br />Telefon: {company.phone}</>}
+    </>
   );
 }
 
@@ -25,113 +32,125 @@ function Confidentialite() {
   return (
     <>
       <h1 className="h1">Datenschutzerklärung</h1>
-      <p className="muted">Letzte Aktualisierung: {UPDATED}</p>
-      <Disclaimer />
+      <Dated />
       <p>
-        {company.name} legt Wert auf den Schutz Ihrer Daten. Diese Erklärung zeigt, welche
-        Daten wir bearbeiten, warum wir das tun und welche Rechte Sie haben, gemäss dem
-        Schweizer Bundesgesetz über den Datenschutz (DSG).
+        Diese Erklärung zeigt, welche Personendaten auf der Website vitiaero.ch bearbeitet
+        werden, wozu, mit wem sie geteilt werden und welche Rechte Sie haben. Sie folgt dem
+        Bundesgesetz über den Datenschutz (DSG).
       </p>
 
-      <h2 className="h3">1. Verantwortliche Stelle</h2>
+      <h2 className="h3">1. Verantwortlich</h2>
+      <p><Contact /></p>
+
+      <h2 className="h3">2. Der heutige Stand</h2>
       <p>
-        {company.name}, {ADDRESS_LINE}.<br />
-        Verantwortlich: {company.responsable}. Kontakt: {company.email}
-        {company.phone ? `, ${company.phone}` : ''}.
+        VitiAero bereitet den Start vor. Vorläufig senden die Formulare der Website
+        (Schätzung, Offerte, Kontakt, Kundenkonto) keine Daten: Die Schätzung wird nur in
+        Ihrem Browser berechnet. Wenn Sie uns eine E-Mail schreiben, erhalten wir Ihre
+        Adresse und den Inhalt Ihrer Nachricht.
       </p>
 
-      <h2 className="h3">2. Welche Daten wir bearbeiten</h2>
+      <h2 className="h3">3. Bei Ihrem Besuch</h2>
       <ul>
-        <li>Identität: Vor- und Nachname.</li>
-        <li>Kontaktdaten: E-Mail-Adresse, Telefon, Gemeinde, Adresse oder Flurname.</li>
-        <li>Parzellen: der Umriss und die Fläche, die Sie auf der Karte einzeichnen.</li>
-        <li>Ihre Anfrage: Art der Behandlung, Zeitraum, Nachricht, allfälliger Aktionscode.</li>
-        <li>Konto: E-Mail-Adresse und Passwort (nur in gehashter Form gespeichert).</li>
-        <li>Nachverfolgung: durchgeführte oder geplante Einsätze auf Ihren Parzellen (Datum, Fläche, Behandlung, Bemerkungen).</li>
         <li>
-          Technische Daten: Bei Ihrem Besuch werden Ihre IP-Adresse und technische Angaben
-          (Art des Browsers) vorübergehend bearbeitet, um die Sicherheit des Dienstes zu
-          gewährleisten (zum Beispiel die Begrenzung von Anmeldeversuchen).
+          <strong>Hosting.</strong> Die Website wird von GitHub Pages gehostet ({company.host}).
+          GitHub speichert aus Sicherheitsgründen die IP-Adresse jeder Besucherin und jedes
+          Besuchers.
+        </li>
+        <li>
+          <strong>Karte der Schätzungsseite.</strong> Die Hintergründe «Satellit», «Karte» und
+          «Kataster» sowie die Gemeindesuche stammen von swisstopo, dem Bundesamt für
+          Landestopografie: Es erhält Ihre IP-Adresse und den gesuchten Ort. Der Hintergrund
+          «Plan» stammt von OpenStreetMap. Er wird nur geladen, wenn Sie ihn wählen;
+          OpenStreetMap erhält dann Ihre IP-Adresse.
+        </li>
+        <li>
+          <strong>Lokale Speicherung.</strong> Einige technische Einstellungen bleiben in Ihrem
+          Browser gespeichert. Details auf der Seite{' '}
+          <Link to="/cookies" style={linkStyle}>Cookie-Verwaltung</Link>.
+        </li>
+      </ul>
+      <p>Die Website verwendet keine Werbe-Tracker und keine Reichweitenmessung.</p>
+
+      <h2 className="h3">4. Sobald der Online-Versand aktiv ist</h2>
+      <p>Die Formulare übermitteln dann die Daten, die Sie eingeben:</p>
+      <ul>
+        <li>Identität: Name und Vorname;</li>
+        <li>Kontaktangaben: E-Mail, Telefon, Gemeinde, Adresse oder Flurname;</li>
+        <li>Parzellen: der auf der Karte gezeichnete Umriss und die Fläche;</li>
+        <li>Anfrage: Art der Behandlung, Zeitraum, Nachricht, Anhänge, allfälliger Promo-Code;</li>
+        <li>Kundenkonto: E-Mail und Passwort, nur in unlesbarer Form (Hash) gespeichert;</li>
+        <li>Verlauf: durchgeführte oder geplante Einsätze auf Ihren Parzellen;</li>
+        <li>Sicherheit: IP-Adresse, einige Minuten lang gespeichert, um Missbrauchsversuche zu begrenzen.</li>
+      </ul>
+      <p>
+        Diese Erklärung wird vor der Aktivierung ergänzt, mit den gewählten Dienstleistern
+        (Hosting des Servers, Berechnung der Distanzen).
+      </p>
+
+      <h2 className="h3">5. Zwecke</h2>
+      <p>
+        Ihre Fragen und Anfragen beantworten, eine Schätzung oder Offerte erstellen, Ihr
+        Konto und den Verlauf der Einsätze führen sowie die Sicherheit der Website
+        gewährleisten. Ihre Daten werden weder verkauft noch für Werbung oder Profiling
+        verwendet.
+      </p>
+
+      <h2 className="h3">6. Bekanntgabe ins Ausland</h2>
+      <ul>
+        <li>
+          <strong>USA</strong>: GitHub, Inc., für das Hosting. GitHub ist nach dem Swiss-U.S.
+          Data Privacy Framework zertifiziert. Für zertifizierte Unternehmen anerkennt der
+          Bundesrat einen angemessenen Schutz (Anhang 1 der Datenschutzverordnung, DSV).
+        </li>
+        <li>
+          <strong>Vereinigtes Königreich und Niederlande</strong>: OpenStreetMap, nur wenn Sie
+          den Hintergrund «Plan» wählen. Beide Staaten stehen auf der Liste mit angemessenem
+          Schutz (Anhang 1 DSV). Die Kacheln laufen zudem über ein weltweites Netz von
+          Cache-Servern, dessen Länder OpenStreetMap nicht veröffentlicht. Um jede Übermittlung
+          an OpenStreetMap zu vermeiden, nutzen Sie die Hintergründe «Satellit», «Karte» oder
+          «Kataster».
         </li>
       </ul>
 
-      <h2 className="h3">3. Zwecke</h2>
-      <p>
-        Ihre Anfrage für eine Schätzung bearbeiten und eine Offerte erstellen, Ihr Konto und
-        die Einsätze auf Ihren Parzellen nachführen, mit Ihnen darüber kommunizieren, die Sicherheit des
-        Dienstes gewährleisten und unsere gesetzlichen Pflichten erfüllen. Ihre Daten werden
-        nicht für Werbung verwendet und es findet kein Profiling statt.
-      </p>
-
-      <h2 className="h3">4. Rechtsgrundlage</h2>
-      <p>
-        Die Bearbeitung beruht auf Ihrer Einwilligung und auf vorvertraglichen Massnahmen,
-        die auf Ihre Anfrage hin erfolgen, sowie auf unserem berechtigten Interesse, die
-        Sicherheit des Dienstes zu gewährleisten.
-      </p>
-
-      <h2 className="h3">5. Cookies und lokale Speicherung</h2>
-      <p>
-        Die Website verwendet keine Werbe-Cookies und keine Analyse-Tracker. Sie speichert
-        in Ihrem Browser nur technische Daten, die für Ihre Anmeldung und die Anzeige nötig
-        sind (zum Beispiel die gewählte Sprache). Die Einzelheiten finden Sie auf unserer
-        Seite{' '}
-        <Link to="/cookies" style={linkStyle}>Cookie-Verwaltung</Link>.
-      </p>
-
-      <h2 className="h3">6. Externe Dienste</h2>
-      <p>
-        Um die Karte anzuzeigen und eine Gemeinde zu suchen, lädt die Website Kartenhintergründe
-        und einen Suchdienst von swisstopo (Schweizerische Eidgenossenschaft) und von
-        OpenStreetMap. Wenn die Karte angezeigt wird, wird Ihre IP-Adresse an diese Anbieter
-        übermittelt. Sie können sie nach ihren eigenen Regeln für technische Zwecke und zur
-        Sicherheit verwenden. Diese Dienste werden nur für die Karte auf der Seite der
-        Schätzung genutzt.
-      </p>
-      <p>
-        Um die Anfahrtskosten zu berechnen, fragt unser Server den öffentlichen Routendienst
-        OSRM (router.project-osrm.org) nach der Strassendistanz zwischen unserem Ausgangspunkt
-        und Ihren Parzellen. Übermittelt wird nur die Position der Mitte Ihrer Parzellen:
-        weder Ihr Name noch Ihre Kontaktdaten noch Ihre IP-Adresse. [ZU PRÜFEN: Betreiber und
-        Hosting-Land dieses Dienstes.]
-      </p>
-
       <h2 className="h3">7. Aufbewahrungsdauer</h2>
+      <ul>
+        <li>Protokolle des Hosters: gemäss der Datenschutzerklärung von GitHub.</li>
+        <li>
+          E-Mails und Anfragen: solange die Bearbeitung Ihrer Anfrage dauert, danach höchstens
+          24 Monate nach dem letzten Austausch, wenn kein Vertrag zustande kommt.
+        </li>
+        <li>
+          Buchhaltungsunterlagen, bei einem Vertrag: 10 Jahre, wie es das Obligationenrecht
+          verlangt (Art. 958f OR).
+        </li>
+        <li>Lokale Speicherung: bis Sie sie löschen.</li>
+      </ul>
+
+      <h2 className="h3">8. Sicherheit</h2>
       <p>
-        Anfragen ohne Folge werden [24 Monate] aufbewahrt. Kontodaten werden aufbewahrt,
-        solange das Konto aktiv ist, und danach gelöscht oder anonymisiert. Unterlagen zu
-        einer allfälligen Rechnungsstellung werden gemäss den gesetzlichen Fristen aufbewahrt
-        ([10 Jahre]). Die technischen Sicherheitszähler (Begrenzung pro IP-Adresse) werden
-        nach wenigen Minuten gelöscht.
+        Die Website wird verschlüsselt (HTTPS) übertragen und lädt keine Skripte von
+        Dritten. Eine Inhaltssicherheitsrichtlinie begrenzt die Ressourcen, die der Browser
+        annimmt.
       </p>
 
-      <h2 className="h3">8. Weitergabe an Dritte und Übermittlung ins Ausland</h2>
+      <h2 className="h3">9. Ihre Rechte</h2>
+      <p>Nach dem DSG können Sie insbesondere:</p>
+      <ul>
+        <li>erfahren, ob Daten über Sie bearbeitet werden, und eine Kopie erhalten (Art. 25);</li>
+        <li>in bestimmten Fällen die von Ihnen gelieferten Daten in einem gängigen elektronischen Format erhalten (Art. 28);</li>
+        <li>unrichtige Daten berichtigen lassen (Art. 32);</li>
+        <li>verlangen, dass eine Bearbeitung eingestellt, eine Bekanntgabe an Dritte verboten oder Ihre Daten gelöscht werden (Art. 32).</li>
+      </ul>
       <p>
-        Wir verkaufen Ihre Daten nicht. Sie können technischen Dienstleistern anvertraut
-        werden (zum Beispiel für das Hosting: {company.host}), die zur Vertraulichkeit
-        verpflichtet sind. Die Kartenhintergründe von OpenStreetMap können einen Zugriff aus
-        der Europäischen Union mit sich bringen. Ohne geeignete Garantien findet keine
-        Übermittlung in ein Land ohne angemessenes Schutzniveau statt. [ZU ERGÄNZEN: Liste
-        der Dienstleister und Länder.]
+        Schreiben Sie an <a href={`mailto:${company.email}`} style={linkStyle}>{company.email}</a>.
+        Sie können sich auch an den Eidgenössischen Datenschutz- und
+        Öffentlichkeitsbeauftragten (EDÖB) wenden:{' '}
+        <a href={LINKS.pfpdt} {...extLink}>www.edoeb.admin.ch</a>.
       </p>
 
-      <h2 className="h3">9. Sicherheit</h2>
-      <p>
-        Wir treffen technische und organisatorische Massnahmen: verschlüsselte Verbindung
-        (HTTPS), gehashte Passwörter, eingeschränkter Zugang zum Verwaltungsbereich,
-        Begrenzung der Anmeldeversuche und Sicherheits-Header.
-      </p>
-
-      <h2 className="h3">10. Ihre Rechte</h2>
-      <p>
-        Sie können Auskunft, Berichtigung oder Löschung Ihrer Daten verlangen, einer
-        Bearbeitung widersprechen, deren Einschränkung oder Herausgabe verlangen und Ihre
-        Einwilligung jederzeit widerrufen. Schreiben Sie an {company.email}. Sie können sich
-        auch an den Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) wenden.
-      </p>
-
-      <h2 className="h3">11. Änderungen</h2>
-      <p>Diese Erklärung kann sich ändern. Das Datum der letzten Aktualisierung steht oben auf der Seite.</p>
+      <h2 className="h3">10. Änderungen</h2>
+      <p>Diese Erklärung kann sich ändern. Das Datum der Aktualisierung steht oben auf der Seite.</p>
     </>
   );
 }
@@ -140,52 +159,53 @@ function Mentions() {
   return (
     <>
       <h1 className="h1">Impressum</h1>
-      <p className="muted">Letzte Aktualisierung: {UPDATED}</p>
-      <Disclaimer />
+      <Dated />
 
       <h2 className="h3">Herausgeber der Website</h2>
       <p>
-        {company.name}<br />
-        {ADDRESS_LINE}<br />
-        E-Mail: {company.email}<br />
-        Telefon: {company.phone}<br />
-        Unternehmens-Identifikationsnummer (UID): {company.ide}<br />
-        Verantwortlich für den Inhalt: {company.responsable}
+        <Contact />
+        {filled(company.ide) && <><br />UID-Nummer: {company.ide}</>}
+        <br />Verantwortlich für den Inhalt: {company.responsable}
       </p>
 
       <h2 className="h3">Hosting</h2>
-      <p>Die Website wird gehostet von {company.host}.</p>
+      <p>GitHub Pages: {company.host}.</p>
 
-      <h2 className="h3">Geistiges Eigentum</h2>
+      <h2 className="h3">Urheberrecht und Nachweise</h2>
       <p>
-        Die Marke VitiAero, die Texte und das Layout sind geschützt. Einige Bilder stammen
-        von Wikimedia Commons unter einer Creative-Commons-Lizenz und sind unten aufgeführt.
-        Ihre Weiterverwendung unterliegt den Bedingungen der jeweiligen Lizenz.
+        Texte und Gestaltung der Website gehören ihrem Urheber. Die übrigen Inhalte gehören
+        ihren Rechteinhabern:
       </p>
       <ul>
-        <li>Terrassen des Lavaux: JoachimKohler-HB, Wikimedia Commons, Lizenz CC BY-SA 4.0.</li>
-        <li>Reben auf Terrassen: P. Vensaus, Wikimedia Commons, Lizenz CC BY-SA 4.0.</li>
-        <li>Sprühdrohne im Flug: Blervis, Wikimedia Commons, Lizenz CC0.</li>
-        <li>Drohne DJI Agras: ZLEA, Wikimedia Commons, Lizenz CC BY-SA 4.0.</li>
         <li>
-          Bilder und Videos der Drohne auf der Seite Ausrüstung sowie Video der Startseite:
-          DJI (ag.dji.com). [NUTZUNGSRECHTE VOR DER VERÖFFENTLICHUNG ZU PRÜFEN].
+          Terrassen des Lavaux: Foto von Joachim Kohler (JoachimKohler-HB),{' '}
+          <a href={LINKS.lavauxPhoto} {...extLink}>Wikimedia Commons</a>, Lizenz{' '}
+          <a href={LINKS.ccBySa} {...extLink}>CC BY-SA 4.0</a>. Bild zugeschnitten und verkleinert.
         </li>
+        <li>Video des Weinbergs von Epesses: {company.responsable}.</li>
+        <li>Fotos und Videos der Drohne (Startseite und Seite Ausrüstung): © DJI.</li>
         <li>
-          Weitere Bilder (freigestellte Drohne, Titelbild): [NUTZUNGSRECHTE VOR DER
-          VERÖFFENTLICHUNG ZU PRÜFEN].
+          Kartenhintergründe: ©swisstopo; ©{' '}
+          <a href={LINKS.osmCopyright} {...extLink}>OpenStreetMap contributors</a>; © Amtliche
+          Vermessung Schweiz / FL (Katasterplan).
         </li>
       </ul>
 
+      <h2 className="h3">Marken</h2>
+      <p>
+        DJI und Agras sind Marken der SZ DJI Technology Co., Ltd. Sie dienen hier nur dazu,
+        die vorgesehene Drohne zu bezeichnen. VitiAero ist nicht mit DJI verbunden.
+      </p>
+
       <h2 className="h3">Haftung</h2>
       <p>
-        Die Angaben dienen der Information. Die online erhaltene Schätzung ist keine
-        verbindliche Offerte: Eine detaillierte Offerte erstellt danach unser Team. Wir
-        bemühen uns um korrekte Angaben, können diese aber nicht garantieren.
+        Die Angaben auf der Website dienen der Information. Die Online-Schätzung ist keine
+        verbindliche Offerte: Die detaillierte Offerte wird danach erstellt. Die Angaben zur
+        Drohne sind jene von DJI; sie hängen vom Gelände und vom Wetter ab.
       </p>
 
       <h2 className="h3">Anwendbares Recht</h2>
-      <p>Diese Website untersteht dem Schweizer Recht. Gerichtsstand: Kanton {CANTON}.</p>
+      <p>Diese Website untersteht dem Schweizer Recht.</p>
     </>
   );
 }
@@ -194,14 +214,10 @@ function Cgv() {
   return (
     <>
       <h1 className="h1">Allgemeine Geschäftsbedingungen</h1>
-      <p className="muted">Letzte Aktualisierung: {UPDATED}</p>
+      <Dated />
       <div className="alert alert-info">
-        Mustervorlage, nicht von einer juristischen Fachperson geprüft. Preise, Fristen,
-        Garantien und Haftungsklauseln sind vor jeder echten Verwendung zu ergänzen und von
-        einer Fachperson zu prüfen.
-        <br />
-        Diese Übersetzung dient der Information. Im Zweifel gilt die französische Fassung.
-        [VON EINER FACHPERSON ZU BESTÄTIGEN]
+        Diese Bedingungen gelten ab dem Start des Dienstes für die Leistungen. Die Punkte in
+        eckigen Klammern werden bis dahin ergänzt.
       </div>
 
       <h2 className="h3">1. Gegenstand und Geltungsbereich</h2>
@@ -213,16 +229,17 @@ function Cgv() {
       <h2 className="h3">2. Schätzung und Offerte</h2>
       <p>
         Die online erhaltene Schätzung ist kostenlos, dient der Orientierung und ist
-        unverbindlich. Sie ist keine verbindliche Offerte. Eine detaillierte Offerte erstellt
-        danach unser Team, je nach Parzellen, Behandlung und den Gegebenheiten vor Ort.
+        unverbindlich. Sie ist keine verbindliche Offerte. Eine detaillierte Offerte wird
+        danach erstellt, je nach Parzellen, Behandlung und den Gegebenheiten vor Ort.
       </p>
 
       <h2 className="h3">3. Annahme und Preise</h2>
       <p>
         Die Leistung beginnt nach der schriftlichen Annahme der Offerte. Die Preise verstehen
-        sich in Schweizer Franken, ohne MWST. Die Schweizer MWST zum Normalsatz von 8,1 %
-        kommt dazu, sofern das Unternehmen steuerpflichtig ist.
-        [Zahlungsbedingungen zu ergänzen: Anzahlung, Frist, akzeptierte Zahlungsmittel.]
+        sich in Schweizer Franken, allfällige MWST inbegriffen. Ist das Unternehmen
+        mehrwertsteuerpflichtig, gilt für das Spritzen von Reben der reduzierte Satz, gemäss
+        der Eidgenössischen Steuerverwaltung. [Zahlungsbedingungen zu ergänzen: Anzahlung,
+        Frist, akzeptierte Zahlungsmittel.]
       </p>
 
       <h2 className="h3">4. Bedingungen für den Einsatz</h2>
@@ -241,18 +258,18 @@ function Cgv() {
 
       <h2 className="h3">6. Vorschriften und Mittel</h2>
       <p>
-        Die Einsätze erfolgen unter Einhaltung der geltenden Schweizer Vorschriften
-        (Luftfahrt, eingesetzte Mittel, Anforderungen von Bund und Kantonen). Wahl und
-        Einsatz der Mittel entsprechen ihrer Zulassung und ihren Anwendungsbedingungen.
-        [VOR DER VERÖFFENTLICHUNG ZU PRÜFEN: nötige Bewilligungen für die Ausbringung per
-        Drohne und für die betroffenen Mittel.]
+        Jeder Einsatz setzt insbesondere eine vorgängige Bewilligung des Bundesamts für
+        Zivilluftfahrt (BAZL), ein von Agroscope zugelassenes Drohnenmodell, ein von einer
+        anerkannten Stelle geprüftes Sprühgerät und mindestens eine Person mit Fachbewilligung
+        für die Verwendung von Pflanzenschutzmitteln voraus. Die Mittel werden gemäss ihrer
+        Zulassung und ihren Anwendungsbedingungen in der Schweiz eingesetzt.
       </p>
 
       <h2 className="h3">7. Haftung und Versicherung</h2>
       <p>
         Wir haften bei Verschulden im Rahmen des Schweizer Rechts. Die Haftung ist
         ausgeschlossen für Schäden, die aus falschen Angaben der Kundschaft oder aus einem
-        unsicheren Zugang entstehen. [ZU ERGÄNZEN: Deckung der Haftpflichtversicherung,
+        unsicheren Zugang entstehen. [Zu ergänzen: Deckung der Haftpflichtversicherung,
         Höchstbeträge, Selbstbehalte.]
       </p>
 
@@ -269,7 +286,11 @@ function Cgv() {
       </p>
 
       <h2 className="h3">10. Anwendbares Recht und Gerichtsstand</h2>
-      <p>Diese Bedingungen unterstehen dem Schweizer Recht. Gerichtsstand: Kanton {CANTON}.</p>
+      <p>
+        Diese Bedingungen unterstehen dem Schweizer Recht. Gerichtsstand: Kanton {CANTON},
+        vorbehalten bleiben die zwingenden Gerichtsstände, insbesondere jene der
+        Konsumentinnen und Konsumenten (Art. 32 und 35 der Zivilprozessordnung).
+      </p>
     </>
   );
 }
@@ -280,18 +301,18 @@ function Cookies() {
   return (
     <>
       <h1 className="h1">Cookie-Verwaltung</h1>
-      <p className="muted">Letzte Aktualisierung: {UPDATED}</p>
+      <Dated />
       <div className="alert alert-info">
-        Diese Website verwendet keine Werbe-Cookies und keine Analyse-Tracker (kein Google
-        Analytics, kein Pixel sozialer Netzwerke). Für Werbung ist daher keine Einwilligung
-        nötig. Es wird nur eine technische Speicherung verwendet, die für den Betrieb nötig ist.
+        Diese Website verwendet keine Werbe-Cookies und keine Reichweitenmessung (kein Google
+        Analytics, kein Pixel sozialer Netzwerke). Nur eine technische Speicherung, die für
+        den Betrieb nützlich ist, bleibt in Ihrem Browser.
       </div>
 
       <h2 className="h3">Was auf Ihrem Gerät gespeichert wird</h2>
       <div className="table-wrap mt-2">
         <table className="data">
           <thead>
-            <tr><th>Name</th><th>Art</th><th>Zweck</th><th>Dauer</th><th>Einwilligung</th></tr>
+            <tr><th>Name</th><th>Art</th><th>Zweck</th><th>Dauer</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -299,46 +320,50 @@ function Cookies() {
               <td>Lokale Speicherung</td>
               <td>Sie in Ihrem Kundenbereich angemeldet halten</td>
               <td>Bis zur Abmeldung, höchstens 7 Tage</td>
-              <td>Nicht nötig (technisch)</td>
             </tr>
             <tr>
               <td>vitiaero_privacy_ack</td>
               <td>Lokale Speicherung</td>
               <td>Speichern, dass Sie den Hinweis gelesen haben</td>
-              <td>Dauerhaft</td>
-              <td>Nicht nötig (technisch)</td>
+              <td>Bis zur Löschung</td>
             </tr>
             <tr>
               <td>vitiaero_lang</td>
               <td>Lokale Speicherung</td>
               <td>Die gewählte Sprache der Website speichern</td>
-              <td>Dauerhaft</td>
-              <td>Nicht nötig (technisch)</td>
+              <td>Bis zur Löschung</td>
             </tr>
             <tr>
               <td>vitiaero_map_tip</td>
               <td>Lokale Speicherung</td>
               <td>Die Hilfe zur Karte nach dem ersten Anzeigen nicht mehr zeigen</td>
-              <td>Dauerhaft</td>
-              <td>Nicht nötig (technisch)</td>
+              <td>Bis zur Löschung</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h2 className="h3 mt-3">Externe Kartendienste</h2>
+      <h2 className="h3 mt-3">Diese Speicherung ablehnen</h2>
       <p>
-        Auf der Seite der Schätzung verwendet die Karte Hintergründe von swisstopo und
-        OpenStreetMap sowie einen Suchdienst für Gemeinden von swisstopo. Diese Dienste
-        setzen keine Werbe-Cookies, erhalten aber Ihre IP-Adresse, wenn sie angezeigt werden.
-        Siehe die{' '}
+        Sie können sie ablehnen, indem Sie die Daten dieser Website in den Einstellungen
+        Ihres Browsers sperren (Bereich Cookies oder Websitedaten). Die Website bleibt
+        nutzbar; nur die Anmeldung im Kundenbereich und das Speichern Ihrer Einstellungen
+        funktionieren dann nicht mehr.
+      </p>
+
+      <h2 className="h3 mt-3">Hosting und Karte</h2>
+      <p>
+        Der Hoster GitHub speichert aus Sicherheitsgründen bei jedem Besuch Ihre IP-Adresse.
+        Auf der Schätzungsseite erhält die Karte ihre Hintergründe von swisstopo und, wenn Sie
+        den Hintergrund «Plan» wählen, von OpenStreetMap: Diese Dienste erhalten Ihre
+        IP-Adresse, setzen aber keine Werbe-Cookies. Siehe{' '}
         <Link to="/confidentialite" style={linkStyle}>Datenschutzerklärung</Link>.
       </p>
 
       <h2 className="h3 mt-3">Gespeicherte Daten löschen</h2>
       <p>
-        Sie können die technische Speicherung dieser Website jederzeit in Ihrem Browser oder
-        mit der Schaltfläche unten löschen. Sie werden dann abgemeldet.
+        Sie können die Speicherung dieser Website jederzeit in Ihrem Browser löschen oder mit
+        der Schaltfläche unten. Sie werden dann abgemeldet.
       </p>
       <button className="btn btn-outline btn-sm" onClick={() => { clearSiteStorage(); setCleared(true); }}>
         Daten dieser Website löschen
@@ -352,26 +377,25 @@ function Conditions() {
   return (
     <>
       <h1 className="h1">Nutzungsbedingungen</h1>
-      <p className="muted">Letzte Aktualisierung: {UPDATED}</p>
-      <Disclaimer />
+      <Dated />
 
       <h2 className="h3">1. Gegenstand</h2>
       <p>
-        Über die Website können Sie kostenlos und unverbindlich eine Schätzung für den
-        Pflanzenschutz im Rebbau per Drohne anfragen. Die Schätzung dient der Orientierung.
-        Die verbindliche Offerte schickt Ihnen unser Team separat.
+        Die Website ermöglicht es, eine Schätzung für den Pflanzenschutz im Rebbau per Drohne
+        zu berechnen, kostenlos und unverbindlich. Die Schätzung dient der Orientierung; die
+        verbindliche Offerte wird separat zugestellt.
       </p>
 
       <h2 className="h3">2. Konto</h2>
       <p>
         Sie verpflichten sich, korrekte Angaben zu machen und Ihre Zugangsdaten vertraulich
-        zu behandeln. Sie sind für die Aktivitäten in Ihrem Konto verantwortlich.
+        zu behandeln. Sie sind für die Aktivitäten über Ihr Konto verantwortlich.
       </p>
 
-      <h2 className="h3">3. Nachverfolgung der Einsätze</h2>
+      <h2 className="h3">3. Verlauf der Einsätze</h2>
       <p>
-        Ihr Kundenbereich zeigt die von unserem Team erfassten Einsätze. Diese Angaben dienen
-        der Nachverfolgung. Bei Abweichungen von Offerte oder Rechnung gelten diese Dokumente.
+        Ihr Kundenbereich zeigt die von VitiAero erfassten Einsätze. Diese Angaben dienen der
+        Übersicht. Bei Abweichungen von Offerte oder Rechnung sind diese Dokumente massgebend.
       </p>
 
       <h2 className="h3">4. Personendaten</h2>
@@ -382,12 +406,16 @@ function Conditions() {
 
       <h2 className="h3">5. Haftung</h2>
       <p>
-        Der Dienst wird ohne Garantie einer ständigen Verfügbarkeit angeboten. Unsere Haftung
-        ist beschränkt, soweit das Schweizer Recht dies erlaubt.
+        Der Dienst wird ohne Gewähr für eine ständige Verfügbarkeit angeboten. Unsere Haftung
+        ist beschränkt, soweit das Schweizer Recht es zulässt.
       </p>
 
       <h2 className="h3">6. Anwendbares Recht</h2>
-      <p>Diese Bedingungen unterstehen dem Schweizer Recht. Gerichtsstand: Kanton {CANTON}.</p>
+      <p>
+        Diese Bedingungen unterstehen dem Schweizer Recht. Gerichtsstand: Kanton {CANTON},
+        vorbehalten bleiben die zwingenden Gerichtsstände, insbesondere jene der
+        Konsumentinnen und Konsumenten.
+      </p>
     </>
   );
 }

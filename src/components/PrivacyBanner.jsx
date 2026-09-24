@@ -27,7 +27,7 @@ export default function PrivacyBanner() {
     <div className="privacy-banner" role="region" aria-label={t.privacyBanner.aria}>
       <p>
         {t.privacyBanner.text}{' '}
-        <Link to="/confidentialite">{t.privacyBanner.more}</Link>.
+        <Link to="/cookies">{t.privacyBanner.more}</Link>.
       </p>
       <button className="btn btn-primary btn-sm" onClick={accept}>{t.privacyBanner.ok}</button>
     </div>

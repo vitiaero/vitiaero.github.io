@@ -28,7 +28,7 @@ export default {
       },
       '/contact': {
         title: 'Contact - VitiAero',
-        desc: 'Une question sur le traitement de vos vignes par drone ? Téléphone, e-mail et formulaire de contact.',
+        desc: 'Une question sur le traitement de vos vignes par drone ? E-mail et formulaire de contact.',
       },
       '/a-propos': {
         title: 'À propos - VitiAero',
@@ -52,7 +52,7 @@ export default {
     call: 'Appeler',
     createAccount: 'Créer un compte',
     genericError: 'Une erreur est survenue. Veuillez réessayer.',
-    staticNotice: (mail) => `L'envoi en ligne sera actif au lancement du service. En attendant, écrivez-nous à ${mail}, nous répondons sous 48 heures.`,
+    staticNotice: (mail) => `L'envoi en ligne sera actif au lancement du service. En attendant, écrivez-nous à ${mail}, nous répondons en général sous 48 heures.`,
   },
 
   lang: { label: 'Langue du site' },
@@ -87,12 +87,12 @@ export default {
 
   launchNotice: {
     aria: 'Information sur le lancement du service',
-    text: 'VitiAero prépare son lancement dans le canton de Vaud. Les demandes d\'estimation sont déjà ouvertes.',
+    text: 'VitiAero prépare son lancement dans le canton de Vaud : aucune intervention n\'est encore réalisée. Le calcul d\'estimation en ligne fonctionne déjà.',
   },
 
   privacyBanner: {
     aria: 'Information sur la confidentialité',
-    text: 'Ce site n\'utilise aucun traceur publicitaire. Il conserve uniquement un stockage technique nécessaire à votre connexion et à vos préférences.',
+    text: 'Ce site n\'utilise aucun traceur publicitaire ni outil de mesure d\'audience. Il conserve seulement un stockage technique pour votre connexion et vos préférences. Vous pouvez le refuser dans les réglages de votre navigateur.',
     more: 'En savoir plus',
     ok: 'J\'ai compris',
   },
@@ -110,15 +110,15 @@ export default {
     },
     stats: [
       { num: '40 L', label: 'Réservoir de pulvérisation' },
-      { num: '100 km', label: 'Rayon d\'intervention' },
-      { num: '48 h', label: 'Réponse à votre demande' },
+      { num: '100 km', label: 'Rayon d\'intervention maximal, selon la parcelle' },
+      { num: '48 h', label: 'Délai de réponse, en général' },
       { num: '0', label: 'Passage de machine au sol' },
     ],
     why: {
       eyebrow: 'Pourquoi le drone',
       title: 'Enfin une solution pour les parcelles difficiles.',
       lead: 'Dans le vignoble suisse, beaucoup de parcelles sont en forte pente ou en terrasses. Elles sont pénibles à traiter et souvent inaccessibles aux machines.',
-      text: 'Le drone survole la vigne et applique le traitement depuis le ciel. Il atteint les coteaux raides sans qu\'aucun engin ne roule dans les rangs. Le sol reste intact et le travail est plus rapide.',
+      text: 'Le drone survole la vigne et applique le traitement depuis le ciel. Il atteint les coteaux raides sans qu\'aucun engin ne roule dans les rangs. Le sol reste intact.',
       cta: 'Estimer ma parcelle',
       alt: 'Vignes suisses en terrasses du Lavaux',
     },
@@ -153,7 +153,7 @@ export default {
         { k: 'Modèle', v: 'DJI Agras T50' },
         { k: 'Réservoir de pulvérisation', v: '40 L' },
         { k: 'Type', v: 'Drone agricole d\'épandage' },
-        { k: 'Point fort', v: 'Traite les parcelles en forte pente' },
+        { k: 'Point fort', v: 'Suit le relief du terrain' },
       ],
     },
     cine: {
@@ -219,13 +219,13 @@ export default {
   equipment: {
     eyebrow: 'Équipement',
     title: 'DJI Agras T50',
-    lead: 'Le drone retenu pour le traitement de vos vignes. Stable, précis et à l\'aise dans les pentes.',
+    lead: 'Le drone prévu pour le traitement de vos vignes, présenté d\'après les données publiées par DJI.',
     heroAlt: 'Le drone DJI Agras T50 déplie ses bras avant le vol',
     figures: [
       { v: '40 L', k: 'Réservoir de pulvérisation' },
       { v: '16 L/min', k: 'Débit avec deux gicleurs' },
       { v: '50 à 500 μm', k: 'Taille des gouttelettes, réglable' },
-      { v: '2 km', k: 'Transmission, sans réseau mobile' },
+      { v: '2 km', k: 'Portée de la transmission' },
     ],
     subnavLabel: 'Sections de la page',
     subnav: [
@@ -235,13 +235,13 @@ export default {
     ],
     drone: {
       eyebrow: 'Le drone',
-      title: 'Stable, même avec un réservoir plein.',
-      text: 'Huit hélices réparties sur quatre bras. Le drone reste stable en pleine charge, y compris au-dessus des coteaux.',
+      title: 'Huit hélices, quatre bras.',
+      text: 'Les huit hélices sont montées par paires, en rotors coaxiaux, sur quatre bras repliables.',
       alt: 'Avant du DJI Agras T50 : les deux caméras et le radar',
       points: [
-        { title: 'Radars et caméras', text: 'À l\'avant et à l\'arrière, ils repèrent les obstacles.' },
+        { title: 'Radars et vision', text: 'Deux radars, à l\'avant et à l\'arrière, et deux capteurs de vision binoculaire repèrent les obstacles.' },
         { title: 'Suivi précis du relief', text: 'Système de suivi du terrain permettant d\'adapter la hauteur de vol au relief, sous réserve des conditions de sécurité et d\'exploitation. Chaque parcelle est évaluée avant l\'intervention.' },
-        { title: 'Signal fiable', text: 'Jusqu\'à 2 km, même sans réseau mobile.' },
+        { title: 'Transmission', text: 'Jusqu\'à 2 km entre le drone et la radiocommande, selon DJI.' },
         { title: 'Bras repliables', text: 'Replié, le drone se transporte facilement.' },
       ],
     },
@@ -259,10 +259,10 @@ export default {
     prep: {
       eyebrow: 'Préparation',
       title: 'Autonome, même sans électricité.',
-      text: 'Dans les vignes, il n\'y a en général pas de prise de courant. Les batteries se rechargent sur place, au générateur DJI D12000iEP : l\'une charge pendant que le drone vole avec l\'autre.',
+      text: 'Dans les vignes, il n\'y a en général pas de prise de courant. Les batteries se rechargent sur place, au générateur DJI D12000iE : l\'une charge pendant que le drone vole avec l\'autre.',
       alt: 'Générateur DJI et batterie du drone à l\'arrière d\'un pick-up, au bord d\'un champ',
       figures: [
-        { v: '9 à 12 min', k: 'Recharge complète d\'une batterie' },
+        { v: '9 à 12 min', k: 'Recharge d\'une batterie au générateur' },
         { v: '9 000 W', k: 'Puissance de charge du générateur' },
         { v: '30 L', k: 'Réservoir d\'essence du générateur' },
       ],
@@ -273,14 +273,13 @@ export default {
       text: 'Chaque parcelle est relevée, puis découpée en passages réguliers. Le drone suit ensuite cet itinéraire tout seul, d\'une simple pression.',
       alt: 'Itinéraire de vol tracé rang par rang sur une parcelle en pente',
       cards: [
-        { key: 'carte-zone', v: '13 ha en 10 min', title: 'Itinéraire de zone', text: 'Le drone relève toute la parcelle et repère lui-même ses limites et ses obstacles.', alt: 'Carte d\'une parcelle avec son itinéraire de zone' },
-        { key: 'carte-limite', v: '13 ha en 3 min', title: 'Itinéraire de limite', text: 'Un relevé plus rapide du contour, pour les parcelles sans obstacle au milieu.', alt: 'Carte d\'une parcelle avec son itinéraire de limite' },
-        { key: 'camera', v: 'Caméra FPV', title: 'Caméra à nacelle', text: 'Une caméra filme la parcelle en direct pendant toute l\'intervention.', alt: 'Caméra à nacelle sous le DJI Agras T50' },
+        { key: 'carte-zone', v: 'Toute la parcelle', title: 'Itinéraire de zone', text: 'Le drone relève toute la parcelle et repère lui-même ses limites et ses obstacles.', alt: 'Carte d\'une parcelle avec son itinéraire de zone' },
+        { key: 'carte-limite', v: 'Bande de 20 m', title: 'Itinéraire de limite', text: 'Un relevé rapide d\'une bande de 20 m le long des limites, pour les parcelles sans obstacle.', alt: 'Carte d\'une parcelle avec son itinéraire de limite' },
       ],
-      note: 'Temps de relevé mesurés par DJI dans des conditions de test. Ils varient selon le terrain et les réglages.',
+      note: 'Modes de relevé décrits par DJI. Selon DJI, le relevé de zone fonctionne jusqu\'à 20° de pente.',
     },
-    note: 'Caractéristiques publiées par DJI, en langage simplifié. Elles varient selon le terrain et la météo. À confirmer avant publication.',
-    credit: 'Images et vidéos du drone : DJI.',
+    note: 'Caractéristiques publiées par DJI (fiche technique, FAQ et actualités du DJI Agras T50, consultées en septembre 2026), en langage simplifié. Elles varient selon le terrain et la météo.',
+    credit: 'Images et vidéos du drone : © DJI.',
     ctaEyebrow: 'Sans engagement',
     ctaTitle: 'Un drone pensé pour vos parcelles.',
     ctaLead: 'Demandez une estimation pour le traitement de vos vignes par drone.',
@@ -363,10 +362,10 @@ export default {
       title: 'Sécurité & réglementation',
       lead: 'Les traitements phytosanitaires par drone sont soumis à des exigences spécifiques en Suisse. VitiAero intègre ces contraintes dans la préparation de ses interventions.',
       items: [
-        'Autorisation de l\'OFAC nécessaire pour les opérations de pulvérisation de liquides par drone.',
-        'Drone homologué pour l\'utilisation prévue.',
-        'Contrôle du pulvérisateur selon les exigences applicables.',
-        'Présence d\'une personne disposant des qualifications nécessaires pour l\'utilisation des produits phytosanitaires.',
+        'Autorisation préalable de l\'OFAC pour toute pulvérisation par drone, demandée au moins deux mois à l\'avance.',
+        'Modèle de drone homologué par Agroscope.',
+        'Contrôle du pulvérisateur par un organisme agréé, avant la mise en service puis tous les trois ans.',
+        'Au moins une personne titulaire du permis d\'utilisation de produits phytosanitaires.',
         'Respect des prescriptions liées aux produits utilisés.',
         'Évaluation préalable de la zone de vol.',
         'Respect des distances et des restrictions applicables.',
@@ -586,7 +585,7 @@ export default {
       'Produits phytosanitaires non compris, sauf indication contraire dans le devis.',
       'Un temps d\'attente important sur place est facturé 100 CHF par heure.',
       'Les conditions d\'intervention sont évaluées avant confirmation de la prestation.',
-      'Montants en francs suisses, hors TVA. La TVA suisse de 8,1 % s\'ajoute si l\'entreprise y est assujettie.',
+      'Montants en francs suisses, TVA éventuelle comprise.',
     ],
     recapTitle: 'Votre demande',
     recap: {

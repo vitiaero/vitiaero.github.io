@@ -10,23 +10,34 @@ const ORANGE_DARK = '#c85a12';
 
 // Fonds de carte swisstopo (WMTS, projection Web Mercator) + plan OpenStreetMap.
 // Les libelles affiches sont traduits (t.map.layers), les cles restent fixes.
+//
+// Credits exiges par chaque fournisseur, affiches sur la carte. Aucun ne doit
+// etre masque : conditions swisstopo (OGD, 1.3.2021), politique d'usage des
+// tuiles OpenStreetMap, licence CadastralWebMap (9.5.2012), qui impose en plus
+// sa formule exacte dans la langue du lecteur.
+const CADASTRE_CREDIT = {
+  fr: '&copy; Mensuration Officielle Suisse / FL',
+  de: '&copy; Amtliche Vermessung Schweiz / FL',
+  en: '&copy; Cadastral Surveying Switzerland / FL',
+};
 const BASE_LAYERS = {
   satellite: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',
-    attribution: '&copy; swisstopo',
+    credit: () => '&copy;swisstopo',
   },
   carte: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg',
-    attribution: '&copy; swisstopo',
+    credit: () => '&copy;swisstopo',
   },
   plan: {
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap',
+    credit: () => '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
   },
-  // Plan cadastral officiel (limites et numeros de parcelles), fourni par swisstopo.
+  // Plan cadastral officiel (limites et numeros de parcelles) des cantons,
+  // diffuse par l'infrastructure federale de geodonnees.
   cadastre: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.kantone.cadastralwebmap-farbe/default/current/3857/{z}/{x}/{y}.png',
-    attribution: '&copy; swisstopo, cadastre',
+    credit: (lang) => CADASTRE_CREDIT[lang] || CADASTRE_CREDIT.fr,
   },
 };
 
@@ -181,10 +192,13 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
       attributionControl: false,
     });
     mapRef.current = map;
+    // Credits des fonds de carte, en bas a droite (sans le lien Leaflet, que sa
+    // licence n'exige pas a l'ecran).
+    L.control.attribution({ prefix: false }).addTo(map);
 
     baseLayerRef.current = L.tileLayer(BASE_LAYERS.satellite.url, {
       maxZoom: 19,
-      attribution: BASE_LAYERS.satellite.attribution,
+      attribution: BASE_LAYERS.satellite.credit(lang),
     }).addTo(map);
 
     drawnGroupRef.current = L.layerGroup().addTo(map);
@@ -421,11 +435,23 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     if (baseLayerRef.current) map.removeLayer(baseLayerRef.current);
     baseLayerRef.current = L.tileLayer(BASE_LAYERS[name].url, {
       maxZoom: 19,
-      attribution: BASE_LAYERS[name].attribution,
+      attribution: BASE_LAYERS[name].credit(lang),
     }).addTo(map);
     baseLayerRef.current.bringToBack();
     setBase(name);
   }
+
+  // Le credit du cadastre suit la langue du site si elle change carte ouverte.
+  useEffect(() => {
+    const map = mapRef.current;
+    const layer = baseLayerRef.current;
+    if (!map || !layer) return;
+    const next = BASE_LAYERS[base].credit(lang);
+    if (layer.options.attribution === next) return;
+    map.removeLayer(layer);
+    layer.options.attribution = next;
+    layer.addTo(map).bringToBack();
+  }, [lang, base]);
 
   // --- Recherche de lieu (API swisstopo) ---
   async function doSearch(e) {

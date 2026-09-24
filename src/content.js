@@ -1,20 +1,22 @@
 // Donnees communes a toutes les langues : coordonnees, videos, images.
 import { asset } from './config.js';
 
-// Coordonnees de l'entreprise, source unique pour les pages legales et le pied
-// de page. Les valeurs entre crochets sont a completer par le proprietaire avant
-// la mise en ligne ; ne rien inventer. Le canton est connu (Vaud).
+// Coordonnees de l'editeur, source unique pour les pages legales et le pied de
+// page. Obligatoires (art. 3 al. 1 let. s LCD, art. 19 nLPD) : nom, adresse
+// postale, e-mail. Les valeurs entre crochets restent a completer par le
+// proprietaire ; ne rien inventer. Un champ facultatif vide n'est pas affiche.
 export const company = {
-  name: '[RAISON_SOCIALE]',
+  name: 'VitiAero (Adrien Delhay)',
   address: '[ADRESSE]',
   npa: '[NPA]',
   city: '[VILLE]',
   canton: 'Vaud',
-  email: 'contact@vitiaero.ch', // adresse retenue pour le projet ; a confirmer
-  phone: '[TELEPHONE]',
-  ide: '[IDE / UID, ex. CHE-123.456.789]',
-  responsable: '[RESPONSABLE]',
-  host: '[HEBERGEUR : nom et adresse]',
+  email: 'contact@vitiaero.ch',
+  phone: '', // facultatif
+  ide: '', // numero IDE (CHE-...) si l'entreprise en a un ; facultatif
+  responsable: 'Adrien Delhay',
+  // Hebergeur du site (GitHub Pages), adresse de sa declaration de confidentialite.
+  host: 'GitHub, Inc., 88 Colin P. Kelly Jr. St., San Francisco, CA 94107, USA',
 };
 
 // Phase de lancement : tant que l'activite n'a pas demarre, un bandeau discret
@@ -56,13 +58,10 @@ export const equipVideos = {
   gicleur: equip('gicleur', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1800000),
   electrovanne: equip('electrovanne', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1000000),
   parcelles: equip('parcelles', 968, 588, 'av01.0.05M.08', 'avc1.64001f', 1100000),
-  camera: equip('camera', 1200, 730, 'av01.0.05M.08', 'avc1.64001f', 1000000),
 };
 
 // Chemins des images. Si une image manque, un repli sobre s'affiche (voir CSS).
 export const images = {
-  hero: asset('/images/hero-drone.jpg'),
-  drone: asset('/images/agras-t30.jpg'),
   lavaux: asset('/images/lavaux.jpg'),
   vignes: asset('/images/t50-rows.jpg'),
 };

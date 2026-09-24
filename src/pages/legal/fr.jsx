@@ -1,24 +1,23 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { company, linkStyle, clearSiteStorage } from './shared.js';
+import { company, filled, linkStyle, extLink, LINKS, clearSiteStorage } from './shared.js';
 
-// Pages légales en français. Textes MODÈLES adaptés au droit suisse (nLPD, en
-// vigueur depuis le 1er septembre 2023), pour un projet d'étude. Les champs
-// entre crochets [ ] sont à compléter et l'ensemble est à faire relire par une
-// personne compétente avant une mise en ligne réelle.
-const UPDATED = 'septembre 2026';
+// Pages légales en français. Chaque règle citée a été vérifiée sur le texte
+// officiel en septembre 2026 (sources dans docs/CONFORMITE.md). Une relecture
+// par un juriste reste recommandée. Les champs entre crochets viennent de
+// src/content.js et restent visibles tant qu'ils ne sont pas renseignés.
+const UPDATED = '24 septembre 2026';
 
-// On n'invente rien : les crochets restent visibles tant que la valeur n'est pas
-// renseignée dans content.js.
 const ADDRESS_LINE = `${company.address}, ${company.npa} ${company.city}, canton de ${company.canton}, Suisse`;
 
-function Disclaimer() {
+function Contact() {
   return (
-    <div className="alert alert-info">
-      Document modèle réalisé dans le cadre d'un projet d'étude (CPNV, PAE). Les
-      mentions entre crochets sont à compléter et le texte doit être validé par une
-      personne compétente avant toute utilisation réelle.
-    </div>
+    <>
+      {company.name}<br />
+      {ADDRESS_LINE}<br />
+      E-mail : <a href={`mailto:${company.email}`} style={linkStyle}>{company.email}</a>
+      {filled(company.phone) && <><br />Téléphone : {company.phone}</>}
+    </>
   );
 }
 
@@ -27,110 +26,119 @@ function Confidentialite() {
     <>
       <h1 className="h1">Politique de confidentialité</h1>
       <p className="muted">Dernière mise à jour : {UPDATED}</p>
-      <Disclaimer />
       <p>
-        {company.name} attache de l'importance à la protection de vos données. La présente
-        politique explique quelles données nous traitons, pourquoi et quels sont vos
-        droits, conformément à la loi fédérale suisse sur la protection des données (nLPD).
+        Cette politique explique quelles données personnelles sont traitées sur le site
+        vitiaero.ch, pourquoi, avec qui elles sont partagées et quels sont vos droits. Elle
+        suit la loi fédérale sur la protection des données (nLPD).
       </p>
 
       <h2 className="h3">1. Responsable du traitement</h2>
+      <p><Contact /></p>
+
+      <h2 className="h3">2. La situation aujourd'hui</h2>
       <p>
-        {company.name}, {ADDRESS_LINE}.<br />
-        Responsable : {company.responsable}. Contact : {company.email}
-        {company.phone ? `, ${company.phone}` : ''}.
+        VitiAero prépare son lancement. Pour l'instant, les formulaires du site (estimation,
+        devis, contact, compte client) n'envoient aucune donnée : le calcul d'estimation se
+        fait uniquement dans votre navigateur. Si vous nous écrivez par e-mail, nous recevons
+        votre adresse et le contenu de votre message.
       </p>
 
-      <h2 className="h3">2. Données que nous traitons</h2>
+      <h2 className="h3">3. Lors de votre visite</h2>
       <ul>
-        <li>Identité : nom et prénom.</li>
-        <li>Coordonnées : adresse e-mail, téléphone, commune, adresse ou lieu-dit.</li>
-        <li>Parcelles : le tracé et la surface que vous dessinez sur la carte.</li>
-        <li>Votre demande : type de traitement, période, message, code promo éventuel.</li>
-        <li>Compte : adresse e-mail et mot de passe (conservé uniquement sous forme hachée).</li>
-        <li>Suivi : interventions réalisées ou planifiées sur vos parcelles (date, surface, traitement, remarques).</li>
         <li>
-          Données techniques : lors de votre visite, votre adresse IP et des informations
-          techniques (type de navigateur) sont traitées de façon temporaire pour assurer
-          la sécurité du service (par exemple la limitation des tentatives de connexion).
+          <strong>Hébergement.</strong> Le site est hébergé par GitHub Pages ({company.host}).
+          GitHub enregistre l'adresse IP de chaque visiteur pour des raisons de sécurité.
+        </li>
+        <li>
+          <strong>Carte de la page d'estimation.</strong> Les fonds « Satellite », « Carte » et
+          « Cadastre » et la recherche de commune viennent de swisstopo, l'Office fédéral de
+          topographie : il reçoit votre adresse IP et le lieu recherché. Le fond « Plan » vient
+          d'OpenStreetMap. Il n'est chargé que si vous le choisissez ; OpenStreetMap reçoit
+          alors votre adresse IP.
+        </li>
+        <li>
+          <strong>Stockage local.</strong> Quelques réglages techniques sont gardés dans votre
+          navigateur. Le détail figure sur la page{' '}
+          <Link to="/cookies" style={linkStyle}>gestion des cookies</Link>.
+        </li>
+      </ul>
+      <p>Le site n'utilise aucun traceur publicitaire ni outil de mesure d'audience.</p>
+
+      <h2 className="h3">4. Quand l'envoi en ligne sera actif</h2>
+      <p>Les formulaires transmettront alors les données que vous y saisissez :</p>
+      <ul>
+        <li>identité : nom et prénom ;</li>
+        <li>coordonnées : e-mail, téléphone, commune, adresse ou lieu-dit ;</li>
+        <li>parcelles : le tracé et la surface dessinés sur la carte ;</li>
+        <li>demande : type de traitement, période, message, pièces jointes, code promo éventuel ;</li>
+        <li>compte client : e-mail et mot de passe, gardé uniquement sous une forme illisible (hachée) ;</li>
+        <li>suivi : interventions réalisées ou prévues sur vos parcelles ;</li>
+        <li>sécurité : adresse IP, gardée quelques minutes pour limiter les tentatives abusives.</li>
+      </ul>
+      <p>
+        Cette politique sera complétée avant l'activation, avec les prestataires retenus
+        (hébergement du serveur, calcul des distances).
+      </p>
+
+      <h2 className="h3">5. Finalités</h2>
+      <p>
+        Répondre à vos questions et demandes, établir une estimation ou un devis, gérer votre
+        compte et le suivi des interventions, et assurer la sécurité du site. Vos données ne
+        sont ni vendues, ni utilisées pour de la publicité ou du profilage.
+      </p>
+
+      <h2 className="h3">6. Communication à l'étranger</h2>
+      <ul>
+        <li>
+          <strong>États-Unis</strong> : GitHub, Inc., pour l'hébergement. GitHub est certifié au
+          cadre de protection des données Suisse-États-Unis (Swiss-U.S. Data Privacy
+          Framework). Pour les entreprises certifiées, le Conseil fédéral reconnaît un niveau de
+          protection adéquat (annexe 1 de l'ordonnance sur la protection des données, OPDo).
+        </li>
+        <li>
+          <strong>Royaume-Uni et Pays-Bas</strong> : OpenStreetMap, seulement si vous choisissez
+          le fond « Plan ». Ces deux pays figurent dans la liste des pays adéquats (annexe 1
+          OPDo). Les tuiles passent aussi par un réseau mondial de serveurs de cache, dont
+          OpenStreetMap ne publie pas la liste des pays. Pour éviter tout envoi vers
+          OpenStreetMap, utilisez les fonds « Satellite », « Carte » ou « Cadastre ».
         </li>
       </ul>
 
-      <h2 className="h3">3. Finalités</h2>
-      <p>
-        Traiter votre demande d'estimation et établir un devis, gérer votre compte et le
-        suivi des interventions sur vos parcelles, communiquer avec vous à ce sujet, assurer
-        la sécurité du service et respecter nos obligations légales. Vos données ne servent pas à de la
-        publicité et ne font l'objet d'aucun profilage.
-      </p>
-
-      <h2 className="h3">4. Base légale</h2>
-      <p>
-        Le traitement repose sur votre consentement et sur l'exécution de mesures
-        précontractuelles prises à votre demande, ainsi que sur notre intérêt légitime à
-        assurer la sécurité du service.
-      </p>
-
-      <h2 className="h3">5. Cookies et stockage local</h2>
-      <p>
-        Le site n'utilise aucun cookie publicitaire ni traceur d'analyse. Il conserve
-        uniquement, dans votre navigateur, un stockage technique nécessaire à votre
-        connexion et à l'affichage (par exemple la langue choisie). Le détail figure sur
-        notre page{' '}
-        <Link to="/cookies" style={linkStyle}>gestion des cookies</Link>.
-      </p>
-
-      <h2 className="h3">6. Services externes</h2>
-      <p>
-        Pour afficher la carte et rechercher une commune, le site charge des fonds de carte
-        et un service de recherche fournis par swisstopo (Confédération suisse) et par
-        OpenStreetMap. Lorsque la carte s'affiche, votre adresse IP est transmise à ces
-        prestataires, qui peuvent l'utiliser à des fins techniques et de sécurité selon
-        leurs propres règles. Ces services sont utilisés uniquement pour la fonction de
-        carte de la page d'estimation.
-      </p>
-      <p>
-        Pour calculer les frais de déplacement, notre serveur demande la distance par la
-        route entre notre point de départ et vos parcelles au service d'itinéraire public
-        OSRM (router.project-osrm.org). Seule la position du centre de vos parcelles lui est
-        transmise : ni votre nom, ni vos coordonnées, ni votre adresse IP. [À VÉRIFIER :
-        exploitant et pays d'hébergement de ce service.]
-      </p>
-
       <h2 className="h3">7. Durée de conservation</h2>
+      <ul>
+        <li>Journaux de l'hébergeur : selon la déclaration de confidentialité de GitHub.</li>
+        <li>
+          E-mails et demandes : le temps de traiter votre demande, puis au plus 24 mois après
+          le dernier échange si aucun contrat n'est conclu.
+        </li>
+        <li>
+          Documents comptables, en cas de contrat : 10 ans, comme l'exige le Code des
+          obligations (art. 958f CO).
+        </li>
+        <li>Stockage local : jusqu'à ce que vous l'effaciez.</li>
+      </ul>
+
+      <h2 className="h3">8. Sécurité</h2>
       <p>
-        Les demandes sans suite sont conservées [24 mois]. Les données de compte sont
-        conservées tant que le compte est actif, puis supprimées ou anonymisées. Les
-        documents liés à une facturation éventuelle sont conservés selon les délais légaux
-        ([10 ans]). Les compteurs techniques de sécurité (limitation par IP) sont effacés
-        après quelques minutes.
+        Le site est servi en connexion chiffrée (HTTPS) et ne charge aucun script tiers. Une
+        politique de sécurité du contenu limite les ressources que le navigateur accepte.
       </p>
 
-      <h2 className="h3">8. Communication à des tiers et transferts à l'étranger</h2>
+      <h2 className="h3">9. Vos droits</h2>
+      <p>Selon la nLPD, vous pouvez notamment :</p>
+      <ul>
+        <li>savoir si des données vous concernant sont traitées et en obtenir une copie (art. 25) ;</li>
+        <li>dans certains cas, recevoir les données que vous nous avez fournies dans un format électronique courant (art. 28) ;</li>
+        <li>faire corriger des données inexactes (art. 32) ;</li>
+        <li>demander l'arrêt d'un traitement, l'interdiction d'une communication à des tiers ou l'effacement de vos données (art. 32).</li>
+      </ul>
       <p>
-        Nous ne vendons pas vos données. Elles peuvent être confiées à des prestataires
-        techniques (par exemple l'hébergement : {company.host}), tenus à la confidentialité.
-        Les fonds de carte OpenStreetMap peuvent impliquer un accès depuis l'Union
-        européenne. Aucun transfert n'est effectué vers un pays sans niveau de protection
-        adéquat sans garanties appropriées. [À COMPLÉTER : liste des prestataires et pays.]
+        Écrivez à <a href={`mailto:${company.email}`} style={linkStyle}>{company.email}</a>.
+        Vous pouvez aussi vous adresser au Préposé fédéral à la protection des données et à la
+        transparence (PFPDT) : <a href={LINKS.pfpdt} {...extLink}>www.edoeb.admin.ch</a>.
       </p>
 
-      <h2 className="h3">9. Sécurité</h2>
-      <p>
-        Nous prenons des mesures techniques et organisationnelles : connexion chiffrée (HTTPS),
-        mots de passe hachés, accès restreint à l'espace d'administration, limitation des
-        tentatives de connexion et en-têtes de sécurité.
-      </p>
-
-      <h2 className="h3">10. Vos droits</h2>
-      <p>
-        Vous pouvez demander l'accès, la rectification ou l'effacement de vos données, vous
-        opposer à un traitement, en demander la limitation ou la remise, et retirer votre
-        consentement à tout moment. Écrivez à {company.email}. Vous pouvez aussi vous
-        adresser au Préposé fédéral à la protection des données et à la transparence (PFPDT).
-      </p>
-
-      <h2 className="h3">11. Modifications</h2>
+      <h2 className="h3">10. Modifications</h2>
       <p>Cette politique peut évoluer. La date de mise à jour figure en haut de page.</p>
     </>
   );
@@ -141,67 +149,66 @@ function Mentions() {
     <>
       <h1 className="h1">Mentions légales</h1>
       <p className="muted">Dernière mise à jour : {UPDATED}</p>
-      <Disclaimer />
 
       <h2 className="h3">Éditeur du site</h2>
       <p>
-        {company.name}<br />
-        {ADDRESS_LINE}<br />
-        E-mail : {company.email}<br />
-        Téléphone : {company.phone}<br />
-        Numéro d'identification des entreprises (IDE/UID) : {company.ide}<br />
-        Responsable du contenu : {company.responsable}
+        <Contact />
+        {filled(company.ide) && <><br />Numéro IDE : {company.ide}</>}
+        <br />Responsable du contenu : {company.responsable}
       </p>
 
       <h2 className="h3">Hébergement</h2>
-      <p>Le site est hébergé par {company.host}.</p>
+      <p>GitHub Pages : {company.host}.</p>
 
-      <h2 className="h3">Propriété intellectuelle</h2>
+      <h2 className="h3">Droits d'auteur et crédits</h2>
       <p>
-        La marque VitiAero, les textes et la mise en page sont protégés. Certaines images
-        proviennent de Wikimedia Commons sous licence Creative Commons et sont créditées
-        ci-dessous ; leur réutilisation reste soumise aux conditions de chaque licence.
+        Les textes et la mise en page du site appartiennent à leur auteur. Les autres contenus
+        appartiennent à leurs titulaires :
       </p>
       <ul>
-        <li>Terrasses du Lavaux : JoachimKohler-HB, Wikimedia Commons, licence CC BY-SA 4.0.</li>
-        <li>Vignes en terrasses : P. Vensaus, Wikimedia Commons, licence CC BY-SA 4.0.</li>
-        <li>Drone d'épandage en vol : Blervis, Wikimedia Commons, licence CC0.</li>
-        <li>Drone DJI Agras : ZLEA, Wikimedia Commons, licence CC BY-SA 4.0.</li>
         <li>
-          Photos et vidéos du drone sur la page Équipement, et vidéo d'accueil : DJI
-          (ag.dji.com). [DROITS D'UTILISATION À VÉRIFIER avant publication].
+          Terrasses du Lavaux : photo de Joachim Kohler (JoachimKohler-HB),{' '}
+          <a href={LINKS.lavauxPhoto} {...extLink}>Wikimedia Commons</a>, licence{' '}
+          <a href={LINKS.ccBySa} {...extLink}>CC BY-SA 4.0</a>. Image recadrée et redimensionnée.
         </li>
+        <li>Vidéo du vignoble d'Epesses : {company.responsable}.</li>
+        <li>Photos et vidéos du drone (accueil et page Équipement) : © DJI.</li>
         <li>
-          Autres visuels (drone détouré, affiche) : [DROITS D'UTILISATION À VÉRIFIER
-          avant publication].
+          Fonds de carte : ©swisstopo ; ©{' '}
+          <a href={LINKS.osmCopyright} {...extLink}>OpenStreetMap contributors</a> ; © Mensuration
+          Officielle Suisse / FL (plan cadastral).
         </li>
       </ul>
 
+      <h2 className="h3">Marques</h2>
+      <p>
+        DJI et Agras sont des marques de SZ DJI Technology Co., Ltd. Elles servent ici
+        uniquement à désigner le drone prévu. VitiAero n'est pas lié à DJI.
+      </p>
+
       <h2 className="h3">Responsabilité</h2>
       <p>
-        Les informations sont fournies à titre indicatif. L'estimation obtenue en ligne n'est
-        pas un devis ferme : un devis détaillé est établi ensuite par notre équipe. Nous nous
-        efforçons d'assurer l'exactitude des informations sans pouvoir la garantir.
+        Les informations du site sont données à titre indicatif. L'estimation en ligne n'est
+        pas un devis ferme : le devis détaillé est établi ensuite. Les caractéristiques du
+        drone sont celles publiées par DJI ; elles varient selon le terrain et la météo.
       </p>
 
       <h2 className="h3">Droit applicable</h2>
-      <p>Le présent site est soumis au droit suisse. For : canton de {company.canton}.</p>
+      <p>Le présent site est soumis au droit suisse.</p>
     </>
   );
 }
 
-// Conditions générales de prestation (CGV). Structure modèle pour un service
-// d'épandage viticole par drone. À faire valider juridiquement : les points
-// sensibles (responsabilité, réglementation, assurance) sont signalés.
+// Conditions générales de prestation. Elles s'appliqueront aux contrats dès le
+// lancement ; les points entre crochets sont des choix du propriétaire.
 function Cgv() {
   return (
     <>
       <h1 className="h1">Conditions générales</h1>
       <p className="muted">Dernière mise à jour : {UPDATED}</p>
       <div className="alert alert-info">
-        Structure modèle non validée par un juriste. Les prix, délais, garanties et clauses
-        de responsabilité doivent être complétés et relus par une personne compétente avant
-        toute utilisation réelle.
+        Ces conditions s'appliqueront aux prestations dès le lancement du service. Les points
+        entre crochets seront complétés d'ici là.
       </div>
 
       <h2 className="h3">1. Objet et champ d'application</h2>
@@ -213,16 +220,16 @@ function Cgv() {
       <h2 className="h3">2. Estimation et devis</h2>
       <p>
         L'estimation obtenue en ligne est gratuite, indicative et sans engagement. Elle ne
-        constitue pas un devis ferme. Un devis détaillé est établi ensuite par notre équipe,
-        en fonction des parcelles, du traitement et des contraintes du site.
+        constitue pas un devis ferme. Un devis détaillé est établi ensuite, en fonction des
+        parcelles, du traitement et des contraintes du site.
       </p>
 
       <h2 className="h3">3. Acceptation et prix</h2>
       <p>
         La prestation débute après acceptation écrite du devis. Les prix sont indiqués en
-        francs suisses, hors TVA. La TVA suisse, au taux normal de 8,1 %, s'ajoute si
-        l'entreprise y est assujettie. [Modalités de paiement à compléter : acompte, délai,
-        moyens acceptés.]
+        francs suisses, TVA éventuelle comprise. Si l'entreprise est assujettie à la TVA, le
+        sulfatage de la vigne relève du taux réduit, selon l'Administration fédérale des
+        contributions. [Modalités de paiement à compléter : acompte, délai, moyens acceptés.]
       </p>
 
       <h2 className="h3">4. Conditions d'intervention</h2>
@@ -242,19 +249,19 @@ function Cgv() {
 
       <h2 className="h3">6. Réglementation et produits</h2>
       <p>
-        Les interventions sont réalisées dans le respect de la réglementation suisse
-        applicable (aviation, produits utilisés, exigences fédérales et cantonales). Le choix
-        et l'emploi des produits respectent leur homologation et leurs conditions d'usage.
-        [À VÉRIFIER AVANT PUBLICATION : autorisations requises pour l'application par drone et
-        pour les produits concernés.]
+        Chaque intervention suppose notamment une autorisation préalable de l'Office fédéral
+        de l'aviation civile (OFAC), un modèle de drone homologué par Agroscope, un
+        pulvérisateur contrôlé par un organisme agréé et au moins une personne titulaire du
+        permis d'utilisation de produits phytosanitaires. Les produits sont employés selon
+        leur autorisation et leurs conditions d'emploi en Suisse.
       </p>
 
       <h2 className="h3">7. Responsabilité et assurance</h2>
       <p>
         Notre responsabilité est engagée en cas de faute dans les limites permises par le
         droit suisse. Elle est exclue pour les dommages résultant d'informations inexactes du
-        client ou d'un accès non sécurisé. [À COMPLÉTER : couverture d'assurance responsabilité
-        civile, plafonds, franchises.]
+        client ou d'un accès non sécurisé. [À compléter : couverture d'assurance
+        responsabilité civile, plafonds, franchises.]
       </p>
 
       <h2 className="h3">8. Force majeure</h2>
@@ -270,14 +277,18 @@ function Cgv() {
       </p>
 
       <h2 className="h3">10. Droit applicable et for</h2>
-      <p>Les présentes conditions sont soumises au droit suisse. For : canton de {company.canton}.</p>
+      <p>
+        Les présentes conditions sont soumises au droit suisse. For : canton de{' '}
+        {company.canton}, sous réserve des fors impératifs, notamment ceux des consommateurs
+        (art. 32 et 35 du Code de procédure civile).
+      </p>
     </>
   );
 }
 
-// Page de gestion des cookies / stockage local. Le site n'utilise aucun traceur
-// nécessitant un consentement : on liste ce qui est réellement stocké et on offre
-// la possibilité d'effacer ces données (droit de gestion, nLPD).
+// Page de gestion des cookies / stockage local. Le site n'utilise aucun traceur :
+// on liste ce qui est réellement stocké, on indique comment le refuser (art. 45c
+// LTC) et on permet de l'effacer.
 function Cookies() {
   const [cleared, setCleared] = useState(false);
 
@@ -286,16 +297,16 @@ function Cookies() {
       <h1 className="h1">Gestion des cookies</h1>
       <p className="muted">Dernière mise à jour : {UPDATED}</p>
       <div className="alert alert-info">
-        Ce site n'utilise aucun cookie publicitaire, ni traceur d'analyse (pas de Google
-        Analytics, pas de pixel de réseau social). Aucun consentement n'est donc requis pour
-        de la publicité. Seul un stockage technique, nécessaire au fonctionnement, est utilisé.
+        Ce site n'utilise aucun cookie publicitaire ni outil de mesure d'audience (pas de
+        Google Analytics, pas de pixel de réseau social). Seul un stockage technique, utile au
+        fonctionnement, est gardé dans votre navigateur.
       </div>
 
       <h2 className="h3">Ce qui est stocké sur votre appareil</h2>
       <div className="table-wrap mt-2">
         <table className="data">
           <thead>
-            <tr><th>Nom</th><th>Type</th><th>Finalité</th><th>Durée</th><th>Consentement</th></tr>
+            <tr><th>Nom</th><th>Type</th><th>Finalité</th><th>Durée</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -303,46 +314,50 @@ function Cookies() {
               <td>Stockage local</td>
               <td>Vous garder connecté à votre espace client</td>
               <td>Jusqu'à la déconnexion, 7 jours au maximum</td>
-              <td>Non requis (technique)</td>
             </tr>
             <tr>
               <td>vitiaero_privacy_ack</td>
               <td>Stockage local</td>
               <td>Mémoriser que vous avez lu le bandeau d'information</td>
-              <td>Persistant</td>
-              <td>Non requis (technique)</td>
+              <td>Jusqu'à effacement</td>
             </tr>
             <tr>
               <td>vitiaero_lang</td>
               <td>Stockage local</td>
-              <td>Mémoriser la langue que vous avez choisie pour le site</td>
-              <td>Persistant</td>
-              <td>Non requis (technique)</td>
+              <td>Mémoriser la langue choisie pour le site</td>
+              <td>Jusqu'à effacement</td>
             </tr>
             <tr>
               <td>vitiaero_map_tip</td>
               <td>Stockage local</td>
               <td>Ne plus afficher l'aide de la carte une fois vue</td>
-              <td>Persistant</td>
-              <td>Non requis (technique)</td>
+              <td>Jusqu'à effacement</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h2 className="h3 mt-3">Services externes de carte</h2>
+      <h2 className="h3 mt-3">Refuser ce stockage</h2>
       <p>
-        Sur la page d'estimation, la carte utilise des fonds fournis par swisstopo et
-        OpenStreetMap et un service de recherche de commune de swisstopo. Ces services ne
-        déposent pas de cookie publicitaire mais reçoivent votre adresse IP lorsqu'ils
-        s'affichent. Voir la{' '}
+        Vous pouvez le refuser en bloquant les données de ce site dans les réglages de votre
+        navigateur (rubrique cookies ou données de sites). Le site reste consultable ;
+        seules la connexion à l'espace client et la mémorisation de vos choix ne
+        fonctionneront plus.
+      </p>
+
+      <h2 className="h3 mt-3">Hébergement et carte</h2>
+      <p>
+        L'hébergeur GitHub enregistre votre adresse IP à chaque visite, pour des raisons de
+        sécurité. Sur la page d'estimation, la carte reçoit ses fonds de swisstopo et, si vous
+        choisissez le fond « Plan », d'OpenStreetMap : ces services reçoivent votre adresse
+        IP mais ne déposent aucun cookie publicitaire. Voir la{' '}
         <Link to="/confidentialite" style={linkStyle}>politique de confidentialité</Link>.
       </p>
 
       <h2 className="h3 mt-3">Effacer les données stockées</h2>
       <p>
-        Vous pouvez à tout moment effacer le stockage technique de ce site depuis votre
-        navigateur, ou avec le bouton ci-dessous. Vous serez alors déconnecté.
+        Vous pouvez à tout moment effacer le stockage de ce site depuis votre navigateur, ou
+        avec le bouton ci-dessous. Vous serez alors déconnecté.
       </p>
       <button className="btn btn-outline btn-sm" onClick={() => { clearSiteStorage(); setCleared(true); }}>
         Effacer les données de ce site
@@ -357,13 +372,12 @@ function Conditions() {
     <>
       <h1 className="h1">Conditions d'utilisation</h1>
       <p className="muted">Dernière mise à jour : {UPDATED}</p>
-      <Disclaimer />
 
       <h2 className="h3">1. Objet</h2>
       <p>
-        Le site permet de demander une estimation d'épandage viticole par drone, gratuitement
+        Le site permet de calculer une estimation d'épandage viticole par drone, gratuitement
         et sans engagement. L'estimation est indicative ; le devis ferme est transmis
-        séparément par notre équipe.
+        séparément.
       </p>
 
       <h2 className="h3">2. Compte</h2>
@@ -374,9 +388,9 @@ function Conditions() {
 
       <h2 className="h3">3. Suivi des interventions</h2>
       <p>
-        Votre espace client affiche les interventions enregistrées par notre équipe. Ces
-        informations sont fournies à titre de suivi. En cas de différence avec le devis ou
-        la facture, ce sont ces documents qui font foi.
+        Votre espace client affiche les interventions enregistrées par VitiAero. Ces
+        informations sont fournies à titre de suivi. En cas de différence avec le devis ou la
+        facture, ce sont ces documents qui font foi.
       </p>
 
       <h2 className="h3">4. Données personnelles</h2>
@@ -392,7 +406,10 @@ function Conditions() {
       </p>
 
       <h2 className="h3">6. Droit applicable</h2>
-      <p>Les présentes conditions sont soumises au droit suisse. For : canton de {company.canton}.</p>
+      <p>
+        Les présentes conditions sont soumises au droit suisse. For : canton de{' '}
+        {company.canton}, sous réserve des fors impératifs, notamment ceux des consommateurs.
+      </p>
     </>
   );
 }

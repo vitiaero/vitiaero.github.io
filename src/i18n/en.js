@@ -27,7 +27,7 @@ export default {
       },
       '/contact': {
         title: 'Contact - VitiAero',
-        desc: 'A question about treating your vines by drone? Phone, email and contact form.',
+        desc: 'A question about treating your vines by drone? Email and contact form.',
       },
       '/a-propos': {
         title: 'About us - VitiAero',
@@ -51,7 +51,7 @@ export default {
     call: 'Call',
     createAccount: 'Create an account',
     genericError: 'Something went wrong. Please try again.',
-    staticNotice: (mail) => `Online sending will be active when the service launches. Until then, write to us at ${mail}, we reply within 48 hours.`,
+    staticNotice: (mail) => `Online sending will be active when the service launches. Until then, write to us at ${mail}, we usually reply within 48 hours.`,
   },
 
   lang: { label: 'Website language' },
@@ -86,12 +86,12 @@ export default {
 
   launchNotice: {
     aria: 'Notice about the launch of the service',
-    text: 'VitiAero is preparing to launch in the canton of Vaud. Estimate requests are already open.',
+    text: 'VitiAero is preparing to launch in the canton of Vaud: no treatments are carried out yet. The online estimate already works.',
   },
 
   privacyBanner: {
     aria: 'Privacy information',
-    text: 'This website uses no advertising trackers. It only keeps technical storage needed for your login and your preferences.',
+    text: 'This website uses no advertising trackers and no audience measurement. It only keeps technical storage for your login and your preferences. You can refuse it in your browser settings.',
     more: 'Learn more',
     ok: 'Got it',
   },
@@ -103,21 +103,21 @@ export default {
       title: 'Treat your vines on steep slopes, with no machines on the ground.',
       lead: 'Request an online estimate for spraying your plots by drone. Free, with no obligation. You then receive a detailed quote.',
       how: 'How it works',
-      note: 'Drone used: DJI Agras T50 - 40-litre spray tank.',
+      note: 'Planned drone: DJI Agras T50 - 40-litre spray tank.',
       scrollAria: 'Scroll down',
       discover: 'Discover',
     },
     stats: [
       { num: '40 L', label: 'Spray tank' },
-      { num: '100 km', label: 'Service radius' },
-      { num: '48 h', label: 'Reply to your request' },
+      { num: '100 km', label: 'Maximum service radius, depending on the plot' },
+      { num: '48 h', label: 'Usual reply time' },
       { num: '0', label: 'Machines driving on the ground' },
     ],
     why: {
       eyebrow: 'Why a drone',
       title: 'At last, a solution for difficult plots.',
       lead: 'In Swiss vineyards, many plots are on steep slopes or terraces. They are hard work to treat and often out of reach for machines.',
-      text: 'The drone flies over the vines and applies the treatment from the air. It reaches steep slopes without any vehicle driving between the rows. The soil stays intact and the work is faster.',
+      text: 'The drone flies over the vines and applies the treatment from the air. It reaches steep slopes without any vehicle driving between the rows. The soil stays intact.',
       cta: 'Estimate my plot',
       alt: 'Swiss terraced vineyards in Lavaux',
     },
@@ -152,7 +152,7 @@ export default {
         { k: 'Model', v: 'DJI Agras T50' },
         { k: 'Spray tank', v: '40 L' },
         { k: 'Type', v: 'Agricultural spraying drone' },
-        { k: 'Strength', v: 'Treats plots on steep slopes' },
+        { k: 'Strength', v: 'Follows the terrain' },
       ],
     },
     cine: {
@@ -216,13 +216,13 @@ export default {
   equipment: {
     eyebrow: 'Equipment',
     title: 'DJI Agras T50',
-    lead: 'The drone chosen to treat your vines. Stable, precise and at ease on slopes.',
+    lead: 'The drone planned for treating your vines, presented from the data published by DJI.',
     heroAlt: 'The DJI Agras T50 drone unfolds its arms before the flight',
     figures: [
       { v: '40 L', k: 'Spray tank' },
       { v: '16 L/min', k: 'Flow rate with two sprinklers' },
       { v: '50 to 500 μm', k: 'Droplet size, adjustable' },
-      { v: '2 km', k: 'Transmission, no mobile network needed' },
+      { v: '2 km', k: 'Transmission range' },
     ],
     subnavLabel: 'Page sections',
     subnav: [
@@ -232,13 +232,13 @@ export default {
     ],
     drone: {
       eyebrow: 'The drone',
-      title: 'Stable, even with a full tank.',
-      text: 'Eight propellers on four arms. The drone stays stable when fully loaded, even above steep slopes.',
+      title: 'Eight propellers, four arms.',
+      text: 'The eight propellers are mounted in pairs, as coaxial rotors, on four folding arms.',
       alt: 'Front of the DJI Agras T50: the two cameras and the radar',
       points: [
-        { title: 'Radars and cameras', text: 'At the front and the rear, they spot obstacles.' },
+        { title: 'Radars and vision', text: 'Two radars, at the front and the rear, and two binocular vision sensors detect obstacles.' },
         { title: 'Precise terrain following', text: 'A terrain-following system that adapts the flight height to the relief, subject to safety and operating conditions. Each plot is assessed before the job.' },
-        { title: 'Reliable signal', text: 'Up to 2 km, even without a mobile network.' },
+        { title: 'Transmission', text: 'Up to 2 km between the drone and the remote controller, according to DJI.' },
         { title: 'Folding arms', text: 'Folded, the drone is easy to carry.' },
       ],
     },
@@ -256,10 +256,10 @@ export default {
     prep: {
       eyebrow: 'Preparation',
       title: 'Self-sufficient, even without mains power.',
-      text: 'Vineyards rarely have a power socket. The batteries are charged on site with the DJI D12000iEP generator: one charges while the drone flies with the other.',
+      text: 'Vineyards rarely have a power socket. The batteries are charged on site with the DJI D12000iE generator: one charges while the drone flies with the other.',
       alt: 'DJI generator and drone battery in the back of a pickup at the edge of a field',
       figures: [
-        { v: '9 to 12 min', k: 'Full charge of one battery' },
+        { v: '9 to 12 min', k: 'Charging one battery on the generator' },
         { v: '9,000 W', k: 'Charging power of the generator' },
         { v: '30 L', k: 'Petrol tank of the generator' },
       ],
@@ -270,14 +270,13 @@ export default {
       text: 'Each plot is surveyed, then split into even passes. The drone then flies that route on its own, at the press of a button.',
       alt: 'Flight route drawn row by row over a plot on a slope',
       cards: [
-        { key: 'carte-zone', v: '13 ha in 10 min', title: 'Area route', text: 'The drone maps the whole plot and finds its boundaries and obstacles by itself.', alt: 'Map of a plot with its area route' },
-        { key: 'carte-limite', v: '13 ha in 3 min', title: 'Boundary route', text: 'A faster survey of the outline, for plots with no obstacles in the middle.', alt: 'Map of a plot with its boundary route' },
-        { key: 'camera', v: 'FPV camera', title: 'Gimbal camera', text: 'A camera films the plot live throughout the job.', alt: 'Gimbal camera under the DJI Agras T50' },
+        { key: 'carte-zone', v: 'Whole plot', title: 'Area route', text: 'The drone maps the whole plot and finds its boundaries and obstacles by itself.', alt: 'Map of a plot with its area route' },
+        { key: 'carte-limite', v: '20 m strip', title: 'Boundary route', text: 'A quick survey of a 20 m wide strip along the boundaries, for plots with no obstacles.', alt: 'Map of a plot with its boundary route' },
       ],
-      note: 'Survey times measured by DJI under test conditions. They vary with the terrain and the settings.',
+      note: 'Survey modes as described by DJI. According to DJI, area surveying works on slopes of up to 20°.',
     },
-    note: 'Specifications published by DJI, in plain language. They vary with the terrain and the weather. To be confirmed before publication.',
-    credit: 'Drone images and videos: DJI.',
+    note: 'Specifications published by DJI (DJI Agras T50 specs, FAQ and news, consulted in September 2026), in plain language. They vary with the terrain and the weather.',
+    credit: 'Drone images and videos: © DJI.',
     ctaEyebrow: 'No obligation',
     ctaTitle: 'A drone designed for your plots.',
     ctaLead: 'Request an estimate for treating your vines by drone.',
@@ -360,10 +359,10 @@ export default {
       title: 'Safety & regulations',
       lead: 'Plant protection treatments by drone are subject to specific requirements in Switzerland. VitiAero builds these constraints into the preparation of its jobs.',
       items: [
-        'FOCA authorisation required for spraying liquids by drone.',
-        'Drone approved for the intended use.',
-        'Inspection of the sprayer according to the applicable requirements.',
-        'Presence of a person holding the qualifications required to use plant protection products.',
+        'Prior FOCA authorisation for any spraying by drone, applied for at least two months in advance.',
+        'Drone model approved by Agroscope.',
+        'Sprayer inspection by an approved body, before first use and then every three years.',
+        'At least one person holding a permit to use plant protection products.',
         'Compliance with the rules attached to the products used.',
         'Prior assessment of the flight area.',
         'Compliance with the applicable distances and restrictions.',
@@ -578,7 +577,7 @@ export default {
       'Plant protection products not included, unless the quote states otherwise.',
       'A long waiting time on site is charged at 100 CHF per hour.',
       'The working conditions are assessed before the service is confirmed.',
-      'Amounts in Swiss francs, excluding VAT. Swiss VAT of 8.1% is added if the company is liable for it.',
+      'Amounts in Swiss francs, including any VAT.',
     ],
     recapTitle: 'Your request',
     recap: {

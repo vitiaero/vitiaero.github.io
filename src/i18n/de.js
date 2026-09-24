@@ -27,7 +27,7 @@ export default {
       },
       '/contact': {
         title: 'Kontakt - VitiAero',
-        desc: 'Eine Frage zur Behandlung Ihrer Reben per Drohne? Telefon, E-Mail und Kontaktformular.',
+        desc: 'Eine Frage zur Behandlung Ihrer Reben per Drohne? E-Mail und Kontaktformular.',
       },
       '/a-propos': {
         title: 'Über uns - VitiAero',
@@ -51,7 +51,7 @@ export default {
     call: 'Anrufen',
     createAccount: 'Konto erstellen',
     genericError: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
-    staticNotice: (mail) => `Der Online-Versand wird zum Start des Dienstes aktiviert. Schreiben Sie uns bis dahin an ${mail}, wir antworten innert 48 Stunden.`,
+    staticNotice: (mail) => `Der Online-Versand wird zum Start des Dienstes aktiviert. Schreiben Sie uns bis dahin an ${mail}, wir antworten in der Regel innert 48 Stunden.`,
   },
 
   lang: { label: 'Sprache der Website' },
@@ -86,12 +86,12 @@ export default {
 
   launchNotice: {
     aria: 'Hinweis zum Start des Dienstes',
-    text: 'VitiAero bereitet den Start im Kanton Waadt vor. Anfragen für eine Schätzung sind bereits möglich.',
+    text: 'VitiAero bereitet den Start im Kanton Waadt vor: Es werden noch keine Einsätze durchgeführt. Die Online-Schätzung funktioniert bereits.',
   },
 
   privacyBanner: {
     aria: 'Hinweis zum Datenschutz',
-    text: 'Diese Website verwendet keine Werbe-Tracker. Sie speichert nur technische Daten, die für Ihre Anmeldung und Ihre Einstellungen nötig sind.',
+    text: 'Diese Website verwendet keine Werbe-Tracker und keine Reichweitenmessung. Sie speichert nur technische Daten für Ihre Anmeldung und Ihre Einstellungen. Sie können dies in den Einstellungen Ihres Browsers ablehnen.',
     more: 'Mehr erfahren',
     ok: 'Verstanden',
   },
@@ -103,21 +103,21 @@ export default {
       title: 'Behandeln Sie Ihre Reben in Steillagen, ohne Maschinen am Boden.',
       lead: 'Fordern Sie online eine Schätzung für die Behandlung Ihrer Parzellen per Drohne an. Kostenlos und unverbindlich. Sie erhalten danach eine detaillierte Offerte.',
       how: 'So funktioniert es',
-      note: 'Eingesetzte Drohne: DJI Agras T50 - Sprühtank mit 40 Litern.',
+      note: 'Vorgesehene Drohne: DJI Agras T50 - Sprühtank mit 40 Litern.',
       scrollAria: 'Nach unten scrollen',
       discover: 'Entdecken',
     },
     stats: [
       { num: '40 L', label: 'Sprühtank' },
-      { num: '100 km', label: 'Einsatzradius' },
-      { num: '48 h', label: 'Antwort auf Ihre Anfrage' },
+      { num: '100 km', label: 'Maximaler Einsatzradius, je nach Parzelle' },
+      { num: '48 h', label: 'Antwortzeit, in der Regel' },
       { num: '0', label: 'Fahrten mit Maschinen am Boden' },
     ],
     why: {
       eyebrow: 'Warum eine Drohne',
       title: 'Endlich eine Lösung für schwierige Parzellen.',
       lead: 'Im Schweizer Rebbau liegen viele Parzellen in steilen Hängen oder auf Terrassen. Sie sind mühsam zu behandeln und für Maschinen oft unzugänglich.',
-      text: 'Die Drohne überfliegt die Reben und bringt die Behandlung aus der Luft aus. Sie erreicht steile Hänge, ohne dass ein Fahrzeug durch die Rebzeilen fährt. Der Boden bleibt unberührt und die Arbeit geht schneller.',
+      text: 'Die Drohne überfliegt die Reben und bringt die Behandlung aus der Luft aus. Sie erreicht steile Hänge, ohne dass ein Fahrzeug durch die Rebzeilen fährt. Der Boden bleibt unberührt.',
       cta: 'Meine Parzelle schätzen',
       alt: 'Schweizer Reben auf Terrassen im Lavaux',
     },
@@ -152,7 +152,7 @@ export default {
         { k: 'Modell', v: 'DJI Agras T50' },
         { k: 'Sprühtank', v: '40 L' },
         { k: 'Typ', v: 'Landwirtschaftliche Sprühdrohne' },
-        { k: 'Stärke', v: 'Behandelt Parzellen in Steillagen' },
+        { k: 'Stärke', v: 'Folgt dem Geländeprofil' },
       ],
     },
     cine: {
@@ -216,13 +216,13 @@ export default {
   equipment: {
     eyebrow: 'Ausrüstung',
     title: 'DJI Agras T50',
-    lead: 'Die Drohne, die für die Behandlung Ihrer Reben vorgesehen ist. Stabil, präzise und sicher in Steillagen.',
+    lead: 'Die Drohne, die für die Behandlung Ihrer Reben vorgesehen ist, dargestellt nach den von DJI veröffentlichten Angaben.',
     heroAlt: 'Die Drohne DJI Agras T50 klappt vor dem Flug ihre Arme aus',
     figures: [
       { v: '40 L', k: 'Sprühtank' },
       { v: '16 L/min', k: 'Durchfluss mit zwei Düsen' },
       { v: '50 bis 500 μm', k: 'Tröpfchengrösse, einstellbar' },
-      { v: '2 km', k: 'Übertragung, ohne Mobilfunknetz' },
+      { v: '2 km', k: 'Reichweite der Übertragung' },
     ],
     subnavLabel: 'Abschnitte der Seite',
     subnav: [
@@ -232,13 +232,13 @@ export default {
     ],
     drone: {
       eyebrow: 'Die Drohne',
-      title: 'Stabil, auch mit vollem Tank.',
-      text: 'Acht Propeller an vier Armen. Die Drohne bleibt auch voll beladen stabil, selbst über steilen Hängen.',
+      title: 'Acht Propeller, vier Arme.',
+      text: 'Die acht Propeller sind paarweise als Koaxialrotoren an vier klappbaren Armen montiert.',
       alt: 'Vorderseite der DJI Agras T50: die beiden Kameras und das Radar',
       points: [
-        { title: 'Radare und Kameras', text: 'Vorne und hinten erkennen sie Hindernisse.' },
+        { title: 'Radare und Sicht', text: 'Zwei Radare, vorne und hinten, und zwei binokulare Sichtsensoren erkennen Hindernisse.' },
         { title: 'Präzise Geländefolge', text: 'Geländefolgesystem, das die Flughöhe dem Relief anpasst, unter Vorbehalt der Sicherheits- und Betriebsbedingungen. Jede Parzelle wird vor dem Einsatz beurteilt.' },
-        { title: 'Zuverlässiges Signal', text: 'Bis 2 km, auch ohne Mobilfunknetz.' },
+        { title: 'Übertragung', text: 'Bis 2 km zwischen Drohne und Fernsteuerung, laut DJI.' },
         { title: 'Klappbare Arme', text: 'Zusammengeklappt lässt sie sich einfach transportieren.' },
       ],
     },
@@ -256,10 +256,10 @@ export default {
     prep: {
       eyebrow: 'Vorbereitung',
       title: 'Autonom, auch ohne Stromanschluss.',
-      text: 'In den Reben gibt es meist keine Steckdose. Die Akkus werden vor Ort mit dem Generator DJI D12000iEP geladen: der eine lädt, während die Drohne mit dem anderen fliegt.',
+      text: 'In den Reben gibt es meist keine Steckdose. Die Akkus werden vor Ort mit dem Generator DJI D12000iE geladen: der eine lädt, während die Drohne mit dem anderen fliegt.',
       alt: 'DJI Generator und Drohnenakku auf der Ladefläche eines Pick-ups am Feldrand',
       figures: [
-        { v: '9 bis 12 min', k: 'Vollständige Ladung eines Akkus' },
+        { v: '9 bis 12 min', k: 'Ladung eines Akkus am Generator' },
         { v: '9 000 W', k: 'Ladeleistung des Generators' },
         { v: '30 L', k: 'Benzintank des Generators' },
       ],
@@ -270,14 +270,13 @@ export default {
       text: 'Jede Parzelle wird erfasst und in gleichmässige Bahnen aufgeteilt. Die Drohne fliegt diese Route danach selbstständig ab, auf Knopfdruck.',
       alt: 'Flugroute, Rebzeile für Rebzeile über einer Parzelle in Hanglage',
       cards: [
-        { key: 'carte-zone', v: '13 ha in 10 min', title: 'Flächenroute', text: 'Die Drohne erfasst die ganze Parzelle und erkennt selbst Grenzen und Hindernisse.', alt: 'Karte einer Parzelle mit ihrer Flächenroute' },
-        { key: 'carte-limite', v: '13 ha in 3 min', title: 'Grenzroute', text: 'Eine schnellere Erfassung des Umrisses, für Parzellen ohne Hindernisse in der Mitte.', alt: 'Karte einer Parzelle mit ihrer Grenzroute' },
-        { key: 'camera', v: 'FPV-Kamera', title: 'Gimbal-Kamera', text: 'Eine Kamera filmt die Parzelle während des ganzen Einsatzes live.', alt: 'Gimbal-Kamera unter der DJI Agras T50' },
+        { key: 'carte-zone', v: 'Ganze Parzelle', title: 'Flächenroute', text: 'Die Drohne erfasst die ganze Parzelle und erkennt selbst Grenzen und Hindernisse.', alt: 'Karte einer Parzelle mit ihrer Flächenroute' },
+        { key: 'carte-limite', v: '20-m-Streifen', title: 'Grenzroute', text: 'Eine schnelle Erfassung eines 20 m breiten Streifens entlang der Grenzen, für Parzellen ohne Hindernisse.', alt: 'Karte einer Parzelle mit ihrer Grenzroute' },
       ],
       note: 'Von DJI unter Testbedingungen gemessene Zeiten. Sie hängen vom Gelände und den Einstellungen ab.',
     },
-    note: 'Von DJI veröffentlichte Angaben, in einfacher Sprache. Sie hängen vom Gelände und vom Wetter ab. Vor der Veröffentlichung zu bestätigen.',
-    credit: 'Bilder und Videos der Drohne: DJI.',
+    note: 'Von DJI veröffentlichte Angaben (Datenblatt, FAQ und News zur DJI Agras T50, abgerufen im September 2026), in einfacher Sprache. Sie hängen vom Gelände und vom Wetter ab.',
+    credit: 'Bilder und Videos der Drohne: © DJI.',
     ctaEyebrow: 'Unverbindlich',
     ctaTitle: 'Eine Drohne für Ihre Parzellen.',
     ctaLead: 'Fordern Sie eine Schätzung für die Behandlung Ihrer Reben per Drohne an.',
@@ -360,10 +359,10 @@ export default {
       title: 'Sicherheit & Regelwerk',
       lead: 'Pflanzenschutzbehandlungen per Drohne unterliegen in der Schweiz besonderen Anforderungen. VitiAero berücksichtigt diese bei der Vorbereitung der Einsätze.',
       items: [
-        'Bewilligung des BAZL für das Ausbringen von Flüssigkeiten per Drohne.',
-        'Für die vorgesehene Verwendung zugelassene Drohne.',
-        'Prüfung des Sprühgeräts nach den geltenden Anforderungen.',
-        'Anwesenheit einer Person mit der nötigen Qualifikation für den Einsatz von Pflanzenschutzmitteln.',
+        'Vorgängige Bewilligung des BAZL für jedes Sprühen per Drohne, mindestens zwei Monate im Voraus beantragt.',
+        'Von Agroscope zugelassenes Drohnenmodell.',
+        'Prüfung des Sprühgeräts durch eine anerkannte Stelle, vor der Inbetriebnahme und danach alle drei Jahre.',
+        'Mindestens eine Person mit Fachbewilligung für die Verwendung von Pflanzenschutzmitteln.',
         'Einhaltung der Vorschriften zu den eingesetzten Mitteln.',
         'Vorgängige Beurteilung des Fluggebiets.',
         'Einhaltung der geltenden Abstände und Einschränkungen.',
@@ -578,7 +577,7 @@ export default {
       'Pflanzenschutzmittel nicht inbegriffen, sofern die Offerte nichts anderes angibt.',
       'Eine längere Wartezeit vor Ort wird mit 100 CHF pro Stunde verrechnet.',
       'Die Einsatzbedingungen werden vor der Bestätigung der Leistung geprüft.',
-      'Beträge in Schweizer Franken, ohne MWST. Die Schweizer MWST von 8,1 % kommt dazu, sofern das Unternehmen steuerpflichtig ist.',
+      'Beträge in Schweizer Franken, allfällige MWST inbegriffen.',
     ],
     recapTitle: 'Ihre Anfrage',
     recap: {

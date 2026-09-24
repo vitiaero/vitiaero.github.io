@@ -82,11 +82,13 @@ export default function Contact() {
           </div>
 
           <div className="contact-cards">
-            <InfoCard icon="phone" title={c.phoneTitle}>
-              {filled(company.phone)
-                ? <a href={telHref(company.phone)}>{company.phone}</a>
-                : <span className="muted">{company.phone}</span>}
-            </InfoCard>
+            {/* Le telephone est facultatif (la loi exige une adresse e-mail) :
+                sans numero, la carte n'apparait pas. */}
+            {filled(company.phone) && (
+              <InfoCard icon="phone" title={c.phoneTitle}>
+                <a href={telHref(company.phone)}>{company.phone}</a>
+              </InfoCard>
+            )}
             <InfoCard icon="mail" title={c.emailTitle}>
               {filled(company.email)
                 ? <a href={`mailto:${company.email}`}>{company.email}</a>

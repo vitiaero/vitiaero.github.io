@@ -177,13 +177,9 @@ export default function Equipement() {
             {e.map.cards.map((c, i) => (
               <Reveal key={c.key} delay={i * 80}>
                 <article className="eq-card">
-                  {c.key === 'camera' ? (
-                    <Stage name="camera" alt={c.alt} ratio="16 / 10" />
-                  ) : (
-                    <div className="eq-stage" style={{ aspectRatio: '16 / 10' }}>
-                      <img src={asset(`/images/equip/${c.key}.webp`)} alt={c.alt} loading="lazy" />
-                    </div>
-                  )}
+                  <div className="eq-stage" style={{ aspectRatio: '16 / 10' }}>
+                    <img src={asset(`/images/equip/${c.key}.webp`)} alt={c.alt} loading="lazy" />
+                  </div>
                   <div className="eq-card-body">
                     <div className="v">{c.v}</div>
                     <h3>{c.title}</h3>

@@ -2,8 +2,8 @@
 
 Audit du 14 septembre 2026, avant publication sur GitHub Pages. Ce document dit ce
 qui est en place, ce qui a été corrigé, et surtout **ce qui reste à faire**. Il ne
-garantit pas une sécurité totale : aucun site ne peut l'être. Les textes légaux
-sont des modèles, à faire valider par une personne compétente.
+garantit pas une sécurité totale : aucun site ne peut l'être. La conformité légale
+(textes, sources, points ouverts) est traitée dans `CONFORMITE.md`.
 
 Signaler une faille : écrire à l'adresse de contact du site, sans publier le détail
 dans une issue GitHub publique.

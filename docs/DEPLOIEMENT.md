@@ -139,9 +139,10 @@ Le serveur envoie alors tous les en-têtes de sécurité, CSP complète comprise
 
 ## Avant d'ouvrir au public
 
-- [ ] Remplir les coordonnées dans `src/content.js` (`[RAISON_SOCIALE]`,
-      `[ADRESSE]`, `[TELEPHONE]`, `[IDE]`, `[RESPONSABLE]`, `[HEBERGEUR]`).
-- [ ] Faire relire les pages légales : ce sont des modèles (voir `SECURITY.md`, section 7).
+- [ ] Compléter l'adresse postale dans `src/content.js` (`[ADRESSE]`, `[NPA]`,
+      `[VILLE]`), obligatoire selon la LCD et la nLPD.
+- [ ] Traiter les points ouverts de `docs/CONFORMITE.md` (accord écrit de DJI,
+      homologation du T50, conditions générales), puis faire relire par un juriste.
 - [ ] Remplacer le service d'itinéraire OSRM public, serveur de démonstration non
       prévu pour la production (`ROUTE_URL` dans `server/index.js`).
 - [ ] Décider de la durée de conservation des pièces jointes (nLPD).
