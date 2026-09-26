@@ -47,6 +47,8 @@ export default {
     skip: 'Zum Inhalt springen',
     loading: 'Wird geladen...',
     requestEstimate: 'Schätzung anfragen',
+    playVideo: 'Video abspielen',
+    pauseVideo: 'Video anhalten',
     backHome: 'Zurück zur Startseite',
     call: 'Anrufen',
     createAccount: 'Konto erstellen',
@@ -106,6 +108,11 @@ export default {
       note: 'Eingesetzte Drohne: DJI Agras T50 - Sprühtank mit 40 Litern.',
       scrollAria: 'Nach unten scrollen',
       discover: 'Entdecken',
+      place: 'Kanton Waadt',
+      clockLabel: 'Uhrzeit in der Schweiz',
+      chips: ['Reben in Hanglage', 'Terrassen', 'DJI Agras T50'],
+      flow: ['Kostenlose Schätzung', 'Detaillierte Offerte'],
+      droneLink: 'Die Drohne DJI Agras T50 ansehen',
     },
     stats: [
       { num: '40 L', label: 'Sprühtank' },
@@ -119,9 +126,11 @@ export default {
       lead: 'Im Schweizer Rebbau liegen viele Parzellen in steilen Hängen oder auf Terrassen. Sie sind mühsam zu behandeln und für Maschinen oft unzugänglich.',
       text: 'Die Drohne überfliegt die Reben und bringt die Behandlung aus der Luft aus. Sie erreicht steile Hänge, ohne dass ein Fahrzeug durch die Rebzeilen fährt. Der Boden bleibt unberührt und die Arbeit geht schneller.',
       cta: 'Meine Parzelle schätzen',
+      tags: ['Steillage', 'Terrassen', 'Boden geschont'],
       alt: 'Schweizer Reben auf Terrassen im Lavaux',
     },
     advantages: {
+      intro: 'Eine Ergänzung zu den herkömmlichen Methoden im Rebbau. Ihr Nutzen hängt von der Parzelle, der Behandlung und dem Wetter ab.',
       eyebrow: 'Die Vorteile',
       title: 'Warum eine Drohne einsetzen?',
       items: [
@@ -133,6 +142,8 @@ export default {
       ],
     },
     how: {
+      next: 'Nächster Schritt',
+      listLabel: 'Die vier Schritte der Anfrage',
       eyebrow: 'So funktioniert es',
       title: 'Ihre Schätzung in vier Schritten.',
       cta: 'Anfrage starten',
@@ -144,6 +155,9 @@ export default {
       ],
     },
     drone: {
+      chips: ['Ausrüstung', 'Bilder: DJI'],
+      tankLabel: 'Sprühtank',
+      cta: 'Zur Ausrüstung',
       eyebrow: 'Unsere Drohne',
       title: 'Die DJI Agras T50, gebaut für die Landwirtschaft.',
       lead: 'Diese grosse Sprühdrohne hat einen Sprühtank mit 40 Litern. Sie bringt die Behandlung aus der Luft aus, auch auf Parzellen in Hanglage.',
@@ -156,6 +170,10 @@ export default {
       ],
     },
     cine: {
+      films: [
+        { label: 'Lavaux, Gesamtansicht', alt: 'Drohnenflug über den Terrassen des Lavaux, unten der Genfersee' },
+        { label: 'Terrassen aus der Nähe', alt: 'Drohnenflug entlang der Rebzeilen und Trockenmauern des Lavaux' },
+      ],
       eyebrow: 'In Bildern',
       title: 'Die Weinberge von oben.',
       lead: 'Von den Terrassen des Lavaux bis ans Ufer des Genfersees, gefilmt mit der Drohne. Die anspruchsvollen Landschaften, für die dieser Dienst gedacht ist.',
@@ -167,6 +185,7 @@ export default {
       text: 'Wir kennen die steilen Terrassen, die zum Genfersee hinunterführen. Unser Dienst passt sich diesen anspruchsvollen Parzellen an, die typisch für die Region sind.',
     },
     faq: {
+      categoriesLabel: 'Fragenkategorien',
       eyebrow: 'Häufige Fragen',
       title: 'Ihre Fragen, unsere Antworten.',
       groups: [
@@ -214,6 +233,8 @@ export default {
   },
 
   equipment: {
+    chips: ['Ausrüstung', 'Landwirtschaftliche Sprühdrohne'],
+    creditShort: 'Bilder und Videos: DJI',
     eyebrow: 'Ausrüstung',
     title: 'DJI Agras T50',
     lead: 'Die Drohne, die für die Behandlung Ihrer Reben vorgesehen ist. Stabil, präzise und sicher in Steillagen.',
@@ -226,11 +247,15 @@ export default {
     ],
     subnavLabel: 'Abschnitte der Seite',
     subnav: [
+      { id: 't50', label: 'DJI Agras T50' },
       { id: 'drone', label: 'Die Drohne' },
       { id: 'pulverisation', label: 'Sprühen & Vorbereitung' },
       { id: 'cartographie', label: 'GPS & Kartierung' },
     ],
     drone: {
+      chips: ['8 Propeller', '4 Arme'],
+      tankLabel: 'Stabil bei voller Last',
+      transport: 'Transport',
       eyebrow: 'Die Drohne',
       title: 'Stabil, auch mit vollem Tank.',
       text: 'Acht Propeller an vier Armen. Die Drohne bleibt auch voll beladen stabil, selbst über steilen Hängen.',
@@ -243,6 +268,7 @@ export default {
       ],
     },
     spray: {
+      chips: ['16 l/min · 2 Düsen', '24 l/min · Kit mit 4 Düsen'],
       eyebrow: 'Sprühsystem',
       title: 'Feine und gleichmässige Tröpfchen.',
       text: 'Zwei Düsen zerstäuben das Mittel in feine Tröpfchen, bis zu 16 Liter pro Minute. Ein Set mit vier Düsen erhöht den Durchfluss auf 24.',
@@ -265,18 +291,20 @@ export default {
       ],
     },
     map: {
+      videoCaption: 'Regelmässige Bahnen, selbstständig abgeflogen',
+      toggleLabel: 'Art der Route',
       eyebrow: 'GPS & Kartierung',
       title: 'Ein geplanter Flug, Parzelle für Parzelle.',
       text: 'Jede Parzelle wird erfasst und in gleichmässige Bahnen aufgeteilt. Die Drohne fliegt diese Route danach selbstständig ab, auf Knopfdruck.',
       alt: 'Flugroute, Rebzeile für Rebzeile über einer Parzelle in Hanglage',
       cards: [
-        { key: 'carte-zone', v: '13 ha in 10 min', title: 'Flächenroute', text: 'Die Drohne erfasst die ganze Parzelle und erkennt selbst Grenzen und Hindernisse.', alt: 'Karte einer Parzelle mit ihrer Flächenroute' },
-        { key: 'carte-limite', v: '13 ha in 3 min', title: 'Grenzroute', text: 'Eine schnellere Erfassung des Umrisses, für Parzellen ohne Hindernisse in der Mitte.', alt: 'Karte einer Parzelle mit ihrer Grenzroute' },
+        { key: 'carte-zone', v: '13 ha in 10 min', big: '13 ha', small: 'in 10 min', title: 'Flächenroute', text: 'Die Drohne erfasst die ganze Parzelle und erkennt selbst Grenzen und Hindernisse.', alt: 'Karte einer Parzelle mit ihrer Flächenroute' },
+        { key: 'carte-limite', v: '13 ha in 3 min', big: '13 ha', small: 'in 3 min', title: 'Grenzroute', text: 'Eine schnellere Erfassung des Umrisses, für Parzellen ohne Hindernisse in der Mitte.', alt: 'Karte einer Parzelle mit ihrer Grenzroute' },
         { key: 'camera', v: 'FPV-Kamera', title: 'Gimbal-Kamera', text: 'Eine Kamera filmt die Parzelle während des ganzen Einsatzes live.', alt: 'Gimbal-Kamera unter der DJI Agras T50' },
       ],
       note: 'Von DJI unter Testbedingungen gemessene Zeiten. Sie hängen vom Gelände und den Einstellungen ab.',
     },
-    note: 'Von DJI veröffentlichte Angaben, in einfacher Sprache. Sie hängen vom Gelände und vom Wetter ab. Vor der Veröffentlichung zu bestätigen.',
+    note: 'Von DJI veröffentlichte Angaben, in einfacher Sprache. Sie hängen vom Gelände und vom Wetter ab.',
     credit: 'Bilder und Videos der Drohne: DJI.',
     ctaEyebrow: 'Unverbindlich',
     ctaTitle: 'Eine Drohne für Ihre Parzellen.',
@@ -314,6 +342,7 @@ export default {
   },
 
   service: {
+    heroAlt: 'Rebterrassen des Lavaux über dem Genfersee',
     eyebrow: 'Der Dienst',
     title: 'Wie funktioniert es?',
     lead: 'Von der Analyse der Parzelle bis zum Einsatzbericht: So läuft eine Rebbehandlung per Drohne ab.',

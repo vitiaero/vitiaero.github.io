@@ -32,7 +32,7 @@ dans GitHub Desktop, **Revert changes in commit**).
 | Les mentions légales, la confidentialité, les CGV | `src/pages/legal/` |
 | Une image | `public/images/` (garder le même nom de fichier) |
 | Une vidéo | `public/videos/` (moins de 100 Mo par fichier) |
-| Les couleurs et la mise en page | `src/styles.css` |
+| Les couleurs et la mise en page | `src/styles/` (`base.css` : couleurs et éléments communs, `home.css`, `equipement.css`, `app.css`) |
 | L'indexation par les moteurs de recherche | `public/robots.txt` |
 
 ### Exemples courants

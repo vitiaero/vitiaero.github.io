@@ -74,6 +74,10 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       sourcemap: false, // le code source original n'est pas publie
+      // Les polices restent des fichiers : la CSP (font-src 'self') refuse les
+      // polices integrees en data:. Les autres petits fichiers suivent la
+      // regle par defaut de Vite.
+      assetsInlineLimit: (file) => (/\.(woff2?|ttf|otf)$/.test(file) ? false : undefined),
     },
     server: {
       port: 5173,

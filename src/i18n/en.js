@@ -47,6 +47,8 @@ export default {
     skip: 'Skip to content',
     loading: 'Loading...',
     requestEstimate: 'Request an estimate',
+    playVideo: 'Play the video',
+    pauseVideo: 'Pause the video',
     backHome: 'Back to home',
     call: 'Call',
     createAccount: 'Create an account',
@@ -106,6 +108,11 @@ export default {
       note: 'Drone used: DJI Agras T50 - 40-litre spray tank.',
       scrollAria: 'Scroll down',
       discover: 'Discover',
+      place: 'Canton of Vaud',
+      clockLabel: 'Time in Switzerland',
+      chips: ['Sloping vineyards', 'Terraces', 'DJI Agras T50'],
+      flow: ['Free estimate', 'Detailed quote'],
+      droneLink: 'See the DJI Agras T50 drone',
     },
     stats: [
       { num: '40 L', label: 'Spray tank' },
@@ -119,9 +126,11 @@ export default {
       lead: 'In Swiss vineyards, many plots are on steep slopes or terraces. They are hard work to treat and often out of reach for machines.',
       text: 'The drone flies over the vines and applies the treatment from the air. It reaches steep slopes without any vehicle driving between the rows. The soil stays intact and the work is faster.',
       cta: 'Estimate my plot',
+      tags: ['Steep slopes', 'Terraces', 'Soil preserved'],
       alt: 'Swiss terraced vineyards in Lavaux',
     },
     advantages: {
+      intro: 'A complement to traditional vineyard methods. Its value depends on the plot, the treatment and the weather.',
       eyebrow: 'The benefits',
       title: 'Why use a drone?',
       items: [
@@ -133,6 +142,8 @@ export default {
       ],
     },
     how: {
+      next: 'Next step',
+      listLabel: 'The four steps of the request',
       eyebrow: 'How it works',
       title: 'Your estimate in four steps.',
       cta: 'Start my request',
@@ -144,6 +155,9 @@ export default {
       ],
     },
     drone: {
+      chips: ['Equipment', 'Images: DJI'],
+      tankLabel: 'Spray tank',
+      cta: 'See the equipment',
       eyebrow: 'Our drone',
       title: 'The DJI Agras T50, built for agriculture.',
       lead: 'This large spraying drone carries a 40-litre spray tank. It applies the treatment from the air, including on sloping plots.',
@@ -156,6 +170,10 @@ export default {
       ],
     },
     cine: {
+      films: [
+        { label: 'Lavaux, overview', alt: 'Drone flight over the Lavaux terraces, with Lake Geneva below' },
+        { label: 'Terraces up close', alt: 'Drone flight along the vine rows and stone walls of Lavaux' },
+      ],
       eyebrow: 'In pictures',
       title: 'The vineyards from above.',
       lead: 'From the terraces of Lavaux to the shores of Lake Geneva, filmed by drone. The demanding landscapes this service is designed for.',
@@ -167,6 +185,7 @@ export default {
       text: 'We know the steep terraces that run down to Lake Geneva. Our service is suited to these demanding plots, typical of the region.',
     },
     faq: {
+      categoriesLabel: 'Question categories',
       eyebrow: 'Frequent questions',
       title: 'Your questions, our answers.',
       groups: [
@@ -214,6 +233,8 @@ export default {
   },
 
   equipment: {
+    chips: ['Equipment', 'Agricultural spraying drone'],
+    creditShort: 'Images and videos: DJI',
     eyebrow: 'Equipment',
     title: 'DJI Agras T50',
     lead: 'The drone chosen to treat your vines. Stable, precise and at ease on slopes.',
@@ -226,11 +247,15 @@ export default {
     ],
     subnavLabel: 'Page sections',
     subnav: [
+      { id: 't50', label: 'DJI Agras T50' },
       { id: 'drone', label: 'The drone' },
       { id: 'pulverisation', label: 'Spraying & preparation' },
       { id: 'cartographie', label: 'GPS & mapping' },
     ],
     drone: {
+      chips: ['8 propellers', '4 arms'],
+      tankLabel: 'Stable at full load',
+      transport: 'Transport',
       eyebrow: 'The drone',
       title: 'Stable, even with a full tank.',
       text: 'Eight propellers on four arms. The drone stays stable when fully loaded, even above steep slopes.',
@@ -243,6 +268,7 @@ export default {
       ],
     },
     spray: {
+      chips: ['16 L/min · 2 nozzles', '24 L/min · 4-nozzle kit'],
       eyebrow: 'Spraying system',
       title: 'Fine and even droplets.',
       text: 'Two sprinklers turn the product into fine droplets, up to 16 litres per minute. A four-sprinkler kit raises the flow rate to 24.',
@@ -265,18 +291,20 @@ export default {
       ],
     },
     map: {
+      videoCaption: 'Regular passes, flown on its own',
+      toggleLabel: 'Type of route',
       eyebrow: 'GPS & mapping',
       title: 'A planned flight, plot by plot.',
       text: 'Each plot is surveyed, then split into even passes. The drone then flies that route on its own, at the press of a button.',
       alt: 'Flight route drawn row by row over a plot on a slope',
       cards: [
-        { key: 'carte-zone', v: '13 ha in 10 min', title: 'Area route', text: 'The drone maps the whole plot and finds its boundaries and obstacles by itself.', alt: 'Map of a plot with its area route' },
-        { key: 'carte-limite', v: '13 ha in 3 min', title: 'Boundary route', text: 'A faster survey of the outline, for plots with no obstacles in the middle.', alt: 'Map of a plot with its boundary route' },
+        { key: 'carte-zone', v: '13 ha in 10 min', big: '13 ha', small: 'in 10 min', title: 'Area route', text: 'The drone maps the whole plot and finds its boundaries and obstacles by itself.', alt: 'Map of a plot with its area route' },
+        { key: 'carte-limite', v: '13 ha in 3 min', big: '13 ha', small: 'in 3 min', title: 'Boundary route', text: 'A faster survey of the outline, for plots with no obstacles in the middle.', alt: 'Map of a plot with its boundary route' },
         { key: 'camera', v: 'FPV camera', title: 'Gimbal camera', text: 'A camera films the plot live throughout the job.', alt: 'Gimbal camera under the DJI Agras T50' },
       ],
       note: 'Survey times measured by DJI under test conditions. They vary with the terrain and the settings.',
     },
-    note: 'Specifications published by DJI, in plain language. They vary with the terrain and the weather. To be confirmed before publication.',
+    note: 'Specifications published by DJI, in plain language. They vary with the terrain and the weather.',
     credit: 'Drone images and videos: DJI.',
     ctaEyebrow: 'No obligation',
     ctaTitle: 'A drone designed for your plots.',
@@ -314,6 +342,7 @@ export default {
   },
 
   service: {
+    heroAlt: 'Lavaux vineyard terraces above Lake Geneva',
     eyebrow: 'The service',
     title: 'How does it work?',
     lead: 'From the survey of the plot to the job report, here is how a vineyard treatment by drone unfolds.',

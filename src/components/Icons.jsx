@@ -20,6 +20,13 @@ const paths = {
   user: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></>,
   tag: <><path d="M4 4h7l9 9-7 7-9-9V4z" /><circle cx="8.5" cy="8.5" r="1.4" fill="currentColor" /></>,
   chevron: <><path d="M8 5l8 7-8 7" /></>,
+  arrow: <><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></>,
+  arrowUpRight: <><path d="M7 17 17 7" /><path d="M8 7h9v9" /></>,
+  plus: <><path d="M12 5v14M5 12h14" /></>,
+  play: <><path d="M8 5.5v13l10.5-6.5L8 5.5z" fill="currentColor" /></>,
+  pause: <><path d="M8.5 5.5v13M15.5 5.5v13" /></>,
+  relief: <><path d="M3 17c3-6 5-9 7-9s3 4 5 4 3-3 6-5" /><path d="M3 21h18" /></>,
+  signal: <><path d="M5 19a10 10 0 0 1 0-14" /><path d="M19 5a10 10 0 0 1 0 14" /><path d="M8.5 15.5a5 5 0 0 1 0-7" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /><circle cx="12" cy="12" r="1.3" fill="currentColor" /></>,
 };
 
 export default function Icon({ name, size = 24, stroke = 1.8, ...rest }) {

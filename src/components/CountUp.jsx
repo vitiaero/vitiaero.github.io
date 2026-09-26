@@ -6,7 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 // ne se declenche que lorsque l'element est reellement visible a l'ecran.
 export default function CountUp({ value, duration = 1300 }) {
   const ref = useRef(null);
-  const m = String(value).match(/^(\D*)(\d+)(.*)$/);
+  // Une seule valeur chiffree ("40 L", "48 h") : une plage comme "50 à 500 μm"
+  // n'est pas animee, elle afficherait "0 à 500" pendant le comptage.
+  const raw = String(value).match(/^(\D*)(\d+)(.*)$/);
+  const m = raw && !/\d/.test(raw[3]) ? raw : null;
   const [display, setDisplay] = useState(value); // valeur finale par defaut
 
   useEffect(() => {

@@ -39,9 +39,11 @@ le code avant de modifier, garde le style et les conventions, et ne casse rien.
 
 ## Stack
 - Front : **React 18 + Vite 7 en JavaScript (PAS TypeScript), React Router 7**, CSS
-  maison dans `src/styles.css` (**pas de Tailwind**). Carte : **Leaflet + Turf**.
+  maison dans `src/styles/` (**pas de Tailwind**). Carte : **Leaflet + Turf**.
 - Back : **Node + Express**, **SQLite via sql.js** (WASM, aucune compilation native).
-- Police : **Inter auto-hébergée** (`public/fonts/Inter-Variable.ttf`).
+- Polices : **Manrope** et **JetBrains Mono**, auto-hébergées par les paquets
+  `@fontsource-variable/manrope` et `@fontsource/jetbrains-mono` (licence OFL,
+  aucun appel à Google Fonts).
 
 ## Structure
 - `src/pages/` : Home, Service, Estimation, Devis, Confirmation, About, Contact,
@@ -96,14 +98,15 @@ le code avant de modifier, garde le style et les conventions, et ne casse rien.
   coordonnées → estimation chiffrée puis envoi. Prix calculé en direct.
   Carte : tracé de parcelles au **polygone (points illimités)**, couleur **ORANGE**,
   calcul de surface (m² et ha), fonds **swisstopo** (Satellite/Carte/Plan),
-  recherche de commune, attribution masquée. Case de **consentement** avant envoi.
+  recherche de commune, attribution swisstopo visible (exigée par ses
+  conditions d'utilisation). Case de **consentement** avant envoi.
   **Import de parcelles** : bouton « Importer un fichier » (GeoJSON ou KML, 5 Mo au
   maximum). Le fichier est lu dans le navigateur, jamais envoyé avant la demande ;
   seuls les contours extérieurs situés en Suisse sont retenus (50 parcelles et
   500 points au maximum), puis la carte se cadre dessus.
   **Estimation en PDF** : bouton « Télécharger en PDF » à l'étape 4 et sur la page
   de confirmation. Il ouvre la fenêtre d'impression du navigateur ; la mise en page
-  vient du bloc `@media print` de `src/styles.css` (en-tête `PrintHeader`, classes
+  vient du bloc `@media print` de `src/styles/app.css` (en-tête `PrintHeader`, classes
   `.printable`, `.no-print` et `.print-only`). Aucune bibliothèque ajoutée.
 - **Comptes** : inscription/connexion, **codes promo**.
 - **Espace client** (`src/pages/Account.jsx`) : suivi d'exploitation. Tuiles de
@@ -139,9 +142,11 @@ le code avant de modifier, garde le style et les conventions, et ne casse rien.
   Reste à confirmer si l'entreprise est assujettie (page Estimation et CGV).
 
 ## Design system
-- Thème **clair / vert / nature**. Tokens dans `:root` de `src/styles.css`
-  (`--bg #f8faf2`, `--accent #4c8231`, `--forest #223016`…).
-- Titres et texte en **Inter**. Logo **VitiAero** (`public/images/logo-vitiaero.png`
+- Refonte « Lavaux et T50 » (septembre 2026) : fond pierre claire, encre, un seul
+  accent vert citron, cartes arrondies. Tokens dans `:root` de `src/styles/base.css`
+  (`--bg #f1f1ee`, `--ink #141513`, `--lime #d6f04a`, `--green #4f6b12`…).
+  Détails et animations : `docs/REFONTE-LAVAUX-T50.md`.
+- Titres et texte en **Manrope**. Logo **VitiAero** (`public/images/logo-vitiaero.png`
   horizontal, `logo-vitiaero-full.png` complet) ; le fond blanc du logo est effacé
   dans le header via `mix-blend-mode: multiply` (donc header opaque clair).
 - **Effet « liquid glass »** adapté au thème clair : cartes/panneaux en verre dépoli

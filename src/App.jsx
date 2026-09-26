@@ -87,13 +87,15 @@ function Protected({ children, role }) {
 
 export default function App() {
   const { t } = useI18n();
+  const { pathname } = useLocation();
   return (
     <>
       <ScrollToTop />
       <a href="#main" className="skip-link">{t.common.skip}</a>
       <LaunchNotice />
       <Header />
-      <main id="main">
+      {/* La cle change a chaque page : la nouvelle page apparait en fondu. */}
+      <main id="main" key={pathname} className="route-view">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/equipement" element={<Equipement />} />

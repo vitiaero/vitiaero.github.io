@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
+import Kicker from '../components/Kicker.jsx';
+import WordRise from '../components/WordRise.jsx';
+import { asset } from '../config.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // Page "Le service" : le deroulement d'une intervention, les conditions
@@ -170,12 +173,14 @@ export default function Service() {
 
   return (
     <div className="page">
-      <section className="eq-hero">
-        <div className="container">
-          <div className="eq-hero-head">
-            <span className="eyebrow">{s.eyebrow}</span>
-            <h1 className="display">{s.title}</h1>
-            <p className="lead">{s.lead}</p>
+      {/* En-tete : carte photo des terrasses du Lavaux, comme l'accueil */}
+      <section className="container">
+        <div className="page-hero">
+          <img className="page-hero-img" src={asset('/images/vignes-pente.jpg')} alt={s.heroAlt} fetchpriority="high" />
+          <div className="page-hero-body">
+            <Kicker tone="light">{s.eyebrow}</Kicker>
+            <h1 className="page-hero-title"><WordRise text={s.title} delay={120} /></h1>
+            <p className="page-hero-lead">{s.lead}</p>
           </div>
         </div>
       </section>

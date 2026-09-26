@@ -59,6 +59,17 @@ export const equipVideos = {
   camera: equip('camera', 1200, 730, 'av01.0.05M.08', 'avc1.64001f', 1000000),
 };
 
+// Deux extraits courts du vol FPV au-dessus d'Epesses (Lavaux), filme par le
+// proprietaire : section "Le vignoble vu du ciel" de l'accueil. 1280 x 720,
+// H.264, 8 s en boucle (fondu entre la fin et le debut).
+const film = (name, bitrate) => [
+  { src: asset(`/videos/${name}.mp4`), type: 'video/mp4; codecs="avc1.640028"', width: 1280, height: 720, framerate: 30, bitrate },
+];
+export const films = {
+  large: film('film-lavaux-large', 3400000),
+  terrasses: film('film-lavaux-terrasses', 2650000),
+};
+
 // Chemins des images. Si une image manque, un repli sobre s'affiche (voir CSS).
 export const images = {
   hero: asset('/images/hero-drone.jpg'),

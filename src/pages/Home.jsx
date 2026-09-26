@@ -1,38 +1,83 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
-import Img from '../components/Img.jsx';
 import CountUp from '../components/CountUp.jsx';
 import BgVideo from '../components/BgVideo.jsx';
 import FaqSchema from '../components/FaqSchema.jsx';
+import Kicker from '../components/Kicker.jsx';
+import WordRise from '../components/WordRise.jsx';
+import ScrollWords from '../components/ScrollWords.jsx';
+import SwissClock from '../components/SwissClock.jsx';
+import BtnArrow from '../components/BtnArrow.jsx';
+import { useParallax } from '../components/useParallax.js';
 import { asset } from '../config.js';
-import { images, videos } from '../content.js';
+import { images, videos, films } from '../content.js';
 import { useI18n } from '../i18n/index.jsx';
+
+// Page d'accueil, d'apres la maquette "Refonte site Lavaux et T50" : cartes
+// arrondies, sections numerotees, accent vert citron. Les textes viennent de
+// src/i18n (verifies) ; visuels du drone : DJI ; Lavaux : proprietaire et
+// photo CC BY-SA (credit dans les mentions legales).
+const img = (p) => asset(`/images/${p}`);
+const pad = (i) => String(i + 1).padStart(2, '0');
 
 function Hero() {
   const { t } = useI18n();
   const h = t.home.hero;
   return (
-    <section className="hero">
-      <div className="hero-media">
-        <img src={asset('/images/hero-poster.jpg')} alt={h.alt} />
-        <BgVideo className="hero-video" variants={videos.hero} poster={asset('/images/hero-poster.jpg')} />
+    <section className="hm-hero" aria-labelledby="hm-title">
+      <div className="hm-hero-meta">
+        <p className="hm-hero-place"><strong>{h.place}</strong><SwissClock label={h.clockLabel} /></p>
+        <p className="hm-hero-tagline">{h.eyebrow}</p>
       </div>
-      <div className="container hero-inner">
-        <span className="eyebrow" style={{ color: '#cfe0b8' }}>{h.eyebrow}</span>
-        <h1 className="display">{h.title}</h1>
-        <p className="lead">{h.lead}</p>
-        <div className="hero-actions">
-          <Link to="/estimation" className="btn btn-primary">{t.common.requestEstimate}</Link>
-          <a href="#comment" className="btn btn-light">{h.how}</a>
+
+      <div className="hm-hero-card">
+        <div className="hm-hero-media">
+          <img src={img('hero-poster.jpg')} alt={h.alt} fetchpriority="high" />
+          <BgVideo className="hm-hero-video" variants={videos.hero} poster={img('hero-poster.jpg')} toggle />
         </div>
-        <p className="hero-note">{h.note}</p>
+
+        <div className="hm-hero-body">
+          <div className="hm-hero-top">
+            <ul className="hm-chips" aria-label={h.eyebrow}>
+              {h.chips.map((c, i) => <li key={c} style={{ '--i': i }}>{c}</li>)}
+            </ul>
+            <p className="hm-hero-flow">
+              <span>{h.flow[0]}</span>
+              <span className="line" aria-hidden="true" />
+              <span>{h.flow[1]}</span>
+            </p>
+          </div>
+
+          <div className="hm-hero-mid">
+            <p className="hm-hero-tank">
+              <span className="big"><CountUp value="40" duration={1600} /><span className="unit">L</span></span>
+              <span className="lbl">{t.home.stats[0].label}</span>
+            </p>
+            <p className="hm-hero-lead">{h.lead}</p>
+          </div>
+
+          <div className="hm-hero-bottom">
+            <Link to="/equipement" className="hm-hero-drone">
+              <span className="hm-hero-drone-media">
+                <img src={img('equip/t50-deplie.jpg')} alt="" />
+              </span>
+              <span className="hm-hero-drone-text">
+                <span className="ic" aria-hidden="true"><Icon name="arrowUpRight" size={14} stroke={2.2} /></span>
+                <span>{h.note}</span>
+              </span>
+            </Link>
+            <div className="hm-hero-main">
+              <h1 id="hm-title" className="hm-hero-title"><WordRise text={h.title} delay={250} /></h1>
+              <div className="hm-hero-actions">
+                <Link to="/estimation" className="btn btn-primary btn-arrow">{t.common.requestEstimate}<BtnArrow /></Link>
+                <a href="#comment" className="btn btn-glass">{h.how}</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <a href="#comment" className="scroll-cue" aria-label={h.scrollAria}>
-        <span>{h.discover}</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
-      </a>
     </section>
   );
 }
@@ -40,18 +85,14 @@ function Hero() {
 function Stats() {
   const { t } = useI18n();
   return (
-    <section className="section-sm">
-      <div className="container">
-        <Reveal className="stats">
-          {t.home.stats.map((s, i) => (
-            <div className="stat" key={i}>
-              <div className="num"><CountUp value={s.num} /></div>
-              <div className="label">{s.label}</div>
-            </div>
-          ))}
+    <dl className="hm-stats">
+      {t.home.stats.map((s, i) => (
+        <Reveal className="hm-stat" key={s.label} delay={i * 90}>
+          <dt>{s.label}</dt>
+          <dd><CountUp value={s.num} /></dd>
         </Reveal>
-      </div>
-    </section>
+      ))}
+    </dl>
   );
 }
 
@@ -59,86 +100,144 @@ function WhyDrone() {
   const { t } = useI18n();
   const w = t.home.why;
   return (
-    <section className="section">
-      <div className="container">
-        <div className="split">
-          <Reveal>
-            <span className="eyebrow">{w.eyebrow}</span>
-            <h2 className="h2">{w.title}</h2>
-            <p className="lead mt-2">{w.lead}</p>
-            <p className="mt-2 muted">{w.text}</p>
-            <div className="mt-3">
-              <Link to="/estimation" className="btn btn-dark">{w.cta}</Link>
-            </div>
-          </Reveal>
+    <section className="hm-why">
+      <div className="hm-why-side">
+        <Reveal><Kicker no="01">{w.eyebrow}</Kicker></Reveal>
+        <Reveal as="ul" className="hm-tags" delay={120}>
+          {w.tags.map((tag, i) => <li key={tag} className={i === 0 ? 'on' : ''}>{tag}</li>)}
+        </Reveal>
+      </div>
+      <div className="hm-why-main">
+        <div className="hm-statement">
+          <h2>{w.title}</h2>{' '}
+          <ScrollWords text={w.lead} />
+        </div>
+        <div className="hm-why-cols">
+          <Reveal as="p">{w.text}</Reveal>
           <Reveal delay={120}>
-            <div className="split-media">
-              <Img src={images.vignes} alt={w.alt} style={{ width: '100%', height: '100%' }} />
-            </div>
+            <Link to="/estimation" className="link-arrow">{w.cta}<Icon name="arrow" size={16} stroke={2} /></Link>
           </Reveal>
         </div>
       </div>
     </section>
   );
 }
+
+const ADV_IMAGES = ['t50-rows.jpg', 'hero-drone.jpg', 'equip/t50-radar.jpg'];
 
 function Advantages() {
   const { t } = useI18n();
   const a = t.home.advantages;
+  const [focus, other] = [a.items[3], a.items[4]];
   return (
-    <section className="section bg-soft">
-      <div className="container">
-        <div className="section-head center">
-          <Reveal>
-            <span className="eyebrow">{a.eyebrow}</span>
-            <h2 className="h2">{a.title}</h2>
+    <section className="hm-adv" aria-labelledby="hm-adv-title">
+      <div className="hm-head">
+        <Reveal as="h2" className="hm-h2" id="hm-adv-title">{a.title}</Reveal>
+        <Reveal as="p" className="hm-head-note" delay={100}>{a.intro}</Reveal>
+      </div>
+      <div className="hm-adv-grid">
+        {a.items.slice(0, 3).map((item, i) => (
+          <Reveal as="article" className="hm-adv-card" key={item.title} delay={i * 110}>
+            <div className="hm-media"><img src={img(ADV_IMAGES[i])} alt="" loading="lazy" /></div>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
           </Reveal>
-        </div>
-        <div className="grid grid-3 grid-cards">
-          {a.items.map((item, i) => (
-            <Reveal key={i} delay={i * 60}>
-              <div className="card">
-                <div className="icon"><Icon name={item.icon} size={24} /></div>
-                <h3 className="h3">{item.title}</h3>
-                <p>{item.text}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        ))}
+      </div>
+      <div className="hm-feature-grid">
+        <Reveal as="article" className="hm-feature is-lime">
+          <div className="hm-feature-top">
+            <h3>{focus.title}</h3>
+            <span className="round" aria-hidden="true"><Icon name="target" size={18} /></span>
+          </div>
+          <p>{focus.text}</p>
+        </Reveal>
+        <Reveal as="article" className="hm-feature" delay={110}>
+          <div className="hm-feature-top">
+            <h3>{other.title}</h3>
+            <span className="round" aria-hidden="true"><Icon name="plus" size={18} stroke={2.2} /></span>
+          </div>
+          <p>{other.text}</p>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-function HowItWorks() {
+// Illustrations des etapes (visuels DJI : carte de parcelle, pulverisation,
+// itineraire). Decoratives : le titre de l'etape est juste a cote.
+const STEP_IMAGES = ['equip/carte-limite.webp', 'equip/spray.jpg', 'equip/carte-zone.webp', 'equip/parcelles.jpg'];
+
+function Steps() {
   const { t } = useI18n();
   const h = t.home.how;
+  const n = h.steps.length;
+  const [step, setStep] = useState(0);
+  const tabs = useRef([]);
+  const cur = h.steps[step];
+
+  const onKey = (e, i) => {
+    let k = null;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') k = (i + 1) % n;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') k = (i - 1 + n) % n;
+    if (e.key === 'Home') k = 0;
+    if (e.key === 'End') k = n - 1;
+    if (k === null) return;
+    e.preventDefault();
+    setStep(k);
+    tabs.current[k]?.focus();
+  };
+
   return (
-    <section className="section" id="comment">
-      <div className="container">
-        <div className="section-head center">
-          <Reveal>
-            <span className="eyebrow">{h.eyebrow}</span>
-            <h2 className="h2">{h.title}</h2>
-          </Reveal>
-        </div>
-        <div className="steps grid-cards">
+    <section className="hm-steps" id="comment" aria-labelledby="hm-steps-title">
+      <div className="hm-steps-side">
+        <Reveal>
+          <Kicker no="02">{h.eyebrow}</Kicker>
+          <h2 className="hm-h2" id="hm-steps-title">{h.title}</h2>
+        </Reveal>
+        <div className="hm-steps-tabs" role="tablist" aria-label={h.listLabel} aria-orientation="vertical">
           {h.steps.map((s, i) => (
-            <Reveal key={i} delay={i * 80}>
-              <div className="step">
-                <div>
-                  {/* Barre remplie a 1/4, 2/4... : on voit ou l'on en est */}
-                  <div className="step-bar" style={{ '--progress': (i + 1) / h.steps.length }} aria-hidden="true" />
-                  <span className="no">{s.no}</span>
-                </div>
-                <h3 className="h3">{s.title}</h3>
-                <p>{s.text}</p>
-              </div>
-            </Reveal>
+            <button
+              key={s.title}
+              ref={(el) => { tabs.current[i] = el; }}
+              type="button"
+              role="tab"
+              id={`hm-step-${i}`}
+              aria-selected={i === step}
+              aria-controls="hm-step-panel"
+              tabIndex={i === step ? 0 : -1}
+              className={`hm-step-tab${i === step ? ' on' : ''}`}
+              onClick={() => setStep(i)}
+              onKeyDown={(e) => onKey(e, i)}
+            >
+              <span className="n">{pad(i)}</span>
+              <span className="t">{s.title}</span>
+              <span className="dot" aria-hidden="true" />
+            </button>
           ))}
         </div>
-        <div className="text-center mt-4">
-          <Link to="/estimation" className="btn btn-primary">{h.cta}</Link>
+      </div>
+
+      <div className="hm-steps-panel" role="tabpanel" id="hm-step-panel" aria-labelledby={`hm-step-${step}`}>
+        <div className="hm-steps-img">
+          {STEP_IMAGES.map((src, i) => (
+            <img key={src} src={img(src)} alt="" loading="lazy" className={i === step ? 'on' : ''} />
+          ))}
+        </div>
+        <div className="hm-steps-text" key={step}>
+          <h3>{cur.title}</h3>
+          <p>{cur.text}</p>
+        </div>
+        <div className="hm-steps-foot">
+          <p className="hm-steps-count" aria-hidden="true">
+            <span className="big" key={`n-${step}`}>{pad(step)}</span>
+            <span className="of">/{pad(n - 1)}</span>
+          </p>
+          <span className="hm-steps-bar" aria-hidden="true"><span style={{ '--p': (step + 1) / n }} /></span>
+          <div className="hm-steps-acts">
+            <button type="button" className="btn btn-outline btn-sm" onClick={() => setStep((step + 1) % n)}>{h.next}</button>
+            <Link to="/estimation" className="btn btn-dark btn-sm">{h.cta}<Icon name="arrow" size={15} stroke={2} /></Link>
+          </div>
         </div>
       </div>
     </section>
@@ -148,51 +247,37 @@ function HowItWorks() {
 function DroneSection() {
   const { t } = useI18n();
   const d = t.home.drone;
+  const giant = useRef(null);
+  const drone = useRef(null);
+  useParallax(giant, 0.1);
+  useParallax(drone, -0.06);
   return (
-    <section className="section bg-ink">
-      <div className="container">
-        <div className="split reverse">
-          <Reveal>
-            <div className="drone-float">
-              <img src={asset('/images/drone-cutout.png')} alt={d.alt} loading="lazy"
-                onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-            </div>
-          </Reveal>
-          <Reveal delay={120}>
-            <span className="eyebrow" style={{ color: '#cfe0b8' }}>{d.eyebrow}</span>
-            <h2 className="h2">{d.title}</h2>
-            <p className="lead mt-2" style={{ color: 'rgba(255,255,255,0.85)' }}>{d.lead}</p>
-            <ul className="spec-list">
-              {d.specs.map((s, i) => (
-                <li key={i}>
-                  <span className="k" style={{ color: 'rgba(255,255,255,0.6)' }}>{s.k}</span>
-                  <span className="v" style={{ color: '#fff' }}>{s.v}</span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
+    <section className="hm-drone" id="drone" aria-labelledby="hm-drone-title">
+      <Reveal className="hm-drone-visual">
+        <span className="giant" ref={giant} aria-hidden="true">T50</span>
+        <img className="hm-drone-img" ref={drone} src={img('drone-cutout.png')} alt={d.alt} loading="lazy" />
+        <ul className="hm-drone-chips">{d.chips.map((c) => <li key={c}>{c}</li>)}</ul>
+        <p className="hm-stat-card">
+          <span className="row">
+            <span className="big">40<span className="unit">L</span></span>
+            <span className="ic" aria-hidden="true"><Icon name="arrowUpRight" size={13} stroke={2.2} /></span>
+          </span>
+          <span className="lbl">{d.tankLabel}</span>
+        </p>
+      </Reveal>
+      <Reveal className="hm-drone-info" delay={120}>
+        <div>
+          <Kicker no="03" tone="lime">{d.eyebrow}</Kicker>
+          <h2 className="hm-h2" id="hm-drone-title">{d.title}</h2>
+          <p className="hm-drone-lead">{d.lead}</p>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function CinematicBand() {
-  const { t } = useI18n();
-  const c = t.home.cine;
-  return (
-    <section className="cine-band">
-      <div className="cine-media" aria-hidden="true">
-        <img src={asset('/images/vignoble-poster.jpg')} alt="" />
-        <BgVideo className="cine-video" variants={videos.vignoble} poster={asset('/images/vignoble-poster.jpg')} />
-      </div>
-      <div className="container cine-inner">
-        <Reveal>
-          <span className="eyebrow" style={{ color: '#cfe0b8' }}>{c.eyebrow}</span>
-          <h2 className="h2">{c.title}</h2>
-          <p className="lead mt-2">{c.lead}</p>
-        </Reveal>
-      </div>
+        <dl className="hm-specs">
+          {d.specs.map((s) => (
+            <div key={s.k}><dt>{s.k}</dt><dd>{s.v}</dd></div>
+          ))}
+        </dl>
+        <Link to="/equipement" className="btn btn-primary btn-arrow">{d.cta}<BtnArrow /></Link>
+      </Reveal>
     </section>
   );
 }
@@ -200,127 +285,116 @@ function CinematicBand() {
 function LavauxBanner() {
   const { t } = useI18n();
   const l = t.home.lavaux;
+  const photo = useRef(null);
+  useParallax(photo, 0.08);
   return (
-    <section className="section">
-      <div className="container">
-        <Reveal>
-          <div className="banner">
-            <div className="banner-media">
-              <img
-                src={images.lavaux}
-                alt={l.alt}
-                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-              />
-            </div>
-            <div className="banner-inner">
-              <span className="eyebrow" style={{ color: '#cfe0b8' }}>{l.eyebrow}</span>
-              <h2 className="h2">{l.title}</h2>
-              <p>{l.text}</p>
-              <div className="mt-3">
-                <Link to="/estimation" className="btn btn-light">{t.common.requestEstimate}</Link>
-              </div>
-            </div>
-          </div>
-        </Reveal>
+    <section className="hm-lavaux" aria-labelledby="hm-lavaux-title">
+      <div className="hm-lavaux-media">
+        <img ref={photo} src={images.lavaux} alt={l.alt} loading="lazy" />
+      </div>
+      <div className="hm-lavaux-body">
+        <Kicker no="04" tone="light">{l.eyebrow}</Kicker>
+        <div className="hm-lavaux-row">
+          <Reveal className="hm-lavaux-text">
+            <h2 className="hm-h2 xl" id="hm-lavaux-title">{l.title}</h2>
+            <p>{l.text}</p>
+          </Reveal>
+          <Reveal delay={180}>
+            <Link to="/estimation" className="hm-circle">
+              <span>{t.common.requestEstimate}</span>
+              <Icon name="arrow" size={16} stroke={2} />
+            </Link>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
 }
 
-function FaqItem({ item, open, onToggle }) {
+const FILMS = [
+  { key: 'large', variants: films.large, poster: 'film-lavaux-large.jpg' },
+  { key: 'terrasses', variants: films.terrasses, poster: 'film-lavaux-terrasses.jpg' },
+];
+
+function Films() {
+  const { t } = useI18n();
+  const c = t.home.cine;
   return (
-    <div className={`faq-item${open ? ' open' : ''}`}>
-      <button className="faq-q" onClick={onToggle} aria-expanded={open}>
-        {item.q}
-        <span className="chev" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-        </span>
-      </button>
-      <div className="faq-a">
-        <div className="faq-a-inner">
-          {item.a}
-          {item.link && (
-            <Link className="faq-link" to={item.link.to}>{item.link.label}</Link>
-          )}
-        </div>
+    <section className="hm-films" aria-labelledby="hm-films-title">
+      <div className="hm-head">
+        <Reveal>
+          <Kicker no="05">{c.eyebrow}</Kicker>
+          <h2 className="hm-h2" id="hm-films-title">{c.title}</h2>
+        </Reveal>
+        <Reveal as="p" className="hm-head-note" delay={100}>{c.lead}</Reveal>
       </div>
-    </div>
+      <div className="hm-films-grid">
+        {FILMS.map((f, i) => (
+          <Reveal as="figure" className={`hm-film${i === 0 ? ' is-wide' : ''}`} key={f.key} delay={i * 120}>
+            <img src={img(f.poster)} alt={c.films[i].alt} loading="lazy" />
+            <BgVideo className="hm-film-video" variants={f.variants} poster={img(f.poster)} toggle onDemand />
+            <figcaption>{c.films[i].label}</figcaption>
+          </Reveal>
+        ))}
+      </div>
+    </section>
   );
 }
 
 function Faq() {
   const { t } = useI18n();
   const f = t.home.faq;
-  // Categories fermees au depart : le visiteur n'ouvre que ce qui l'interesse.
-  // Plusieurs categories peuvent etre ouvertes ensemble (rien ne saute sous ses
-  // yeux) ; une seule reponse a la fois, reperee par "categorie.question".
-  const [openCats, setOpenCats] = useState(() => new Set());
-  const [open, setOpen] = useState('');
-
-  function toggleCat(g) {
-    setOpenCats((prev) => {
-      const next = new Set(prev);
-      if (next.has(g)) next.delete(g); else next.add(g);
-      return next;
-    });
-  }
+  const [cat, setCat] = useState(0);
+  const [open, setOpen] = useState(0);
+  const group = f.groups[cat];
 
   return (
-    <section className="section" id="faq">
-      <div className="container">
-        <div className="section-head center">
-          <Reveal>
-            <span className="eyebrow">{f.eyebrow}</span>
-            <h2 className="h2">{f.title}</h2>
-          </Reveal>
-        </div>
-        <Reveal className="faq-cats">
-          {f.groups.map((group, g) => {
-            const expanded = openCats.has(g);
-            const panelId = `faq-cat-${g}`;
-            return (
-              <div className={`faq-cat${expanded ? ' open' : ''}`} key={group.title}>
-                <h3 className="faq-cat-heading">
-                  <button
-                    type="button"
-                    className="faq-cat-toggle"
-                    aria-expanded={expanded}
-                    aria-controls={panelId}
-                    onClick={() => toggleCat(g)}
-                  >
-                    <span className="faq-cat-icon" aria-hidden="true"><Icon name={group.icon} size={20} /></span>
-                    <span className="faq-cat-title">{group.title}</span>
-                    <span className="faq-cat-count">{f.count(group.items.length)}</span>
-                    <span className="faq-cat-chev" aria-hidden="true"><Icon name="chevron" size={18} stroke={2.2} /></span>
-                  </button>
-                </h3>
-                <div className="faq-cat-panel" id={panelId}>
-                  <div className="faq">
-                    {group.items.map((item, i) => {
-                      const key = `${g}.${i}`;
-                      return (
-                        <FaqItem
-                          key={key}
-                          item={item}
-                          open={open === key}
-                          onToggle={() => setOpen(open === key ? '' : key)}
-                        />
-                      );
-                    })}
-                  </div>
+    <section className="hm-faq" id="faq" aria-labelledby="hm-faq-title">
+      <div className="hm-faq-side">
+        <Reveal>
+          <Kicker no="06">{f.eyebrow}</Kicker>
+          <h2 className="hm-h2" id="hm-faq-title">{f.title}</h2>
+        </Reveal>
+        <Reveal className="hm-faq-cats" role="group" aria-label={f.categoriesLabel} delay={100}>
+          {f.groups.map((g, i) => (
+            <button
+              key={g.title}
+              type="button"
+              className={`pill${i === cat ? ' on' : ''}`}
+              aria-pressed={i === cat}
+              onClick={() => { setCat(i); setOpen(0); }}
+            >
+              {g.title}<span className="count">{g.items.length}</span>
+            </button>
+          ))}
+        </Reveal>
+        <Reveal as="p" className="hm-faq-more" delay={160}>
+          {f.moreTitle} {f.moreText}{' '}
+          <Link to="/contact" className="link-u">{f.moreCta}</Link>
+        </Reveal>
+      </div>
+
+      <div className="hm-faq-list" key={cat}>
+        {group.items.map((item, i) => {
+          const id = `faq-${cat}-${i}`;
+          const isOpen = open === i;
+          return (
+            <div className={`hm-qa${isOpen ? ' open' : ''}`} key={item.q} style={{ '--i': i }}>
+              <h3>
+                <button type="button" id={`${id}-q`} aria-expanded={isOpen} aria-controls={id} onClick={() => setOpen(isOpen ? -1 : i)}>
+                  <span>{item.q}</span>
+                  <span className="ic" aria-hidden="true"><Icon name="plus" size={16} stroke={2.2} /></span>
+                </button>
+              </h3>
+              <div className="hm-qa-a" id={id} role="region" aria-labelledby={`${id}-q`}>
+                <div className="hm-qa-in">
+                  <p>{item.a}</p>
+                  {item.link && <Link className="link-u" to={item.link.to}>{item.link.label}</Link>}
                 </div>
               </div>
-            );
-          })}
-        </Reveal>
-        <Reveal className="faq-more">
-          <span className="faq-more-icon" aria-hidden="true"><Icon name="mail" size={22} /></span>
-          <div className="faq-more-text">
-            <p className="faq-more-title">{f.moreTitle}</p>
-            <p className="faq-more-sub">{f.moreText}</p>
-          </div>
-          <Link to="/contact" className="btn btn-primary btn-sm">{f.moreCta}</Link>
-        </Reveal>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -329,34 +403,39 @@ function Faq() {
 function FinalCta() {
   const { t } = useI18n();
   const c = t.home.cta;
+  const photo = useRef(null);
+  useParallax(photo, 0.06);
   return (
-    <section className="section">
-      <div className="container">
-        <Reveal className="cta-band">
-          <span className="eyebrow">{c.eyebrow}</span>
-          <h2 className="h1">{c.title}</h2>
-          <p className="lead mt-2" style={{ maxWidth: '48ch', margin: '1rem auto 0' }}>{c.lead}</p>
-          <Link to="/estimation" className="btn btn-primary">{t.common.requestEstimate}</Link>
-        </Reveal>
+    <section className="hm-cta" aria-labelledby="hm-cta-title">
+      <div className="hm-cta-media">
+        <img ref={photo} src={img('hero-poster.jpg')} alt="" loading="lazy" />
       </div>
+      <Reveal className="hm-cta-body">
+        <Kicker tone="light">{c.eyebrow}</Kicker>
+        <h2 className="hm-h2 xl" id="hm-cta-title">{c.title}</h2>
+        <p>{c.lead}</p>
+        <Link to="/estimation" className="btn btn-primary btn-arrow">{t.common.requestEstimate}<BtnArrow /></Link>
+      </Reveal>
     </section>
   );
 }
 
 export default function Home() {
   return (
-    <div>
+    <div className="page home">
       <FaqSchema />
-      <Hero />
-      <Stats />
-      <WhyDrone />
-      <Advantages />
-      <HowItWorks />
-      <DroneSection />
-      <CinematicBand />
-      <LavauxBanner />
-      <Faq />
-      <FinalCta />
+      <div className="container home-flow">
+        <Hero />
+        <Stats />
+        <WhyDrone />
+        <Advantages />
+        <Steps />
+        <DroneSection />
+        <LavauxBanner />
+        <Films />
+        <Faq />
+        <FinalCta />
+      </div>
     </div>
   );
 }

@@ -48,6 +48,8 @@ export default {
     skip: 'Aller au contenu',
     loading: 'Chargement...',
     requestEstimate: 'Demander une estimation',
+    playVideo: 'Lire la vidéo',
+    pauseVideo: 'Mettre la vidéo en pause',
     backHome: 'Retour à l\'accueil',
     call: 'Appeler',
     createAccount: 'Créer un compte',
@@ -107,6 +109,11 @@ export default {
       note: 'Drone retenu : DJI Agras T50 - réservoir de pulvérisation de 40 litres.',
       scrollAria: 'Faire défiler vers le bas',
       discover: 'Découvrir',
+      place: 'Canton de Vaud',
+      clockLabel: 'Heure en Suisse',
+      chips: ['Vignes en pente', 'Terrasses', 'DJI Agras T50'],
+      flow: ['Estimation gratuite', 'Devis détaillé'],
+      droneLink: 'Voir le drone DJI Agras T50',
     },
     stats: [
       { num: '40 L', label: 'Réservoir de pulvérisation' },
@@ -120,9 +127,11 @@ export default {
       lead: 'Dans le vignoble suisse, beaucoup de parcelles sont en forte pente ou en terrasses. Elles sont pénibles à traiter et souvent inaccessibles aux machines.',
       text: 'Le drone survole la vigne et applique le traitement depuis le ciel. Il atteint les coteaux raides sans qu\'aucun engin ne roule dans les rangs. Le sol reste intact et le travail est plus rapide.',
       cta: 'Estimer ma parcelle',
+      tags: ['Forte pente', 'Terrasses', 'Sol préservé'],
       alt: 'Vignes suisses en terrasses du Lavaux',
     },
     advantages: {
+      intro: 'Une solution complémentaire aux méthodes viticoles traditionnelles. Son intérêt dépend de la parcelle, du traitement et de la météo.',
       eyebrow: 'Les avantages',
       title: 'Pourquoi utiliser un drone ?',
       items: [
@@ -134,6 +143,8 @@ export default {
       ],
     },
     how: {
+      next: 'Étape suivante',
+      listLabel: 'Les quatre étapes de la demande',
       eyebrow: 'Comment ça marche',
       title: 'Votre estimation en quatre étapes.',
       cta: 'Commencer ma demande',
@@ -145,6 +156,9 @@ export default {
       ],
     },
     drone: {
+      chips: ['Équipement', 'Images : DJI'],
+      tankLabel: 'Réservoir de pulvérisation',
+      cta: 'Voir l\'équipement',
       eyebrow: 'Notre drone',
       title: 'Le DJI Agras T50, conçu pour l\'agriculture.',
       lead: 'Ce grand drone d\'épandage embarque un réservoir de pulvérisation de 40 litres. Il applique le traitement depuis le ciel, y compris sur les parcelles en pente.',
@@ -157,6 +171,10 @@ export default {
       ],
     },
     cine: {
+      films: [
+        { label: 'Lavaux, vue d\'ensemble', alt: 'Vol en drone au-dessus des terrasses du Lavaux, le lac Léman en contrebas' },
+        { label: 'Terrasses en gros plan', alt: 'Vol en drone le long des rangs de vigne et des murs de pierre du Lavaux' },
+      ],
       eyebrow: 'En images',
       title: 'Le vignoble vu du ciel.',
       lead: 'Des terrasses du Lavaux au bord du lac Léman, filmées par drone. Les paysages exigeants pour lesquels ce service est pensé.',
@@ -168,6 +186,7 @@ export default {
       text: 'Nous connaissons les terrasses en pente qui descendent vers le lac Léman. Notre service s\'adapte à ces parcelles exigeantes, typiques de la région.',
     },
     faq: {
+      categoriesLabel: 'Catégories de questions',
       eyebrow: 'Questions fréquentes',
       title: 'Vos questions, nos réponses.',
       groups: [
@@ -217,6 +236,8 @@ export default {
   // Page Equipement. Donnees publiees par DJI (ag.dji.com, page T50 en
   // francais), reformulees simplement. Rien d'autre n'est avance.
   equipment: {
+    chips: ['Équipement', 'Drone agricole d\'épandage'],
+    creditShort: 'Images et vidéos : DJI',
     eyebrow: 'Équipement',
     title: 'DJI Agras T50',
     lead: 'Le drone retenu pour le traitement de vos vignes. Stable, précis et à l\'aise dans les pentes.',
@@ -229,11 +250,15 @@ export default {
     ],
     subnavLabel: 'Sections de la page',
     subnav: [
+      { id: 't50', label: 'DJI Agras T50' },
       { id: 'drone', label: 'Le drone' },
       { id: 'pulverisation', label: 'Pulvérisation & préparation' },
       { id: 'cartographie', label: 'GPS & cartographie' },
     ],
     drone: {
+      chips: ['8 hélices', '4 bras'],
+      tankLabel: 'Stable en pleine charge',
+      transport: 'Transport',
       eyebrow: 'Le drone',
       title: 'Stable, même avec un réservoir plein.',
       text: 'Huit hélices réparties sur quatre bras. Le drone reste stable en pleine charge, y compris au-dessus des coteaux.',
@@ -246,6 +271,7 @@ export default {
       ],
     },
     spray: {
+      chips: ['16 L/min · 2 gicleurs', '24 L/min · kit 4 gicleurs'],
       eyebrow: 'Système de pulvérisation',
       title: 'Des gouttelettes fines et régulières.',
       text: 'Deux gicleurs transforment le produit en fines gouttelettes, jusqu\'à 16 litres par minute. Un kit de quatre gicleurs porte le débit à 24.',
@@ -268,18 +294,20 @@ export default {
       ],
     },
     map: {
+      videoCaption: 'Passages réguliers, suivis tout seul',
+      toggleLabel: 'Type d\'itinéraire',
       eyebrow: 'GPS & cartographie',
       title: 'Un vol planifié, parcelle par parcelle.',
       text: 'Chaque parcelle est relevée, puis découpée en passages réguliers. Le drone suit ensuite cet itinéraire tout seul, d\'une simple pression.',
       alt: 'Itinéraire de vol tracé rang par rang sur une parcelle en pente',
       cards: [
-        { key: 'carte-zone', v: '13 ha en 10 min', title: 'Itinéraire de zone', text: 'Le drone relève toute la parcelle et repère lui-même ses limites et ses obstacles.', alt: 'Carte d\'une parcelle avec son itinéraire de zone' },
-        { key: 'carte-limite', v: '13 ha en 3 min', title: 'Itinéraire de limite', text: 'Un relevé plus rapide du contour, pour les parcelles sans obstacle au milieu.', alt: 'Carte d\'une parcelle avec son itinéraire de limite' },
+        { key: 'carte-zone', v: '13 ha en 10 min', big: '13 ha', small: 'en 10 min', title: 'Itinéraire de zone', text: 'Le drone relève toute la parcelle et repère lui-même ses limites et ses obstacles.', alt: 'Carte d\'une parcelle avec son itinéraire de zone' },
+        { key: 'carte-limite', v: '13 ha en 3 min', big: '13 ha', small: 'en 3 min', title: 'Itinéraire de limite', text: 'Un relevé plus rapide du contour, pour les parcelles sans obstacle au milieu.', alt: 'Carte d\'une parcelle avec son itinéraire de limite' },
         { key: 'camera', v: 'Caméra FPV', title: 'Caméra à nacelle', text: 'Une caméra filme la parcelle en direct pendant toute l\'intervention.', alt: 'Caméra à nacelle sous le DJI Agras T50' },
       ],
       note: 'Temps de relevé mesurés par DJI dans des conditions de test. Ils varient selon le terrain et les réglages.',
     },
-    note: 'Caractéristiques publiées par DJI, en langage simplifié. Elles varient selon le terrain et la météo. À confirmer avant publication.',
+    note: 'Caractéristiques publiées par DJI, en langage simplifié. Elles varient selon le terrain et la météo.',
     credit: 'Images et vidéos du drone : DJI.',
     ctaEyebrow: 'Sans engagement',
     ctaTitle: 'Un drone pensé pour vos parcelles.',
@@ -317,6 +345,7 @@ export default {
   },
 
   service: {
+    heroAlt: 'Vignes en terrasses du Lavaux au-dessus du lac Léman',
     eyebrow: 'Le service',
     title: 'Comment ça fonctionne ?',
     lead: 'De l\'analyse de la parcelle au rapport d\'intervention, voici le déroulement d\'un traitement de vigne par drone.',
