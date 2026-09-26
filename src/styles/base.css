@@ -447,7 +447,8 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 .reveal.reveal-armed.reveal-in { opacity: 1; transform: none; }
 
 /* Titre dont les mots montent un a un (WordRise) */
-.wr { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+/* Marge basse du masque : garde entieres les lettres qui descendent (g, p, ç). */
+.wr { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.18em; margin-bottom: -0.18em; }
 .wr-in { display: inline-block; animation: wordUp 1s var(--ease) both; animation-delay: calc(var(--wr-delay, 0ms) + var(--i, 0) * 70ms); }
 @keyframes wordUp { from { transform: translateY(105%); } to { transform: none; } }
 
