@@ -172,7 +172,7 @@ function Mentions() {
           <a href={LINKS.ccBySa} {...extLink}>CC BY-SA 4.0</a>. Image recadrée et redimensionnée.
         </li>
         <li>Vidéo du vignoble d'Epesses : {company.responsable}.</li>
-        <li>Photos et vidéos du drone (accueil et page Équipement) : © DJI.</li>
+        <li>Photos et vidéos du drone DJI Agras T55 (accueil et page Équipement) : © DJI, <a href="https://ag.dji.com/t55" {...extLink}>ag.dji.com/t55</a>. Images réduites et converties, vidéos raccourcies ou mises en boucle, sans son.</li>
         <li>
           Fonds de carte : ©swisstopo ; ©{' '}
           <a href={LINKS.osmCopyright} {...extLink}>OpenStreetMap contributors</a> ; © Mensuration
@@ -180,11 +180,11 @@ function Mentions() {
         </li>
       </ul>
 
-      <h2 className="h3">Marques</h2>
-      <p>
-        DJI et Agras sont des marques de SZ DJI Technology Co., Ltd. Elles servent ici
-        uniquement à désigner le drone prévu. VitiAero n'est pas lié à DJI.
-      </p>
+      $1
+        DJI et AGRAS sont des marques de SZ DJI Technology Co., Ltd. Ce site est indépendant et
+        n'est ni édité ni nécessairement approuvé par DJI. Ces noms servent uniquement à
+        désigner le drone prévu.
+      $2
 
       <h2 className="h3">Responsabilité</h2>
       <p>

@@ -374,7 +374,7 @@ function PromosTab() {
 
       <div className="card">
         <h3 className="h3 mb-2">Ajouter un code</h3>
-        {error && <div className="alert alert-error">{error}</div>}
+        {error && <div className="alert alert-error" role="alert">{error}</div>}
         <form onSubmit={add}>
           <div className="field">
             <label>Code</label>
@@ -507,7 +507,7 @@ function InterventionsTab() {
 
       <div className="card">
         <h3 className="h3 mb-2">Ajouter une intervention</h3>
-        {error && <div className="alert alert-error">{error}</div>}
+        {error && <div className="alert alert-error" role="alert">{error}</div>}
         <form onSubmit={add}>
           <div className="field">
             <label htmlFor="iv-client">Client</label>

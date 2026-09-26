@@ -1,15 +1,25 @@
 /* =======================================================================
-   VitiDrone - Systeme de style (inspiration DJI : sobre, epure, premium)
+   VitiAero - Systeme de style (identite propre : sobre, epure)
    Palette neutre + un seul accent : vert vigne discret.
    ======================================================================= */
 
 /* Police fournie par le client, auto-hebergee (Inter variable) */
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter-Variable.ttf') format('truetype-variations');
+  src: url('/fonts/Inter-Variable-latin.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
+}
+/* Police de secours aux dimensions d'Inter (mesurees sur le fichier) : le texte
+   ne bouge presque pas quand Inter arrive. */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('Helvetica');
+  size-adjust: 105.76%;
+  ascent-override: 91.60%;
+  descent-override: 22.83%;
+  line-gap-override: 0%;
 }
 
 :root {
@@ -48,8 +58,8 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* Police unique fournie par le client : Inter */
-  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --serif: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font: 'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --serif: 'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --mono: 'Inter', ui-monospace, 'SFMono-Regular', monospace;
 }
 
@@ -239,7 +249,7 @@ button { font-family: inherit; cursor: pointer; }
   transition: background 0.2s, color 0.2s;
 }
 .nav a:hover { background: var(--bg-soft); color: var(--ink); }
-.nav a.active { color: var(--accent); font-weight: 600; }
+.nav a.active { color: var(--accent-dark); font-weight: 600; }
 .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
 
 .burger {
@@ -408,7 +418,8 @@ button { font-family: inherit; cursor: pointer; }
   color: #fff;
   overflow: hidden;
 }
-.hero-media { position: absolute; inset: 0; z-index: 0; }
+/* z-index auto : le bouton pause de la video passe au-dessus du texte */
+.hero-media { position: absolute; inset: 0; }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; }
 .hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 /* Mobile et mouvement reduit : on masque la video, l'image (poster) reste */
@@ -530,11 +541,15 @@ button { font-family: inherit; cursor: pointer; }
 .spec-list .k { color: var(--muted); min-width: 130px; }
 
 /* Drone en PNG detoure, flottant sur le fond vert foret */
-.about-logo { width: 210px; max-width: 62%; margin-bottom: 1.2rem; mix-blend-mode: multiply; }
+.about-logo { width: 210px; height: auto; max-width: 62%; margin-bottom: 1.2rem; mix-blend-mode: multiply; }
 .drone-float { display: grid; place-items: center; padding: 1rem 0; }
 .drone-float img { width: 100%; max-width: 580px; filter: drop-shadow(0 26px 40px rgba(0, 0, 0, 0.45)); animation: floaty 6s var(--ease) infinite; }
 @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @media (prefers-reduced-motion: reduce) { .drone-float img { animation: none; } }
+figure.drone-float { margin: 0; }
+/* Photo sur fond noir : le noir se fond dans le fond sombre de la section */
+.drone-float img.on-dark { mix-blend-mode: lighten; filter: none; }
+.drone-caption { margin-top: 0.6rem; font-size: 0.8rem; color: rgba(255, 255, 255, 0.72); text-align: center; }
 .spec-list .v { font-weight: 600; }
 
 /* ------------------------------ Banniere ------------------------------ */
@@ -593,7 +608,7 @@ button { font-family: inherit; cursor: pointer; }
 .footer a { color: #cfcdc4; }
 .footer a:hover { color: #fff; }
 .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; }
-.footer h4 { color: #fff; font-size: 0.95rem; margin-bottom: 1rem; letter-spacing: 0.02em; }
+.footer h2 { color: #fff; font-size: 0.95rem; margin-bottom: 1rem; letter-spacing: 0.02em; }
 .footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; font-size: 0.95rem; }
 .footer .brand { color: #fff; margin-bottom: 1rem; }
 .footer-bottom { margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.85rem; color: #97958c; }
@@ -694,7 +709,7 @@ button { font-family: inherit; cursor: pointer; }
 .textarea { min-height: 120px; resize: vertical; }
 .field .hint { font-size: 0.82rem; color: var(--muted); margin-top: 0.35rem; }
 .consent { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.9rem; color: var(--ink-soft); cursor: pointer; line-height: 1.4; }
-.consent input { margin-top: 0.15rem; width: 17px; height: 17px; accent-color: var(--accent); flex: none; }
+.consent input { margin-top: 0.05rem; width: 20px; height: 20px; accent-color: var(--accent); flex: none; }
 .consent a { color: var(--accent); font-weight: 600; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
@@ -860,7 +875,7 @@ button { font-family: inherit; cursor: pointer; }
   border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
   padding: 18px; position: sticky; top: calc(var(--header-h) + 16px);
 }
-.map-panel h3 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+.map-panel h2 { font-size: 1.05rem; margin-bottom: 0.4rem; }
 .map-tools { display: grid; gap: 0.55rem; margin: 1rem 0; }
 .map-tools .btn { justify-content: flex-start; }
 
@@ -969,8 +984,10 @@ button { font-family: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .map-tip, .map-chip, .btn.pulse { animation: none; }
 }
-/* Attribution masquee a la demande (drapeau Leaflet + credit swisstopo) */
-.leaflet-control-attribution { display: none !important; }
+/* Credits des fonds de carte (swisstopo, OpenStreetMap, cadastre) : exiges par
+   leurs licences, ils restent toujours visibles. */
+.leaflet-container .leaflet-control-attribution { font-size: 0.68rem; line-height: 1.4; padding: 1px 6px; background: rgba(255, 255, 255, 0.88); color: #333; }
+.leaflet-container .leaflet-control-attribution a { color: inherit; }
 
 .map-search { display: flex; gap: 0.4rem; }
 .map-search .input { padding: 0.6rem 0.7rem; font-size: 0.9rem; }
@@ -1130,6 +1147,8 @@ table.data tr.clickable:hover td { background: var(--bg-soft); }
 .spinner { width: 22px; height: 22px; border: 2px solid var(--line-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-block { display: grid; place-items: center; padding: 60px; color: var(--muted); gap: 12px; }
+/* Chargement d'une page : occupe l'ecran pour que le pied de page ne saute pas */
+.route-loading { min-height: 100vh; align-content: start; padding-top: 30vh; }
 
 /* ------------------------------ Responsive ------------------------------ */
 @media (max-width: 960px) {
@@ -1297,9 +1316,9 @@ textarea:focus-visible,
   .card, .auth-card, .map-panel, .glass, .stat { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
-/* ================== Page Equipement (DJI Agras T50) ================== */
-/* Rendus DJI sur fond noir : on les presente dans des "scenes" sombres,
-   encadrees par des bandes vert tres fonce, dans l'esprit du site. */
+/* ================== Page Equipement (DJI Agras T55) ================== */
+/* Photos presentees dans des "scenes" sombres, encadrees par des bandes
+   vert tres fonce, dans l'esprit du site. */
 .equip-page [id] { scroll-margin-top: calc(var(--header-h) + 72px); }
 
 /* Visuel : image fixe (mobile, avant lecture) et video par-dessus */
@@ -1419,6 +1438,17 @@ textarea:focus-visible,
 .eq-card p { margin: 0; font-size: 0.92rem; line-height: 1.5; color: var(--muted); }
 .eq-note { margin: 1.2rem auto 0; max-width: 640px; text-align: center; font-size: 0.82rem; color: var(--muted); }
 .eq-sources { margin: clamp(40px, 5vw, 64px) auto 0; max-width: 680px; text-align: center; font-size: 0.8rem; line-height: 1.5; color: var(--muted); }
+/* Fiche technique : lisible sur telephone, sans defilement horizontal. */
+.eq-spec { max-width: 880px; margin: 0 auto; }
+.eq-spec table.data { min-width: 0; }
+.eq-spec table.data th { width: 40%; white-space: normal; vertical-align: top; }
+.eq-spec table.data tr:last-child th { border-bottom: none; }
+/* Questions sur le drone : question en gras, reponse dessous. */
+.eq-qa { display: grid; gap: 1rem; max-width: 760px; margin: 0 auto; }
+.eq-qa div { padding: 1.2rem 1.3rem; border-radius: var(--radius); background: #fff; border: 1px solid var(--line); }
+.eq-qa dt { font-weight: 700; color: var(--ink); }
+.eq-qa dd { margin: 0.4rem 0 0; line-height: 1.55; color: var(--muted); }
+.eq-cta-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 0.8rem; }
 
 @media (max-width: 960px) {
   .eq-split, .eq-split.text-first { grid-template-columns: 1fr; }
@@ -1438,6 +1468,26 @@ textarea:focus-visible,
 }
 
 
+/* Bouton pause des videos d'ambiance (WCAG 2.2.2) */
+.video-toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 4;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(10, 12, 8, 0.55);
+  color: #fff;
+  cursor: pointer;
+}
+.video-toggle:hover { background: rgba(10, 12, 8, 0.78); }
+.video-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (max-width: 720px), (prefers-reduced-motion: reduce) { .video-toggle { display: none; } }
+
 /* Bande cinematique : extrait FPV du vignoble en plein ecran */
 .cine-band {
   position: relative;
@@ -1447,7 +1497,7 @@ textarea:focus-visible,
   overflow: hidden;
   color: #fff;
 }
-.cine-media { position: absolute; inset: 0; z-index: 0; }
+.cine-media { position: absolute; inset: 0; }
 .cine-media img,
 .cine-video {
   position: absolute;

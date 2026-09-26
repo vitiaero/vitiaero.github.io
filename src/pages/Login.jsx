@@ -44,7 +44,7 @@ export default function Login() {
             <h1 className="h2 text-center">{l.title}</h1>
             <p className="muted text-center mt-1 mb-3">{l.lead}</p>
 
-            {error && <div className="alert alert-error">{error}</div>}
+            {error && <div className="alert alert-error" role="alert">{error}</div>}
 
             <form onSubmit={submit}>
               <div className="field">

@@ -15,7 +15,10 @@ export default function About() {
         <div className="container">
           <div className="split">
             <Reveal>
-              <img src={asset('/images/logo-vitiaero-full.png')} alt="VitiAero" className="about-logo" />
+              <picture>
+                <source type="image/webp" srcSet={asset('/images/logo-vitiaero-full-420.webp')} />
+                <img src={asset('/images/logo-vitiaero-full-420.jpg')} alt="VitiAero" width="420" height="420" className="about-logo" />
+              </picture>
               <span className="eyebrow">{a.eyebrow}</span>
               <h1 className="h1">{a.title}</h1>
               <p className="lead mt-2">{a.lead}</p>

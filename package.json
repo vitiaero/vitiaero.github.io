@@ -11,8 +11,7 @@
     "build": "vite build",
     "serve": "npm run build && node server/index.js",
     "start": "node server/index.js",
-    "preview": "vite preview",
-    "images": "node scripts/download-images.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@turf/turf": "^7.2.0",

@@ -513,12 +513,13 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
   return (
     <div className="map-wrap">
       <div className="map-panel">
-        <h3>{m.title}</h3>
+        <h2>{m.title}</h2>
         <p className="tool-hint">{m.intro}</p>
 
         <form className="map-search mt-2" onSubmit={doSearch}>
           <input
             className="input"
+            aria-label={m.searchPh}
             placeholder={m.searchPh}
             value={query}
             onChange={(e) => setQuery(e.target.value)}

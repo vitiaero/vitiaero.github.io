@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header.jsx';
 import LaunchNotice from './components/LaunchNotice.jsx';
 import MobileCta from './components/MobileCta.jsx';
@@ -10,7 +10,6 @@ import { useI18n } from './i18n/index.jsx';
 
 import Home from './pages/Home.jsx';
 import Equipement from './pages/Equipement.jsx';
-import Estimation from './pages/Estimation.jsx';
 import Confirmation from './pages/Confirmation.jsx';
 import About from './pages/About.jsx';
 import Service from './pages/Service.jsx';
@@ -18,10 +17,14 @@ import Devis from './pages/Devis.jsx';
 import Contact from './pages/Contact.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
-import Account from './pages/Account.jsx';
-import Admin from './pages/Admin.jsx';
 import Legal from './pages/Legal.jsx';
 import NotFound from './pages/NotFound.jsx';
+
+// Les pages avec carte chargent Leaflet : elles arrivent a part, pour alleger
+// le chargement des autres pages.
+const Estimation = lazy(() => import('./pages/Estimation.jsx'));
+const Account = lazy(() => import('./pages/Account.jsx'));
+const Admin = lazy(() => import('./pages/Admin.jsx'));
 
 // Titre et description par page (application a page unique : on met a jour la
 // balise <title>, la meta description et le lien canonique a chaque navigation,
@@ -94,32 +97,34 @@ export default function App() {
       <LaunchNotice />
       <Header />
       <main id="main">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/equipement" element={<Equipement />} />
-          <Route path="/estimation" element={<Estimation />} />
-          <Route path="/confirmation" element={<Confirmation />} />
-          <Route path="/le-service" element={<Service />} />
-          <Route path="/devis" element={<Devis />} />
-          <Route path="/a-propos" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/connexion" element={<Login />} />
-          <Route path="/inscription" element={<Register />} />
-          <Route
-            path="/espace-client"
-            element={<Protected><Account /></Protected>}
-          />
-          <Route
-            path="/admin"
-            element={<Protected role="admin"><Admin /></Protected>}
-          />
-          <Route path="/confidentialite" element={<Legal doc="confidentialite" />} />
-          <Route path="/mentions-legales" element={<Legal doc="mentions" />} />
-          <Route path="/conditions-generales" element={<Legal doc="cgv" />} />
-          <Route path="/cookies" element={<Legal doc="cookies" />} />
-          <Route path="/conditions" element={<Legal doc="conditions" />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<div className="loading-block route-loading"><div className="spinner" /> {t.common.loading}</div>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/equipement" element={<Equipement />} />
+            <Route path="/estimation" element={<Estimation />} />
+            <Route path="/confirmation" element={<Confirmation />} />
+            <Route path="/le-service" element={<Service />} />
+            <Route path="/devis" element={<Devis />} />
+            <Route path="/a-propos" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/connexion" element={<Login />} />
+            <Route path="/inscription" element={<Register />} />
+            <Route
+              path="/espace-client"
+              element={<Protected><Account /></Protected>}
+            />
+            <Route
+              path="/admin"
+              element={<Protected role="admin"><Admin /></Protected>}
+            />
+            <Route path="/confidentialite" element={<Legal doc="confidentialite" />} />
+            <Route path="/mentions-legales" element={<Legal doc="mentions" />} />
+            <Route path="/conditions-generales" element={<Legal doc="cgv" />} />
+            <Route path="/cookies" element={<Legal doc="cookies" />} />
+            <Route path="/conditions" element={<Legal doc="conditions" />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
       <Footer />
       <MobileCta />

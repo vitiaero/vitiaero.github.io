@@ -117,7 +117,7 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={submit} noValidate>
-                  {error && <div className="alert alert-error">{error}</div>}
+                  {error && <div className="alert alert-error" role="alert">{error}</div>}
                   <FormErrorSummary
                     errors={errors}
                     summaryRef={summaryRef}

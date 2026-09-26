@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
-import Img from '../components/Img.jsx';
+import Picture from '../components/Picture.jsx';
 import CountUp from '../components/CountUp.jsx';
 import BgVideo from '../components/BgVideo.jsx';
 import FaqSchema from '../components/FaqSchema.jsx';
@@ -16,8 +16,8 @@ function Hero() {
   return (
     <section className="hero">
       <div className="hero-media">
-        <img src={asset('/images/hero-poster.jpg')} alt={h.alt} />
-        <BgVideo className="hero-video" variants={videos.hero} poster={asset('/images/hero-poster.jpg')} />
+        <Picture img={images.colline} alt={h.alt} eager />
+        <BgVideo className="hero-video" variants={videos.hero} />
       </div>
       <div className="container hero-inner">
         <span className="eyebrow" style={{ color: '#cfe0b8' }}>{h.eyebrow}</span>
@@ -73,7 +73,7 @@ function WhyDrone() {
           </Reveal>
           <Reveal delay={120}>
             <div className="split-media">
-              <Img src={images.vignes} alt={w.alt} style={{ width: '100%', height: '100%' }} />
+              <Picture img={images.pulvColline} alt={w.alt} sizes="(max-width: 960px) 100vw, 50vw" />
             </div>
           </Reveal>
         </div>
@@ -153,10 +153,10 @@ function DroneSection() {
       <div className="container">
         <div className="split reverse">
           <Reveal>
-            <div className="drone-float">
-              <img src={asset('/images/drone-cutout.png')} alt={d.alt} loading="lazy"
-                onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-            </div>
+            <figure className="drone-float">
+              <Picture img={images.studio} alt={d.alt} sizes="(max-width: 960px) 90vw, 580px" className="on-dark" />
+              <figcaption className="drone-caption">{d.caption}</figcaption>
+            </figure>
           </Reveal>
           <Reveal delay={120}>
             <span className="eyebrow" style={{ color: '#cfe0b8' }}>{d.eyebrow}</span>
@@ -170,6 +170,9 @@ function DroneSection() {
                 </li>
               ))}
             </ul>
+            <div className="mt-3">
+              <Link to="/equipement" className="btn btn-light">{d.more}</Link>
+            </div>
           </Reveal>
         </div>
       </div>
@@ -182,9 +185,9 @@ function CinematicBand() {
   const c = t.home.cine;
   return (
     <section className="cine-band">
-      <div className="cine-media" aria-hidden="true">
-        <img src={asset('/images/vignoble-poster.jpg')} alt="" />
-        <BgVideo className="cine-video" variants={videos.vignoble} poster={asset('/images/vignoble-poster.jpg')} />
+      <div className="cine-media">
+        <img src={asset('/images/vignoble-poster.jpg')} alt="" loading="lazy" decoding="async" />
+        <BgVideo className="cine-video" variants={videos.vignoble} />
       </div>
       <div className="container cine-inner">
         <Reveal>

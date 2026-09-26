@@ -15,7 +15,7 @@ export default function Footer() {
             <p style={{ color: '#a8a69d', maxWidth: '32ch' }}>{t.footer.tagline}</p>
           </div>
           <div>
-            <h4>{t.footer.navigation}</h4>
+            <h2>{t.footer.navigation}</h2>
             <ul>
               <li><Link to="/">{t.nav.home}</Link></li>
               <li><Link to="/le-service">{t.nav.service}</Link></li>
@@ -27,7 +27,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4>{t.footer.yourAccount}</h4>
+            <h2>{t.footer.yourAccount}</h2>
             <ul>
               <li><Link to="/connexion">{t.nav.login}</Link></li>
               <li><Link to="/inscription">{t.common.createAccount}</Link></li>
@@ -35,7 +35,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4>{t.footer.contact}</h4>
+            <h2>{t.footer.contact}</h2>
             <ul>
               <li>{t.footer.region}</li>
               <li><a href={`mailto:${company.email}`}>{company.email}</a></li>

@@ -72,7 +72,10 @@ export default function Header() {
     <header className={`header${scrolled ? ' scrolled' : ''}`} ref={headerRef}>
       <div className="container header-inner">
         <Link to="/" className="brand" onClick={close} aria-label={t.nav.brandHome}>
-          <img src={asset('/images/logo-vitiaero.png')} alt="VitiAero" className="brand-logo" />
+          <picture>
+            <source type="image/webp" srcSet={asset('/images/logo-vitiaero-120.webp')} />
+            <img src={asset('/images/logo-vitiaero-120.png')} alt="VitiAero" width="351" height="120" className="brand-logo" />
+          </picture>
         </Link>
 
         <nav className="nav">{navLinks}</nav>

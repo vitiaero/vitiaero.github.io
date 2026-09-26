@@ -31,12 +31,19 @@ export const preLaunch = true;
 // retient la premiere que l'ecran et l'appareil peuvent lire de facon fluide.
 // type : codec exact, pour que le navigateur sache s'il sait le decoder.
 // bitrate : debit moyen reel du fichier (bits par seconde).
+// Les videos du drone viennent de DJI (ag.dji.com/t55, 26.9.2026), sans son,
+// en AV1 puis en H.264. Registre complet : docs/REGISTRE-MEDIAS.md.
+const clip = (name, width, height, av1Bitrate, avcBitrate) => [
+  { src: asset(`/videos/${name}.av1.mp4`), type: 'video/mp4; codecs="av01.0.08M.08"', width, height, framerate: 25, bitrate: av1Bitrate },
+  { src: asset(`/videos/${name}.mp4`), type: 'video/mp4; codecs="avc1.640028"', width, height, framerate: 25, bitrate: avcBitrate },
+];
 export const videos = {
-  hero: [
-    { src: asset('/videos/hero-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.12M.08"', width: 3840, height: 2160, framerate: 25, bitrate: 5900000 },
-    { src: asset('/videos/hero-2160.mp4'), type: 'video/mp4; codecs="avc1.640033"', width: 3840, height: 2160, framerate: 25, bitrate: 17500000 },
-    { src: asset('/videos/hero-1080.mp4'), type: 'video/mp4; codecs="avc1.640032"', width: 1920, height: 1080, framerate: 25, bitrate: 8100000 },
-  ],
+  hero: clip('dji-accueil-colline', 1920, 960, 3360000, 6730000),
+  equipement: clip('dji-t55-transport', 1920, 1080, 2480000, 5320000),
+  pulverisation: clip('dji-pulverisation-champ', 1920, 960, 4370000, 7340000),
+  radar: clip('dji-radar-avant', 1146, 960, 1350000, 2280000),
+  batterie: clip('dji-dissipateur-batterie', 1920, 960, 1390000, 2610000),
+  // Plans FPV du vignoble d'Epesses, filmes par le proprietaire.
   vignoble: [
     { src: asset('/videos/vignoble-fpv-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.13M.08"', width: 3840, height: 2160, framerate: 60, bitrate: 22900000 },
     { src: asset('/videos/vignoble-fpv-2160.mp4'), type: 'video/mp4; codecs="avc1.640034"', width: 3840, height: 2160, framerate: 60, bitrate: 23300000 },
@@ -44,24 +51,28 @@ export const videos = {
   ],
 };
 
-// Visuels de la page Equipement (DJI, et le plan du drone qui se deplie fourni
-// par le proprietaire). Chaque video existe en AV1 puis en H.264, meme
-// definition ; l'image fixe du meme nom est dans /images/equip.
-const equip = (name, width, height, av1, avc, bitrate) => [
-  { src: asset(`/videos/equip/${name}.av1.mp4`), type: `video/mp4; codecs="${av1}"`, width, height, framerate: 25, bitrate: Math.round(bitrate / 2) },
-  { src: asset(`/videos/equip/${name}.mp4`), type: `video/mp4; codecs="${avc}"`, width, height, framerate: 25, bitrate },
-];
-export const equipVideos = {
-  't50-deplie': equip('t50-deplie', 1280, 720, 'av01.0.05M.08', 'avc1.64001f', 2400000),
-  spray: equip('spray', 1920, 1080, 'av01.0.08M.08', 'avc1.640032', 8400000),
-  pompe: equip('pompe', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1600000),
-  gicleur: equip('gicleur', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1800000),
-  electrovanne: equip('electrovanne', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1000000),
-  parcelles: equip('parcelles', 968, 588, 'av01.0.05M.08', 'avc1.64001f', 1100000),
-};
+// Photos du DJI Agras T55 (© DJI, ag.dji.com/t55) : AVIF et WebP en deux
+// largeurs, JPEG de repli dans la petite largeur. Dimensions = petite largeur.
+const DJI = '/images/dji/';
+const photo = (name, small, big, width, height) => ({
+  avif: `${asset(`${DJI}${name}-${small}.avif`)} ${small}w, ${asset(`${DJI}${name}-${big}.avif`)} ${big}w`,
+  webp: `${asset(`${DJI}${name}-${small}.webp`)} ${small}w, ${asset(`${DJI}${name}-${big}.webp`)} ${big}w`,
+  src: asset(`${DJI}${name}-${small}.jpg`),
+  width,
+  height,
+});
 
-// Chemins des images. Si une image manque, un repli sobre s'affiche (voir CSS).
 export const images = {
+  // Photo CC BY-SA 4.0, credit dans les mentions legales.
   lavaux: asset('/images/lavaux.jpg'),
-  vignes: asset('/images/t50-rows.jpg'),
+  colline: photo('accueil-colline', 1280, 2400, 1280, 640),
+  pulvColline: photo('pulverisation-colline', 800, 1386, 800, 534),
+  studio: photo('t55-studio', 700, 1060, 700, 422),
+  transport: photo('t55-transport', 1280, 2560, 1280, 720),
+  pulvChamp: photo('pulverisation-champ', 1280, 2400, 1280, 640),
+  radar: photo('radar-avant', 800, 1146, 800, 670),
+  batterie: photo('dissipateur-batterie', 1280, 2400, 1280, 640),
+  epandage: photo('epandage', 800, 1386, 800, 600),
+  levage: photo('levage', 800, 1600, 800, 400),
+  radiocommande: photo('radiocommande', 800, 1386, 800, 462),
 };

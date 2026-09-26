@@ -50,7 +50,7 @@ export default function Register() {
             <h1 className="h2 text-center">{r.title}</h1>
             <p className="muted text-center mt-1 mb-3">{r.lead}</p>
 
-            {error && <div className="alert alert-error">{error}</div>}
+            {error && <div className="alert alert-error" role="alert">{error}</div>}
             <FormErrorSummary
               errors={errors}
               summaryRef={summaryRef}

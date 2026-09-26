@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useI18n } from '../i18n/index.jsx';
 
 // Video d'ambiance (muette, en boucle) qui choisit la meilleure version lisible
 // par l'appareil, dans l'ordre de la liste : 4K AV1, puis 4K H.264, puis 1080p.
@@ -37,9 +38,16 @@ async function pickIndex(variants) {
 
 // loop = false : la video se joue une fois et s'arrete sur sa derniere image
 // (elle repart du debut quand elle revient a l'ecran).
+//
+// Un bouton permet de mettre la video en pause (WCAG 2.2.2). Il n'apparait que
+// lorsque la video est chargee, donc jamais sur mobile ni en mouvement reduit.
 export default function BgVideo({ variants, poster, className, loop = true }) {
+  const { t } = useI18n();
   const ref = useRef(null);
   const index = useRef(-1);
+  const stopped = useRef(false); // true : mise en pause par le visiteur
+  const [active, setActive] = useState(false);
+  const [paused, setPaused] = useState(true);
 
   useEffect(() => {
     const video = ref.current;
@@ -49,14 +57,22 @@ export default function BgVideo({ variants, poster, className, loop = true }) {
     let ready = false;
     let visible = false;
 
-    const play = () => { video.muted = true; video.play?.().catch(() => {}); };
+    const play = () => {
+      if (stopped.current) return;
+      video.muted = true;
+      video.play?.().catch(() => {});
+    };
+    const onPlay = () => setPaused(false);
+    const onPause = () => setPaused(true);
+    video.addEventListener('play', onPlay);
+    video.addEventListener('pause', onPause);
 
     // Si une version est absente ou illisible, on passe a la suivante, plus
     // legere. Apres la derniere, on masque la video : l'image dessous reste.
     const onError = () => {
       if (index.current < 0) return;
       index.current += 1;
-      if (index.current >= variants.length) { video.style.display = 'none'; return; }
+      if (index.current >= variants.length) { video.style.display = 'none'; setActive(false); return; }
       video.src = variants[index.current].src;
       if (visible) play();
     };
@@ -75,6 +91,7 @@ export default function BgVideo({ variants, poster, className, loop = true }) {
         index.current = i;
         video.src = variants[i].src;
         ready = true;
+        setActive(true);
         if (visible) play();
       });
     }, { rootMargin: '200px 0px' });
@@ -84,18 +101,46 @@ export default function BgVideo({ variants, poster, className, loop = true }) {
       cancelled = true;
       io.disconnect();
       video.removeEventListener('error', onError);
+      video.removeEventListener('play', onPlay);
+      video.removeEventListener('pause', onPause);
     };
   }, [variants]);
 
+  const toggle = () => {
+    const video = ref.current;
+    if (!video) return;
+    if (video.paused) {
+      stopped.current = false;
+      video.muted = true;
+      video.play?.().catch(() => {});
+    } else {
+      stopped.current = true;
+      video.pause();
+    }
+  };
+
+  const label = paused ? t.common.playVideo : t.common.pauseVideo;
   return (
-    <video
-      ref={ref}
-      className={className}
-      muted
-      loop={loop}
-      playsInline
-      preload="none"
-      poster={poster}
-    />
+    <>
+      <video
+        ref={ref}
+        className={className}
+        muted
+        loop={loop}
+        playsInline
+        preload="none"
+        poster={active ? poster : undefined}
+        aria-hidden="true"
+      />
+      {active && (
+        <button type="button" className="video-toggle" onClick={toggle} aria-label={label} title={label}>
+          {paused ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>
+          )}
+        </button>
+      )}
+    </>
   );
 }
