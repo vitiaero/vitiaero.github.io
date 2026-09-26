@@ -172,7 +172,7 @@ function Mentions() {
           <a href={LINKS.ccBySa} {...extLink}>CC BY-SA 4.0</a>. Image recadrée et redimensionnée.
         </li>
         <li>Vidéo du vignoble d'Epesses : {company.responsable}.</li>
-        <li>Photos et vidéos du drone DJI Agras T55 (accueil et page Équipement) : © DJI, <a href="https://ag.dji.com/t55" {...extLink}>ag.dji.com/t55</a>. Images réduites et converties, vidéos raccourcies ou mises en boucle, sans son.</li>
+        <li>Illustrations du drone DJI Agras T55 (accueil et page Équipement) : images et vidéos générées par intelligence artificielle avec Higgsfield pour VitiAero, d'après des vues du produit. Ce ne sont pas des photographies.</li>
         <li>
           Fonds de carte : ©swisstopo ; ©{' '}
           <a href={LINKS.osmCopyright} {...extLink}>OpenStreetMap contributors</a> ; © Mensuration

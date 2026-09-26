@@ -3,10 +3,8 @@ import { useState } from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
 import Picture from '../components/Picture.jsx';
-import CountUp from '../components/CountUp.jsx';
 import BgVideo from '../components/BgVideo.jsx';
 import FaqSchema from '../components/FaqSchema.jsx';
-import { asset } from '../config.js';
 import { images, videos } from '../content.js';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -16,23 +14,19 @@ function Hero() {
   return (
     <section className="hero">
       <div className="hero-media">
-        <Picture img={images.colline} alt={h.alt} eager />
-        <BgVideo className="hero-video" variants={videos.hero} />
+        <Picture img={images.epesses} alt={h.alt} eager />
+        {videos.hero && <BgVideo className="hero-video" variants={videos.hero} />}
       </div>
       <div className="container hero-inner">
-        <span className="eyebrow" style={{ color: '#cfe0b8' }}>{h.eyebrow}</span>
+        <span className="eyebrow" style={{ color: '#d9e4cc' }}>{h.eyebrow}</span>
         <h1 className="display">{h.title}</h1>
         <p className="lead">{h.lead}</p>
         <div className="hero-actions">
-          <Link to="/estimation" className="btn btn-primary">{t.common.requestEstimate}</Link>
-          <a href="#comment" className="btn btn-light">{h.how}</a>
+          <Link to="/devis" className="btn btn-primary">{h.ctaQuote}</Link>
+          <Link to="/le-service" className="btn btn-quiet">{h.ctaServices}</Link>
         </div>
         <p className="hero-note">{h.note}</p>
       </div>
-      <a href="#comment" className="scroll-cue" aria-label={h.scrollAria}>
-        <span>{h.discover}</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
-      </a>
     </section>
   );
 }
@@ -45,7 +39,7 @@ function Stats() {
         <Reveal className="stats">
           {t.home.stats.map((s, i) => (
             <div className="stat" key={i}>
-              <div className="num"><CountUp value={s.num} /></div>
+              <div className="num">{s.num}</div>
               <div className="label">{s.label}</div>
             </div>
           ))}
@@ -68,12 +62,12 @@ function WhyDrone() {
             <p className="lead mt-2">{w.lead}</p>
             <p className="mt-2 muted">{w.text}</p>
             <div className="mt-3">
-              <Link to="/estimation" className="btn btn-dark">{w.cta}</Link>
+              <Link to="/estimation" className="btn btn-secondary">{w.cta}</Link>
             </div>
           </Reveal>
           <Reveal delay={120}>
             <div className="split-media">
-              <Picture img={images.pulvColline} alt={w.alt} sizes="(max-width: 960px) 100vw, 50vw" />
+              <Picture img={images.coteau} alt={w.alt} sizes="(max-width: 960px) 100vw, 50vw" />
             </div>
           </Reveal>
         </div>
@@ -87,24 +81,19 @@ function Advantages() {
   const a = t.home.advantages;
   return (
     <section className="section bg-soft">
-      <div className="container">
-        <div className="section-head center">
-          <Reveal>
-            <span className="eyebrow">{a.eyebrow}</span>
-            <h2 className="h2">{a.title}</h2>
-          </Reveal>
-        </div>
-        <div className="grid grid-3 grid-cards">
+      <div className="container adv">
+        <Reveal className="adv-head">
+          <span className="eyebrow">{a.eyebrow}</span>
+          <h2 className="h2">{a.title}</h2>
+        </Reveal>
+        <ul className="adv-list">
           {a.items.map((item, i) => (
-            <Reveal key={i} delay={i * 60}>
-              <div className="card">
-                <div className="icon"><Icon name={item.icon} size={24} /></div>
-                <h3 className="h3">{item.title}</h3>
-                <p>{item.text}</p>
-              </div>
-            </Reveal>
+            <li key={i}>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
@@ -126,11 +115,7 @@ function HowItWorks() {
           {h.steps.map((s, i) => (
             <Reveal key={i} delay={i * 80}>
               <div className="step">
-                <div>
-                  {/* Barre remplie a 1/4, 2/4... : on voit ou l'on en est */}
-                  <div className="step-bar" style={{ '--progress': (i + 1) / h.steps.length }} aria-hidden="true" />
-                  <span className="no">{s.no}</span>
-                </div>
+                <span className="no">{s.no}</span>
                 <h3 className="h3">{s.title}</h3>
                 <p>{s.text}</p>
               </div>
@@ -154,7 +139,7 @@ function DroneSection() {
         <div className="split reverse">
           <Reveal>
             <figure className="drone-float">
-              <Picture img={images.studio} alt={d.alt} sizes="(max-width: 960px) 90vw, 580px" className="on-dark" />
+              <Picture img={images.bordVigne} alt={d.alt} sizes="(max-width: 960px) 90vw, 580px" className="drone-photo" />
               <figcaption className="drone-caption">{d.caption}</figcaption>
             </figure>
           </Reveal>
@@ -175,26 +160,6 @@ function DroneSection() {
             </div>
           </Reveal>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function CinematicBand() {
-  const { t } = useI18n();
-  const c = t.home.cine;
-  return (
-    <section className="cine-band">
-      <div className="cine-media">
-        <img src={asset('/images/vignoble-poster.jpg')} alt="" loading="lazy" decoding="async" />
-        <BgVideo className="cine-video" variants={videos.vignoble} />
-      </div>
-      <div className="container cine-inner">
-        <Reveal>
-          <span className="eyebrow" style={{ color: '#cfe0b8' }}>{c.eyebrow}</span>
-          <h2 className="h2">{c.title}</h2>
-          <p className="lead mt-2">{c.lead}</p>
-        </Reveal>
       </div>
     </section>
   );
@@ -291,7 +256,6 @@ function Faq() {
                     aria-controls={panelId}
                     onClick={() => toggleCat(g)}
                   >
-                    <span className="faq-cat-icon" aria-hidden="true"><Icon name={group.icon} size={20} /></span>
                     <span className="faq-cat-title">{group.title}</span>
                     <span className="faq-cat-count">{f.count(group.items.length)}</span>
                     <span className="faq-cat-chev" aria-hidden="true"><Icon name="chevron" size={18} stroke={2.2} /></span>
@@ -317,12 +281,11 @@ function Faq() {
           })}
         </Reveal>
         <Reveal className="faq-more">
-          <span className="faq-more-icon" aria-hidden="true"><Icon name="mail" size={22} /></span>
           <div className="faq-more-text">
             <p className="faq-more-title">{f.moreTitle}</p>
             <p className="faq-more-sub">{f.moreText}</p>
           </div>
-          <Link to="/contact" className="btn btn-primary btn-sm">{f.moreCta}</Link>
+          <Link to="/contact" className="btn btn-secondary btn-sm">{f.moreCta}</Link>
         </Reveal>
       </div>
     </section>
@@ -337,7 +300,7 @@ function FinalCta() {
       <div className="container">
         <Reveal className="cta-band">
           <span className="eyebrow">{c.eyebrow}</span>
-          <h2 className="h1">{c.title}</h2>
+          <h2 className="h2">{c.title}</h2>
           <p className="lead mt-2" style={{ maxWidth: '48ch', margin: '1rem auto 0' }}>{c.lead}</p>
           <Link to="/estimation" className="btn btn-primary">{t.common.requestEstimate}</Link>
         </Reveal>
@@ -356,7 +319,6 @@ export default function Home() {
       <Advantages />
       <HowItWorks />
       <DroneSection />
-      <CinematicBand />
       <LavauxBanner />
       <Faq />
       <FinalCta />

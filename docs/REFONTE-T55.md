@@ -10,10 +10,19 @@ Documents liés : `docs/REGISTRE-MEDIAS.md` (livrable 4) et
 
 1. Textes et chiffres réécrits d'après les pages officielles du T55 (section 3),
    dans les trois langues.
-2. Première version des visuels : illustrations Higgsfield. Le même jour, le
-   propriétaire les a jugées « pas du tout comparables au vrai drone » et a
-   demandé les photos et vidéos du site de DJI. Elles sont en place, créditées
-   « © DJI ». L'accord écrit de DJI reste à obtenir avant la publication.
+2. Visuels, série 1 : illustrations Higgsfield décrites d'après la fiche
+   technique. Jugées « pas du tout comparables au vrai drone » (elles montraient
+   huit hélices coaxiales au lieu de quatre).
+3. Visuels DJI : photos et vidéos officielles du T55, utilisées puis retirées le
+   même jour pour éviter tout problème de droits.
+4. Visuels, série 2 (en place) : illustrations générées à partir de 14 rendus du
+   T55 fournis par le propriétaire, page Équipement remise dans la structure de
+   l'ancienne page (drone et radar, pulvérisation et ses trois pièces, batterie,
+   préparation). Retours du propriétaire à traiter quand des crédits seront
+   disponibles : vidéo d'accueil façon vidéo de référence (drone un peu plus
+   loin), vidéo d'en-tête et images Sécurité, Pulvérisation (jets seulement à
+   l'arrière), Réservoir et Batterie à refaire, radiocommande pour la
+   préparation du vol. Détail et coûts : `docs/REGISTRE-MEDIAS.md`.
 
 ## 2. Inventaire avant et après
 
@@ -27,10 +36,10 @@ Documents liés : `docs/REGISTRE-MEDIAS.md` (livrable 4) et
 | Recharge | D12000iE, 9 à 12 min, 9 000 W | 8 à 9 min de 30 à 95 % (DB1050), D8000iE ou C7000 |
 | Sécurité | radars avant et arrière | radars avant (360°), arrière, dessus, dessous ; 60 m ; 2,5 m |
 | SEO, README, marques | T50 | T55 ; mention d'indépendance de DJI |
-| Vidéo d'accueil | `hero-2160/1080` (film DJI du T50) | `dji-accueil-colline` (T55) |
-| Images d'accueil | `hero-poster.jpg`, `drone-cutout.png`, `t50-rows.jpg` | `dji/accueil-colline`, `dji/t55-studio`, `dji/pulverisation-colline` |
-| Page Équipement | `images/equip/*`, `videos/equip/*` (T50) | `dji/t55-transport`, `pulverisation-champ`, `radar-avant`, `dissipateur-batterie`, `epandage`, `levage`, `radiocommande` + 4 vidéos |
-| Image de partage | `hero-poster.jpg` | `partage-vitiaero.jpg` (photo DJI du T55) |
+| Vidéo d'accueil | `hero-2160/1080` (film DJI du T50) | aucune pour l'instant (image fixe), à régénérer |
+| Images d'accueil | `hero-poster.jpg`, `drone-cutout.png`, `t50-rows.jpg` | `t55/accueil-lavaux`, `t55/drone-vignes`, `t55/accueil-coteau` (générées) |
+| Page Équipement | `images/equip/*`, `videos/equip/*` (T50) | `t55/bord-vigne`, `radar-avant`, `pulverisation-vigne`, `pompe`, `buse`, `reservoir`, `batterie`, `vue-du-ciel` + vidéo `t55-equipement` (générées) |
+| Image de partage | `hero-poster.jpg` | `partage-vitiaero.jpg` (illustration générée) |
 | Scripts | `scripts/download-images.js`, script npm `images` | supprimés |
 
 Autres corrections : police WOFF2 de 77 Ko (au lieu de 785 Ko), logos réduits,
@@ -70,8 +79,9 @@ modèle ».
 
 - [ ] Rendre le site accessible (dépôt public ou autre hébergeur) — bloquant.
 - [ ] Adresse postale dans `src/content.js` — bloquant.
-- [ ] Accord écrit de DJI ou retrait des visuels DJI — bloquant.
-- [ ] Relecture juriste : marques, droits à l'image des personnes visibles.
+- [ ] Confirmer l'origine des 14 rendus de référence du T55.
+- [ ] Relecture juriste : marques DJI et AGRAS, visuels générés d'après ces rendus.
+- [ ] Régénérer les visuels signalés (voir section 1) quand des crédits Higgsfield sont disponibles.
 - [ ] Après publication : « Enforce HTTPS », test sur iPhone, Android et lecteur d'écran.
 - [ ] Recommandé : réencoder les vidéos FPV du vignoble (65 à 93 Mo).
 - [ ] Au lancement : Agroscope, OFAC, OPer-A, SafetySpray ; CG complètes ; `preLaunch = false` et `robots.txt`.
@@ -86,10 +96,10 @@ Site compilé en mode statique, servi en local, testé dans Chrome sans fenêtre
   aucun débordement horizontal.
 - **Liens** : 41 liens internes valides (seul signalement : faux positif sur la
   page 404) ; 70 fichiers référencés, aucun manquant ; 5 liens externes en 200.
-- **Performance** (mobile, 4G lente, processeur ÷4) : LCP accueil 4,37 → 2,56 s,
-  Équipement 5,15 → 2,01 s, Estimation 2,23 → 1,87 s ; CLS 0 partout (0,72 avant
-  sur Estimation) ; accueil mobile 297 Ko au lieu de 3,1 Mo. Aucune vidéo sur
-  mobile ni en mouvement réduit.
+- **Performance** (mobile, 4G lente, processeur ÷4, visuels de la série 2) :
+  LCP accueil 4,37 → 3,10 s, Équipement 5,15 → 2,71 s, Estimation 2,23 → 1,90 s ;
+  CLS 0 partout (0,72 avant sur Estimation) ; accueil mobile 378 Ko au lieu de
+  3,1 Mo. Aucune vidéo sur mobile ni en mouvement réduit.
 - **Accessibilité** (automatisé) : aucun défaut, sauf les cases de consentement
   de 20 px (conformes par l'exception d'espacement) et le champ anti-robot
   volontairement masqué. Bouton pause des vidéos fonctionnel. Lecteur d'écran

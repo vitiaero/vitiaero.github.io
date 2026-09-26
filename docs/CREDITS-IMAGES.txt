@@ -1,45 +1,20 @@
-Credits des images et videos du site (etat du 24 septembre 2026)
+Credits des images et videos du site (etat du 26 septembre 2026)
 
 Le credit public figure dans les mentions legales (src/pages/legal/*.jsx).
-Detail de la verification : docs/CONFORMITE.md.
+Registre detaille (prompts, references, couts, statuts) : docs/REGISTRE-MEDIAS.md.
+Verification juridique : docs/CONFORMITE.md.
 
-LIBRES DE DROITS OU CREDITES CORRECTEMENT
-
+- images/t55/* et videos/t55-* : illustrations du DJI Agras T55 generees par IA
+  (Higgsfield) pour VitiAero, d'apres 14 rendus du T55 fournis par le
+  proprietaire (origine a confirmer). Mention sur le site : "Illustration
+  generee par IA".
+- images/partage-vitiaero.jpg : recadrage de l'illustration d'accueil.
 - images/lavaux.jpg : Joachim Kohler (JoachimKohler-HB), licence CC BY-SA 4.0.
   Source : https://commons.wikimedia.org/wiki/File:Lavaux_vignobles_en_terrasses_au_bord_du_L%C3%A9man_(2015).jpg
-  Original 5400 x 3600, version du site 3200 x 2354 (recadree et redimensionnee).
-  Le credit doit rester visible avec les liens vers la source et la licence.
+  Recadree et redimensionnee. Le credit doit rester visible avec les liens.
 - videos/vignoble-fpv-*.mp4 et images/vignoble-poster.jpg : plans FPV du
   vignoble d'Epesses filmes par Adrien Delhay.
-- images/logo-vitiaero*.png : logo du projet.
+- images/logo-vitiaero-* : logo du projet (originaux dans sources/logos/).
 
-RISQUE OUVERT : ACCORD ECRIT DE DJI A OBTENIR
-
-Les conditions du site DJI (https://www.dji.com/terms) interdisent l'usage
-commercial de leur contenu sans consentement ecrit prealable. Decision du
-proprietaire : garder ces visuels et demander l'accord (modele de lettre dans
-docs/CONFORMITE.md).
-
-- videos/hero-*.mp4 : extrait promotionnel DJI Agras T50.
-- Page Equipement, videos/equip/* et images/equip/* : visuels officiels DJI
-  (ag.dji.com, page DJI Agras T50), recuperes les 11 et 12 septembre 2026.
-  t50-deplie et parcelles viennent de fichiers fournis par le proprietaire,
-  d'origine DJI.
-- images/equip/generateur.jpg : photo DJI
-  (ag.dji.com/newsroom/agras-t50-intelligent-battery-design).
-
-ORIGINE NON CONFIRMEE (probablement DJI)
-
-- images/hero-poster.jpg, images/drone-cutout.png, images/t50-rows.jpg.
-  A traiter comme les visuels DJI tant que la source n'est pas etablie.
-
-RETIRES DU SITE LE 24 SEPTEMBRE 2026 (affiches nulle part)
-
-- images/agras-t30.jpg (ZLEA, CC BY-SA 4.0 ; modele T30, pas le T50),
-  images/hero-drone.jpg (Blervis, CC0), images/vignes-pente.jpg (P. Vensaus,
-  CC BY-SA 4.0), images/t50-flight.jpg et images/t50-eclate.jpg / .webp
-  (origine non confirmee), et la carte camera de la page Equipement
-  (images/equip/camera.jpg, videos/equip/camera.*, extrait de la video
-  promotionnelle DJI). Ils restent dans l'historique Git.
-  Remplacants libres possibles si DJI refuse : hero-drone.jpg (CC0, aucune
-  obligation) et vignes-pente.jpg (CC BY-SA 4.0, credit a afficher).
+Aucune photo ni video de DJI n'est publiee. Les visuels de l'ancien modele et
+les photos DJI du T55 (retires le 26.9.2026) restent dans l'historique Git.

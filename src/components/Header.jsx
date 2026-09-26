@@ -61,8 +61,9 @@ export default function Header() {
       <NavLink to="/le-service" onClick={close}>{t.nav.service}</NavLink>
       <NavLink to="/estimation" onClick={close}>{t.nav.estimation}</NavLink>
       <NavLink to="/equipement" onClick={close}>{t.nav.equipment}</NavLink>
-      <NavLink to="/a-propos" onClick={close}>{t.nav.about}</NavLink>
-      <NavLink to="/contact" onClick={close}>{t.nav.contact}</NavLink>
+      <Link to="/contact#zone" onClick={close}>{t.nav.zone}</Link>
+      <Link to="/#faq" onClick={close}>{t.nav.faq}</Link>
+      <NavLink to="/contact" end onClick={close}>{t.nav.contact}</NavLink>
       {user?.role === 'admin' && <NavLink to="/admin" onClick={close}>{t.nav.admin}</NavLink>}
       {user?.role === 'client' && <NavLink to="/espace-client" onClick={close}>{t.nav.account}</NavLink>}
     </>
@@ -82,12 +83,8 @@ export default function Header() {
 
         <div className="nav-actions">
           <LangSwitch />
-          {user ? (
-            <button className="btn btn-outline btn-sm" onClick={handleLogout}>{t.nav.logout}</button>
-          ) : (
-            <Link to="/connexion" className="btn btn-ghost btn-sm">{t.nav.login}</Link>
-          )}
-          <Link to="/estimation" className="btn btn-primary btn-sm">{t.common.requestEstimate}</Link>
+          {user && <button className="btn btn-secondary btn-sm" onClick={handleLogout}>{t.nav.logout}</button>}
+          <Link to="/devis" className="btn btn-primary btn-sm">{t.common.requestQuote}</Link>
         </div>
 
         <button
@@ -108,7 +105,7 @@ export default function Header() {
         ) : (
           <Link to="/connexion" className="btn btn-outline" onClick={close}>{t.nav.login}</Link>
         )}
-        <Link to="/estimation" className="btn btn-primary" onClick={close}>{t.common.requestEstimate}</Link>
+        <Link to="/devis" className="btn btn-primary" onClick={close}>{t.common.requestQuote}</Link>
       </div>
     </header>
   );

@@ -183,7 +183,7 @@ function Mentions() {
           <a href={LINKS.ccBySa} {...extLink}>CC BY-SA 4.0</a>. Bild zugeschnitten und verkleinert.
         </li>
         <li>Video des Weinbergs von Epesses: {company.responsable}.</li>
-        <li>Fotos und Videos der Drohne DJI Agras T55 (Startseite und Seite Ausrüstung): © DJI, <a href="https://ag.dji.com/t55" {...extLink}>ag.dji.com/t55</a>. Bilder verkleinert und umgewandelt, Videos gekürzt oder als Schleife, ohne Ton.</li>
+        <li>Illustrationen der Drohne DJI Agras T55 (Startseite und Seite Ausrüstung): mit künstlicher Intelligenz (Higgsfield) für VitiAero erzeugte Bilder und Videos nach Ansichten des Produkts. Es sind keine Fotos.</li>
         <li>
           Kartenhintergründe: ©swisstopo; ©{' '}
           <a href={LINKS.osmCopyright} {...extLink}>OpenStreetMap contributors</a>; © Amtliche

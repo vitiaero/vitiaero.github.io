@@ -31,48 +31,43 @@ export const preLaunch = true;
 // retient la premiere que l'ecran et l'appareil peuvent lire de facon fluide.
 // type : codec exact, pour que le navigateur sache s'il sait le decoder.
 // bitrate : debit moyen reel du fichier (bits par seconde).
-// Les videos du drone viennent de DJI (ag.dji.com/t55, 26.9.2026), sans son,
-// en AV1 puis en H.264. Registre complet : docs/REGISTRE-MEDIAS.md.
-const clip = (name, width, height, av1Bitrate, avcBitrate) => [
-  { src: asset(`/videos/${name}.av1.mp4`), type: 'video/mp4; codecs="av01.0.08M.08"', width, height, framerate: 25, bitrate: av1Bitrate },
-  { src: asset(`/videos/${name}.mp4`), type: 'video/mp4; codecs="avc1.640028"', width, height, framerate: 25, bitrate: avcBitrate },
+// Registre complet des medias : docs/REGISTRE-MEDIAS.md.
+const clip = (name, framerate, av1Bitrate, avcBitrate) => [
+  { src: asset(`/videos/${name}.av1.mp4`), type: 'video/mp4; codecs="av01.0.08M.08"', width: 1920, height: 1080, framerate, bitrate: av1Bitrate },
+  { src: asset(`/videos/${name}.mp4`), type: 'video/mp4; codecs="avc1.640028"', width: 1920, height: 1080, framerate, bitrate: avcBitrate },
 ];
 export const videos = {
-  hero: clip('dji-accueil-colline', 1920, 960, 3360000, 6730000),
-  equipement: clip('dji-t55-transport', 1920, 1080, 2480000, 5320000),
-  pulverisation: clip('dji-pulverisation-champ', 1920, 960, 4370000, 7340000),
-  radar: clip('dji-radar-avant', 1146, 960, 1350000, 2280000),
-  batterie: clip('dji-dissipateur-batterie', 1920, 960, 1390000, 2610000),
-  // Plans FPV du vignoble d'Epesses, filmes par le proprietaire.
-  vignoble: [
-    { src: asset('/videos/vignoble-fpv-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.13M.08"', width: 3840, height: 2160, framerate: 60, bitrate: 22900000 },
-    { src: asset('/videos/vignoble-fpv-2160.mp4'), type: 'video/mp4; codecs="avc1.640034"', width: 3840, height: 2160, framerate: 60, bitrate: 23300000 },
-    { src: asset('/videos/vignoble-fpv-1080.mp4'), type: 'video/mp4; codecs="avc1.640032"', width: 1920, height: 1080, framerate: 60, bitrate: 16400000 },
-  ],
+  // Accueil : vol FPV au-dessus des vignes d'Epesses (Lavaux), filme par le
+  // proprietaire ; extrait ralenti, en boucle.
+  hero: clip('lavaux-epesses', 30, 4860000, 7690000),
+  // Equipement : illustration generee (Higgsfield, Kling 3.0) d'apres des vues du T55.
+  equipement: clip('t55-equipement', 24, 1720000, 5660000),
 };
 
-// Photos du DJI Agras T55 (© DJI, ag.dji.com/t55) : AVIF et WebP en deux
-// largeurs, JPEG de repli dans la petite largeur. Dimensions = petite largeur.
-const DJI = '/images/dji/';
-const photo = (name, small, big, width, height) => ({
-  avif: `${asset(`${DJI}${name}-${small}.avif`)} ${small}w, ${asset(`${DJI}${name}-${big}.avif`)} ${big}w`,
-  webp: `${asset(`${DJI}${name}-${small}.webp`)} ${small}w, ${asset(`${DJI}${name}-${big}.webp`)} ${big}w`,
-  src: asset(`${DJI}${name}-${small}.jpg`),
+// Images : AVIF et WebP en deux largeurs, JPEG de repli dans la petite
+// largeur. Dimensions intrinseques = petite largeur.
+const picture = (dir) => (name, small, big, width, height) => ({
+  avif: `${asset(`${dir}${name}-${small}.avif`)} ${small}w, ${asset(`${dir}${name}-${big}.avif`)} ${big}w`,
+  webp: `${asset(`${dir}${name}-${small}.webp`)} ${small}w, ${asset(`${dir}${name}-${big}.webp`)} ${big}w`,
+  src: asset(`${dir}${name}-${small}.jpg`),
   width,
   height,
 });
+// Photos reelles du Lavaux (proprietaire).
+const real = picture('/images/lavaux/');
+// Illustrations generees du DJI Agras T55 (references : rendus du produit).
+const t55 = picture('/images/t55/');
 
 export const images = {
   // Photo CC BY-SA 4.0, credit dans les mentions legales.
   lavaux: asset('/images/lavaux.jpg'),
-  colline: photo('accueil-colline', 1280, 2400, 1280, 640),
-  pulvColline: photo('pulverisation-colline', 800, 1386, 800, 534),
-  studio: photo('t55-studio', 700, 1060, 700, 422),
-  transport: photo('t55-transport', 1280, 2560, 1280, 720),
-  pulvChamp: photo('pulverisation-champ', 1280, 2400, 1280, 640),
-  radar: photo('radar-avant', 800, 1146, 800, 670),
-  batterie: photo('dissipateur-batterie', 1280, 2400, 1280, 640),
-  epandage: photo('epandage', 800, 1386, 800, 600),
-  levage: photo('levage', 800, 1600, 800, 400),
-  radiocommande: photo('radiocommande', 800, 1386, 800, 462),
+  epesses: real('epesses', 1280, 2400, 1280, 720),
+  coteau: t55('accueil-coteau', 800, 1600, 800, 598),
+  bordVigne: t55('bord-vigne', 1280, 2400, 1280, 724),
+  radar: t55('radar-avant', 800, 1600, 800, 452),
+  pompe: t55('pompe', 600, 1200, 600, 600),
+  buse: t55('buse', 600, 1200, 600, 600),
+  reservoir: t55('reservoir', 600, 1200, 600, 600),
+  batterie: t55('batterie', 800, 1600, 800, 532),
+  vueDuCiel: t55('vue-du-ciel', 800, 1600, 800, 452),
 };

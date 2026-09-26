@@ -1,5 +1,11 @@
 # Prompt de reprise — Projet VitiAero
 
+> **Mise à jour du 26 septembre 2026** : le drone présenté est désormais le
+> DJI Agras T55. Les passages ci-dessous qui décrivent le T50, ses chiffres et
+> ses médias sont obsolètes : voir `docs/REFONTE-T55.md` et
+> `docs/REGISTRE-MEDIAS.md`.
+
+
 Copie tout ce bloc dans une nouvelle discussion Claude Code pour continuer le projet.
 
 ---

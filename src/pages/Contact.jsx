@@ -81,7 +81,7 @@ export default function Contact() {
             <p className="lead mt-2">{c.lead}</p>
           </div>
 
-          <div className="contact-cards">
+          <div className="contact-cards" id="zone">
             {/* Le telephone est facultatif (la loi exige une adresse e-mail) :
                 sans numero, la carte n'apparait pas. */}
             {filled(company.phone) && (

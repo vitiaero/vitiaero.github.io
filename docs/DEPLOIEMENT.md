@@ -142,7 +142,7 @@ Le serveur envoie alors tous les en-têtes de sécurité, CSP complète comprise
 - [ ] Compléter l'adresse postale dans `src/content.js` (`[ADRESSE]`, `[NPA]`,
       `[VILLE]`), obligatoire selon la LCD et la nLPD.
 - [ ] Traiter les points ouverts de `docs/CONFORMITE.md` (accord écrit de DJI,
-      homologation du T50, conditions générales), puis faire relire par un juriste.
+      homologation du T55, conditions générales), puis faire relire par un juriste.
 - [ ] Remplacer le service d'itinéraire OSRM public, serveur de démonstration non
       prévu pour la production (`ROUTE_URL` dans `server/index.js`).
 - [ ] Décider de la durée de conservation des pièces jointes (nLPD).

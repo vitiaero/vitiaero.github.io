@@ -6,10 +6,11 @@ import Picture from '../components/Picture.jsx';
 import { images, videos } from '../content.js';
 import { useI18n } from '../i18n/index.jsx';
 
-// Page Equipement : le DJI Agras T55, presente comme une page produit.
-// Chaque caracteristique vient des pages officielles de DJI (sources et dates
-// dans docs/REFONTE-T55.md). Photos et videos : DJI (ag.dji.com/t55), credit
-// sur la page ; registre dans docs/REGISTRE-MEDIAS.md.
+// Page Equipement : le DJI Agras T55, presente comme une page produit, dans la
+// meme structure que l'ancienne page (drone, pulverisation et ses pieces,
+// batterie, preparation). Chaque caracteristique vient des pages officielles de
+// DJI (docs/REFONTE-T55.md). Visuels : illustrations generees d'apres des vues
+// du T55 ; registre dans docs/REGISTRE-MEDIAS.md.
 
 // Scene : image fixe (toujours) et video par-dessus sur ordinateur. La video
 // part de la meme image, qui reste visible pendant le chargement.
@@ -66,8 +67,8 @@ function Figures({ items, className }) {
   );
 }
 
-// Photos des cartes Epandage et Levage, dans l'ordre des textes.
-const CARD_IMAGES = [images.epandage, images.levage];
+// Images des trois pieces du systeme de pulverisation, par cle de texte.
+const PART_IMAGES = { pompe: images.pompe, buse: images.buse, reservoir: images.reservoir };
 
 export default function Equipement() {
   const { t } = useI18n();
@@ -84,7 +85,7 @@ export default function Equipement() {
             <p className="lead">{e.lead}</p>
           </div>
           <Reveal>
-            <Stage img={images.transport} alt={e.heroAlt} ratio="16 / 9" video={videos.equipement} sizes="(max-width: 1140px) 100vw, 1100px" eager className="eq-stage-hero" />
+            <Stage img={images.bordVigne} alt={e.heroAlt} ratio="16 / 9" video={videos.equipement} sizes="(max-width: 1140px) 100vw, 1100px" eager className="eq-stage-hero" />
           </Reveal>
           <Figures items={e.figures} className="eq-figures" />
         </div>
@@ -92,27 +93,12 @@ export default function Equipement() {
 
       <SubNav items={e.subnav} label={e.subnavLabel} title={e.title} />
 
-      {/* Pulverisation */}
-      <section id="pulverisation" className="eq-dark">
-        <div className="container">
-          <Reveal className="eq-head">
-            <span className="eyebrow">{e.spray.eyebrow}</span>
-            <h2 className="h2">{e.spray.title}</h2>
-            <p className="lead">{e.spray.text}</p>
-          </Reveal>
-          <Reveal>
-            <Stage img={images.pulvChamp} alt={e.spray.alt} ratio="2 / 1" video={videos.pulverisation} sizes="(max-width: 1240px) 100vw, 1200px" />
-          </Reveal>
-          <Figures items={e.spray.figures} className="eq-figures" />
-        </div>
-      </section>
-
-      {/* Securite */}
+      {/* Le drone et sa securite */}
       <section id="securite" className="section">
         <div className="container">
           <div className="eq-split">
             <Reveal>
-              <Stage img={images.radar} alt={e.safety.alt} ratio="6 / 5" video={videos.radar} sizes="(max-width: 960px) 100vw, 55vw" />
+              <Stage img={images.radar} alt={e.safety.alt} ratio="16 / 9" sizes="(max-width: 960px) 100vw, 55vw" />
             </Reveal>
             <Reveal delay={100}>
               <span className="eyebrow">{e.safety.eyebrow}</span>
@@ -134,18 +120,48 @@ export default function Equipement() {
         </div>
       </section>
 
+      {/* Pulverisation et ses pieces */}
+      <section id="pulverisation" className="eq-dark">
+        <div className="container">
+          <Reveal className="eq-head">
+            <span className="eyebrow">{e.spray.eyebrow}</span>
+            <h2 className="h2">{e.spray.title}</h2>
+            <p className="lead">{e.spray.text}</p>
+          </Reveal>
+          <Reveal>
+            <Stage img={images.coteau} alt={e.spray.alt} ratio="16 / 9" sizes="(max-width: 1240px) 100vw, 1200px" />
+          </Reveal>
+          <div className="eq-parts">
+            {e.spray.parts.map((p, i) => (
+              <Reveal key={p.key} delay={i * 80}>
+                <figure className="eq-part">
+                  <Stage img={PART_IMAGES[p.key]} alt={p.alt} ratio="1 / 1" sizes="(max-width: 960px) 50vw, 400px" />
+                  <figcaption>
+                    <h3>{p.title}</h3>
+                    <p>{p.text}</p>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+          <Figures items={e.spray.figures} className="eq-figures" />
+        </div>
+      </section>
+
       {/* Batterie et recharge */}
       <section id="batterie" className="section bg-soft">
         <div className="container">
-          <Reveal className="eq-head">
-            <span className="eyebrow">{e.battery.eyebrow}</span>
-            <h2 className="h2">{e.battery.title}</h2>
-            <p className="lead">{e.battery.text}</p>
-          </Reveal>
-          <Reveal>
-            <Stage img={images.batterie} alt={e.battery.alt} ratio="2 / 1" video={videos.batterie} sizes="(max-width: 1240px) 100vw, 1200px" />
-          </Reveal>
-          <Figures items={e.battery.figures} className="eq-stats" />
+          <div className="eq-split text-first">
+            <Reveal>
+              <span className="eyebrow">{e.battery.eyebrow}</span>
+              <h2 className="h2">{e.battery.title}</h2>
+              <p className="lead">{e.battery.text}</p>
+              <Figures items={e.battery.figures} className="eq-stats" />
+            </Reveal>
+            <Reveal delay={100}>
+              <Stage img={images.batterie} alt={e.battery.alt} ratio="3 / 2" sizes="(max-width: 960px) 100vw, 55vw" />
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -161,7 +177,6 @@ export default function Equipement() {
             {e.versatility.cards.map((c, i) => (
               <Reveal key={c.title} delay={i * 80}>
                 <article className="eq-card">
-                  <Stage img={CARD_IMAGES[i]} alt={c.alt} ratio="4 / 3" sizes="(max-width: 960px) 100vw, 50vw" />
                   <div className="eq-card-body">
                     <div className="v">{c.v}</div>
                     <h3>{c.title}</h3>
@@ -177,14 +192,14 @@ export default function Equipement() {
       {/* Preparation du vol */}
       <section id="preparation" className="section bg-soft">
         <div className="container">
-          <div className="eq-split text-first">
+          <div className="eq-split">
             <Reveal>
+              <Stage img={images.vueDuCiel} alt={e.map.alt} ratio="16 / 9" sizes="(max-width: 960px) 100vw, 55vw" />
+            </Reveal>
+            <Reveal delay={100}>
               <span className="eyebrow">{e.map.eyebrow}</span>
               <h2 className="h2">{e.map.title}</h2>
               <p className="lead">{e.map.text}</p>
-            </Reveal>
-            <Reveal delay={100}>
-              <Stage img={images.radiocommande} alt={e.map.alt} ratio="16 / 9" sizes="(max-width: 960px) 100vw, 55vw" />
             </Reveal>
           </div>
         </div>

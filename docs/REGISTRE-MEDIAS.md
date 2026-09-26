@@ -3,7 +3,155 @@
 Mis à jour le 26 septembre 2026. Ce registre trace l'origine, les droits et
 l'usage de chaque photo et vidéo du drone.
 
-## 1. Médias utilisés : visuels officiels DJI du T55
+## 1. Médias utilisés : illustrations générées d'après des vues du T55 (série 2)
+
+**Décisions du propriétaire (26.9.2026)** : ne pas utiliser les photos et vidéos
+de DJI (droits) ; générer des visuels « ultra-réalistes » en prenant comme
+source de vérité 14 rendus du DJI Agras T55 fournis par le propriétaire ; modèle
+plus coûteux accepté, sans dépasser l'abonnement.
+
+- Outil : Higgsfield (compte du propriétaire, abonnement « plus »). Images :
+  GPT Image 2.5 avec images de référence. Vidéos : Kling 3.0 pro, à partir d'une
+  image générée, sans son.
+- Références : 14 rendus envoyés à Higgsfield le 26.9.2026 (`t55-ref-04` à
+  `t55-ref-17`). **Origine des rendus à confirmer** (vraisemblablement DJI) :
+  voir la conformité, point sur les références.
+- Fidélité : chaque résultat a été comparé aux rendus : quatre hélices simples à
+  deux pales et pointes orange (et non huit hélices coaxiales, erreur de la
+  série 1), bras avant plus hauts que les bras arrière, cylindre radar à
+  l'avant, réservoir blanc à couvercle gris et languette orange à l'arrière,
+  batterie à ailettes, buses centrifuges sous les moteurs. Règle ajoutée par le
+  propriétaire : **les jets de pulvérisation partent seulement des deux bras
+  arrière**.
+- Conditions de Higgsfield (26.7.2026) : pas de revendication de propriété, pas
+  de restriction d'usage commercial, l'utilisateur reste responsable des droits
+  de tiers.
+- Crédits de la série 2 : 57,5. Solde après la série : 0,75 crédit, insuffisant pour toute nouvelle génération (la moins chère coûte 2,75 crédits pour une image et 4,5 pour une vidéo).
+- Textes alternatifs : dans `src/i18n/*.js` (clés `alt`, `heroAlt`,
+  `parts[].alt`), tous préfixés « Illustration : ». Crédit sur le site :
+  « Illustration générée par IA » et mentions légales.
+- Formats publiés : AVIF puis WebP en deux largeurs, JPEG de repli, grain très
+  léger contre les paliers de couleur. Vidéos : AV1 puis H.264, 1920 × 1080,
+  24 i/s, sans son.
+
+| Tâche | Usage | Modèle et réglages | Références | Fichier du site | Coût | Statut |
+|---|---|---|---|---|---|---|
+| 88e4ab1a | Accueil, en-tête (image fixe) et image de partage | GPT Image 2.5, qualité xhigh, 2k, 16:9 | 13 trois quarts ; 12 trois quarts, haut ; 17 trois quarts, avant ; 15 face ; 16 profil ; 11 moteur et buse | archivée hors du site | 4,5 | Retirée : un jet part d'un bras avant (non conforme : deux buses standard, à l'arrière). |
+| 020a4ea2 | Accueil, vidéo d'en-tête (8 s) | Kling 3.0 pro, 8 s, 16:9, sans son | départ : 88e4ab1a | archivée hors du site | 14 | Retirée : jugée peu réaliste par le propriétaire (flou d'hélice pâteux vers 4,3 s). |
+| d54409e8 | Accueil, « Pourquoi le drone » | GPT Image 2.5, qualité high, 2k, 4:3 | 16 profil ; 13 trois quarts ; 11 moteur et buse ; 15 face | `images/t55/accueil-coteau-*` | 2,75 | Utilisée (accueil « Pourquoi le drone » et page Équipement, pulvérisation). Conforme : deux jets sous les bras arrière. |
+| e4b001b2 | Accueil, drone détouré | GPT Image 2.5, qualité high, 2k, 4:3, fond transparent | 13 trois quarts ; 12 trois quarts, haut ; 17 trois quarts, avant ; 15 face | archivée hors du site | 2,75 | Retirée : jugée bizarre sur le fond vert. |
+| e91373f3 | Équipement, en-tête (image fixe) | GPT Image 2.5, qualité high, 2k, 16:9 | 13 trois quarts ; 17 trois quarts, avant ; 12 trois quarts, haut ; 15 face ; 16 profil | `images/t55/bord-vigne-*` | 2,75 | Utilisée (en-tête Équipement et section « Notre drone » de l'accueil). À remplacer quand des crédits seront disponibles (jugée peu réaliste). |
+| c8a1e71b | Équipement, sécurité | GPT Image 2.5, qualité high, 2k, 16:9 | 09 radar et batterie ; 15 face ; 05 trois quarts, replié ; 13 trois quarts | `images/t55/radar-avant-*` | 2,75 | Utilisée, à refaire (jugée bizarre). |
+| c0e1edcd | Équipement, pulvérisation | GPT Image 2.5, qualité high, 2k, 16:9 | 16 profil ; 13 trois quarts ; 11 moteur et buse ; 15 face | archivée hors du site | 2,75 | Retirée : un jet part d'un bras avant (non conforme). |
+| 4f013ac5 | Équipement, pièce « pompes » | GPT Image 2.5, qualité high, 2k, 1:1 | 10 pompes ; 07 avant, bas ; 15 face | `images/t55/pompe-*` | 2,75 | Utilisée. |
+| e842292a | Équipement, pièce « buses » | GPT Image 2.5, qualité high, 2k, 1:1 | 11 moteur et buse ; 16 profil | `images/t55/buse-*` | 2,75 | Utilisée. |
+| 8f3f7047 | Équipement, pièce « réservoir » | GPT Image 2.5, qualité high, 2k, 1:1 | 08 réservoir et batterie ; 06 dessus, réservoir | `images/t55/reservoir-*` | 2,75 | Utilisée, à refaire (plus concrète). |
+| 342c1bb2 | Équipement, batterie | GPT Image 2.5, qualité high, 2k, 3:2 | 09 radar et batterie ; 06 dessus, réservoir ; 08 réservoir et batterie | `images/t55/batterie-*` | 2,75 | Utilisée, à refaire (autre plan). |
+| 15b4a038 | Équipement, préparation du vol | GPT Image 2.5, qualité high, 2k, 16:9 | 14 dessus, déplié ; 04 dessus, replié | `images/t55/vue-du-ciel-*` | 2,75 | Utilisée, à remplacer par la radiocommande. |
+| 315bb74d | Équipement, vidéo d'en-tête (5 s, depuis 24) | Kling 3.0 pro, 5 s, 16:9, sans son | départ : e91373f3 | `videos/t55-equipement.*` | 8,75 | Utilisée, à refaire (jugée peu réaliste). |
+| aed43a1a | Accueil, « Notre drone » ; départ prévu de la future vidéo d'accueil | GPT Image 2.5, qualité high, 2k, 16:9 | 13 trois quarts ; 12 trois quarts, haut ; 17 trois quarts, avant ; 15 face ; 11 moteur et buse | archivée hors du site | 2,75 | Retirée : trois jets, dont un sous un bras avant (non conforme). |
+
+### Prompts exacts (série 2)
+
+**88e4ab1a (Accueil, en-tête (image fixe) et image de partage)**
+
+> The reference images show the exact design of the agricultural spraying drone to use. Reproduce this exact drone faithfully, with identical proportions and parts: four long carbon-fibre arms in an X layout, each ending in ONE large two-blade black propeller with orange tips (four propellers in total, no coaxial or stacked rotors); the two front arms mounted higher than the two rear arms; a light-grey faceted central body; a tall light-grey cylindrical radar and vision module standing upright at the front; a white 50-litre tank with a round grey lid and an orange tab at the rear; the battery with heat-sink fins between them; black tubular landing gear; small black centrifugal spray nozzles hanging under the two rear motors. Nothing added, nothing missing.
+>
+> Ultra-photorealistic premium advertising photograph for a website hero. Early morning in the Lavaux terraced vineyards, Switzerland: rows of green vines on dry-stone-walled terraces descending the steep hillside, Lake Geneva softly visible far below in the distance, warm golden sunrise light, light morning haze over the lake. No people, no village, no recognisable buildings or landmarks in the foreground.
+>
+> The drone flies slowly at low altitude, about two metres above the vine rows, seen from a three-quarter front angle slightly above it. It sprays a light, controlled, translucent fine mist from the nozzles under its rear motors, falling only onto the vine foliage below, never excessive or opaque. Propellers spinning with natural motion blur on the blade tips; the rotor wash gently moves the vine leaves.
+>
+> Composition: the drone sits in the right third of the frame, a calm negative space on the left (soft vineyard, lake and sky) for the website headline. Palette of deep elegant greens and warm stone, subtle reflections on the lake, realistic depth of field, extremely sharp mechanical detail on the drone, natural cinematic colour grading, full-frame camera, 35 mm lens. No text, no logos, no watermark, no lettering, no CGI look, no invented parts, no extra rotors or arms.
+
+**020a4ea2 (Accueil, vidéo d'en-tête (8 s))**
+
+> Ultra-photorealistic premium cinematic advertising shot. The agricultural spraying drone flies very slowly and steadily forward along the vine rows at a constant low height, spraying a light, controlled, translucent fine mist that settles only on the vine foliage below. Its four propellers spin fast with natural motion blur; the drone keeps exactly the same shape, arms, radar cylinder, tank and proportions throughout, nothing changes or morphs. The camera performs a very slow, smooth lateral tracking move from a three-quarter front angle, starting slightly wide on the Lavaux vineyard terraces and gently easing closer to the drone. The rotor wash softly moves the vine leaves. Lake Geneva, the hills and the sunrise stay still, light haze drifts slowly. Stable camera, no sudden movement, physically plausible motion, no new objects, no people, no text, no logos, no morphing.
+
+**d54409e8 (Accueil, « Pourquoi le drone »)**
+
+> The reference images show the exact agricultural spraying drone to reproduce, with identical design and proportions: four carbon-fibre arms, each with ONE large two-blade black propeller with orange tips (four propellers only); front arms higher than rear arms; light-grey faceted body; tall grey cylindrical radar module at the front; white tank with a grey lid and orange tab at the rear; black tubular landing gear; small black centrifugal nozzles under the rear motors. Nothing invented.
+>
+> Ultra-photorealistic editorial photograph. The drone flies a few metres above a very steep terraced vineyard in Lavaux, Switzerland, seen from the side at vine level, spraying a light, translucent, controlled mist from the nozzles under its rear motors onto the vine foliage. Soft early-morning backlight makes the fine droplets glow; green vine leaves sharp in the foreground, a dry-stone terrace wall below, the lake blurred far behind. Natural colours, 50 mm lens, realistic depth of field. No people, no text, no logos, no watermark, no CGI look.
+
+**e4b001b2 (Accueil, drone détouré)**
+
+> Reproduce exactly the agricultural spraying drone shown in the reference images, with identical design, parts and proportions: four carbon-fibre arms, each with ONE two-blade black propeller with orange tips (four propellers only), front arms higher than rear arms, light-grey faceted body, tall grey cylindrical radar module at the front, white tank with grey lid and orange tab at the rear, battery with heat-sink fins in the middle, black tubular landing gear, small black nozzles under the rear motors. Photorealistic product photograph, three-quarter front view from slightly above, arms unfolded, propellers still and sharp, isolated on a fully transparent background, no floor, no shadow, soft studio lighting, crisp real materials. No text, no logos, no invented parts.
+
+**e91373f3 (Équipement, en-tête (image fixe))**
+
+> Reproduce exactly the agricultural spraying drone shown in the reference images, identical design and proportions: four carbon-fibre arms, each with ONE two-blade black propeller with orange tips (four propellers only), front arms higher than rear arms, light-grey faceted body, tall grey cylindrical radar module at the front, white tank with grey lid and orange tab at the rear, black tubular landing gear, small black nozzles under the rear motors. Nothing invented.
+>
+> Ultra-photorealistic premium photograph. The drone stands on its landing gear on a gravel track at the edge of a terraced vineyard in Lavaux, Switzerland, at sunrise, arms unfolded and propellers still, ready for take-off. Camera at knee height, three-quarter front view, warm low sunlight, long soft shadows, vine rows and dry-stone walls rising behind, Lake Geneva softly visible in the distance. Drone in the centre-right of the frame. Premium editorial style, natural colours, 35 mm lens. No people, no vehicles, no text, no logos, no watermark.
+
+**c8a1e71b (Équipement, sécurité)**
+
+> Reproduce exactly the agricultural spraying drone shown in the reference images, identical design: the tall light-grey cylindrical radar and vision module standing at the front of the faceted light-grey body, with its small camera lenses; carbon-fibre arms with single two-blade black propellers with orange tips; white tank with grey lid at the rear. Nothing invented.
+>
+> Ultra-photorealistic close-up photograph of the front of the drone hovering in the early morning above a vineyard: the camera faces the radar cylinder at the same height, the front arms and propellers partly in frame, vine rows softly out of focus behind, fine morning mist in the air, soft diffused light, real materials. No screens, no added lights, no text, no logos, no watermark.
+
+**c0e1edcd (Équipement, pulvérisation)**
+
+> Reproduce exactly the agricultural spraying drone shown in the reference images, identical design and proportions: four carbon-fibre arms each with ONE two-blade black propeller with orange tips (four propellers only), front arms higher than rear arms, light-grey faceted body, tall grey radar cylinder at the front, white tank with grey lid and orange tab at the rear, black tubular landing gear, black centrifugal nozzles hanging under the rear motors. Nothing invented.
+>
+> Ultra-photorealistic photograph. The drone flies slowly along a vine row about three metres above the canopy on a sloping vineyard, seen from a low side angle. The nozzles under its rear motors release a fine, even, controlled mist, backlit by the rising sun so the droplets glow; the rest of the vineyard in soft focus. Golden light, natural colours, 85 mm lens compression. Physically plausible spray, no people, no text, no logos, no watermark.
+
+**4f013ac5 (Équipement, pièce « pompes »)**
+
+> Reproduce exactly the spray pump unit shown in the reference images: the black pump assembly with its round impeller housings and short hoses mounted under the white tank, between the black tubular landing gear legs of the agricultural drone. Identical shapes and parts, nothing invented.
+>
+> Ultra-photorealistic close-up photograph of this pump under the drone, the drone standing on a gravel path at the edge of a vineyard in soft morning light, shallow depth of field, vine rows blurred in the background, a few water droplets on the black plastic, real materials. No text, no logos, no labels, no watermark.
+
+**e842292a (Équipement, pièce « buses »)**
+
+> Reproduce exactly the motor pod and centrifugal nozzle shown in the reference image: the carbon-fibre arm with its finned electronics housing, the grey motor with the black two-blade propeller on top, and the black cylindrical centrifugal nozzle with an orange ring hanging below the motor, fed by a thin grey hose. Identical shapes, nothing invented.
+>
+> Ultra-photorealistic close-up photograph of this nozzle in operation while the drone hovers above a vineyard: the spinning nozzle releases a fine, even ring of mist droplets that drifts down onto the vine leaves below. Backlit morning sun makes the droplets glow, shallow depth of field, vines blurred behind. Real materials, no text, no logos, no labels, no watermark.
+
+**8f3f7047 (Équipement, pièce « réservoir »)**
+
+> Reproduce exactly the drone's spray tank shown in the reference images: the white, slightly translucent plastic tank with its large round grey lid and orange pull tab, the small black level sensor with its white cable next to the lid, and the black frame around it. Identical shapes, nothing invented.
+>
+> Ultra-photorealistic close-up photograph of this tank on the drone standing at the edge of a vineyard in the early morning, a gloved hand not visible, a few drops of water on the white plastic, soft natural light, shallow depth of field, vine rows blurred behind. Real materials, no text, no logos, no labels, no watermark.
+
+**342c1bb2 (Équipement, batterie)**
+
+> Reproduce exactly the battery area of the agricultural drone shown in the reference images: the dark-grey battery inserted in the middle of the body, with its large aluminium heat-sink fins, carrying handle and power button with level lights, between the tall grey radar cylinder at the front and the white tank at the rear. Identical shapes, nothing invented.
+>
+> Ultra-photorealistic close-up photograph from slightly above of this battery and its heat-sink fins on the drone, standing outdoors at the edge of a vineyard in warm late-morning sunlight, crisp metal texture, shallow depth of field, vines blurred behind. No text, no logos, no labels, no watermark.
+
+**15b4a038 (Équipement, préparation du vol)**
+
+> Reproduce exactly the agricultural drone seen from directly above in the reference images: X layout of four carbon-fibre arms, each with ONE two-blade black propeller with orange tips, the white tank with round grey lid and orange tab, the battery with fins and the grey radar cylinder. Identical design, nothing invented.
+>
+> Ultra-photorealistic aerial photograph taken straight down from high above a steep terraced vineyard in Lavaux, Switzerland: irregular vineyard parcels separated by dry-stone walls and narrow paths, parallel vine rows following the slope, summer morning light. The drone is small in the frame, flying over one parcel, its propellers blurred by motion, its shadow on the vines. No overlays, no lines, no text, no logos, no people, no vehicles, no watermark.
+
+**315bb74d (Équipement, vidéo d'en-tête (5 s, depuis 24))**
+
+> Ultra-photorealistic premium cinematic shot. Very slow, smooth dolly-in toward the agricultural drone standing still on its landing gear on the gravel track at the edge of the terraced vineyard at sunrise. The drone does not move, its four propellers stay still; it keeps exactly the same shape, arms, radar cylinder, tank and proportions throughout, nothing changes or morphs. Warm low sunlight, a few specks of dust drifting in the air, vine leaves moving very slightly in a light breeze, soft sparkle on the lake in the distance. Stable camera, no sudden movement, physically plausible, no new objects, no people, no text, no logos, no morphing.
+
+**aed43a1a (Accueil, « Notre drone » ; départ prévu de la future vidéo d'accueil)**
+
+> The reference images show the exact agricultural spraying drone to reproduce, with identical design and proportions: four carbon-fibre arms, each with ONE large two-blade black propeller with orange tips (four propellers only, no coaxial rotors); the two front arms mounted higher than the two rear arms; light-grey faceted central body; tall light-grey cylindrical radar module standing at the front; white 50-litre tank with a round grey lid and orange tab at the rear; black tubular landing gear; black centrifugal nozzles hanging under the rear motors. Nothing added, nothing missing.
+>
+> Ultra-photorealistic frame from a real agricultural drone commercial, shot with a telephoto lens from another drone. The camera is slightly above and in front of the drone, three-quarter front view. The drone flies low and steady over dense rows of vines on a steep terraced vineyard slope in Lavaux, Switzerland, at medium distance: it fills about one third of the frame width, placed centre-right, not in the extreme foreground. From the nozzles under its rear motors, two realistic spray plumes of fine droplets fall straight down onto the vine canopy, dense near the nozzles and dissipating lower, lit from behind by warm late-afternoon sun so the droplets glow. The lush deep-green vine foliage and a few dry-stone terrace walls fill the whole background as the slope rises behind the drone; no sky. Propellers spinning with natural motion blur. Real documentary look, 85 mm telephoto compression, shallow depth of field, natural colours, crisp mechanical detail on the drone. No people, no buildings, no text, no logos, no watermark, no CGI look, no invented parts.
+
+## 2. Autres médias (inchangés)
+
+| Fichier | Auteur et licence | Usage |
+|---|---|---|
+| `public/images/lavaux.jpg` | Joachim Kohler, Wikimedia Commons, CC BY-SA 4.0, recadrée | Accueil et À propos |
+| `public/videos/lavaux-epesses.*`, `public/images/lavaux/epesses-*`, `public/images/partage-vitiaero.jpg` | Adrien Delhay : vol FPV au-dessus des vignes d'Epesses (Lavaux). Extrait de 19 à 25 s de `sources/videos/vignoble-fpv-2160.mp4`, ralenti de moitié, boucle par fondu d'une seconde, sans son ; images tirées de la même prise | Accueil, en-tête (vidéo et image) ; image de partage |
+| `public/images/logo-vitiaero-120.*`, `logo-vitiaero-full-420.*` | Logo du projet ; réductions des fichiers de `sources/logos/` | En-tête, À propos |
+
+Les deux fichiers de logo d'origine contiennent des métadonnées C2PA
+(provenance d'un outil de création). Les versions publiées, réduites, ne les
+reprennent pas. L'origine du logo est à confirmer par le propriétaire.
+
+## 3. Historique : visuels officiels DJI du T55 (utilisés puis retirés le 26.9.2026)
+
+Retirés du site le même jour, à la demande du propriétaire, pour ne pas avoir
+de problème de droits. Les fichiers restent dans l'historique Git (commit
+51ccafd).
 
 **Décision du propriétaire (26.9.2026)** : remplacer les illustrations générées
 par IA, jugées trop éloignées du vrai drone, par les photos et vidéos officielles
@@ -53,19 +201,7 @@ largeur (composant `Picture`), avec largeur et hauteur déclarées. Vidéos : AV
 puis H.264, sans piste son, chargées seulement sur ordinateur, quand elles sont
 visibles, jamais en mouvement réduit. Un bouton permet de les mettre en pause.
 
-## 2. Autres médias (inchangés)
-
-| Fichier | Auteur et licence | Usage |
-|---|---|---|
-| `public/images/lavaux.jpg` | Joachim Kohler, Wikimedia Commons, CC BY-SA 4.0, recadrée | Accueil et À propos |
-| `public/videos/vignoble-fpv-*.mp4`, `public/images/vignoble-poster.jpg` | Adrien Delhay (vignoble d'Epesses) | Accueil, bande « En images » |
-| `public/images/logo-vitiaero-120.*`, `logo-vitiaero-full-420.*` | Logo du projet ; réductions des fichiers de `sources/logos/` | En-tête, À propos |
-
-Les deux fichiers de logo d'origine contiennent des métadonnées C2PA
-(provenance d'un outil de création). Les versions publiées, réduites, ne les
-reprennent pas. L'origine du logo est à confirmer par le propriétaire.
-
-## 3. Historique : illustrations générées avec Higgsfield (non utilisées)
+## 4. Historique : série 1 d'illustrations Higgsfield (non utilisées)
 
 Générées le 26 septembre 2026 pour la première version de la refonte, puis
 retirées du site le même jour à la demande du propriétaire. Les fichiers ne sont
@@ -156,4 +292,3 @@ les textes des prompts).
 **a9f6df2a (Vidéo équipement (depuis c2020e60))**
 
 > Original photorealistic cinematic shot. Slow, smooth dolly-in toward the agricultural drone standing still on the gravel track at sunrise. The drone does not move and its propellers stay still; it keeps exactly the same shape, arms and proportions throughout. Warm low sunlight, a few specks of dust in the air, vine leaves moving very slightly in a light breeze. Stable camera, physically plausible, no new objects, no people, no text, no logos, no morphing.
-

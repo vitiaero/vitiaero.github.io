@@ -4,6 +4,34 @@ Relevé du 20 septembre 2026, mesuré sur le site en marche, pas jugé de mémoi
 Chaque point dit ce qui se passe, pourquoi cela compte pour un vigneron qui
 visite le site, et le travail que demande la correction.
 
+## Direction artistique (révision du 26 septembre 2026)
+
+Objectif : un site d'entreprise vaudoise crédible, pas un modèle de page
+générique. Les règles ci-dessous priment sur les sections plus anciennes.
+
+- **Palette** : fond blanc cassé `#f7f6f1`, fond secondaire pierre
+  `#efede6`, texte anthracite `#1f231e`, texte secondaire gris pierre
+  `#5f635b`, bordures `#dfdcd3`. Vert vigne `#3d6a2b` réservé aux actions
+  (boutons, liens, repères) ; vert forêt `#1f2a1b` pour les sections sombres.
+  Pas de dégradé décoratif ni de teinte bleue.
+- **Formes** : rayon de 10 px pour les blocs et les images, 6 à 8 px pour les
+  contrôles et les boutons ; aucune pilule, sauf le bouton pause rond.
+  Bordures fines, ombres quasi absentes.
+- **Typographie** : Inter seule. Titre d'accueil 2,1 à 3,5 rem en graisse 700 ;
+  titres de section 1,5 à 2,1 rem en 650 ; surtitres en casse normale, petits,
+  vert foncé.
+- **Boutons** : principal plein vert (« Demander un devis ») ; secondaire en
+  contour fin (`.btn-secondary`, ou `.btn-quiet` sur image).
+- **Effets retirés** : verre dépoli, reflets, nuées colorées, compteurs animés,
+  flèche qui rebondit, drone flottant, boutons qui se soulèvent. Restent : une
+  apparition courte (8 px, 0,45 s), un zoom d'image de 2 % au survol.
+- **Images** : priorité aux vraies images (vidéo FPV d'Epesses en en-tête).
+  Les illustrations générées du T55 respectent les rendus de référence :
+  quatre hélices, deux buses à l'arrière (docs/PLAN-GENERATION.md).
+- **Compositions variées** : en-tête éditorial, chiffres en ligne, texte et
+  image, avantages en liste à côté du titre, étapes en frise, section sombre
+  pour le drone, bandeau photo du Lavaux, FAQ par catégories.
+
 ## Déjà corrigé
 
 Pour situer l'état actuel :

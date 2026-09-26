@@ -18,19 +18,19 @@ garantie).
 |---|---|---|---|
 | 1 | Site en ligne | **Bloquant avant publication** | Le 26.9.2026, vitiaero.ch et vitiaero.github.io répondent « Site not found » et le dépôt `vitiaero/vitiaero.github.io` n'est pas visible publiquement (404). Avec un compte gratuit, GitHub Pages exige un dépôt public (section 1.1). |
 | 2 | Identité de l'éditeur (mentions légales, confidentialité, contact) | **Bloquant avant publication** | Adresse postale absente : « [ADRESSE], [NPA] [VILLE] » s'affiche sur /mentions-legales, /confidentialite et /contact. Exigée par l'art. 3 al. 1 let. s LCD et l'art. 19 al. 2 let. a nLPD. À renseigner dans `src/content.js`. |
-| 3 | Photos et vidéos DJI du T55 | **Bloquant avant publication** | Utilisées à la demande du propriétaire, créditées « © DJI ». Les conditions de DJI interdisent l'usage commercial sans consentement écrit préalable. Obtenir l'accord écrit (modèle en annexe) ou retirer les visuels (section 1.3). |
+| 3 | Visuels du drone (illustrations générées d'après des rendus du T55) | **À faire vérifier par un juriste local** | Les photos et vidéos de DJI ont été retirées le 26.9.2026. Les visuels sont générés par IA (Higgsfield) à partir de 14 rendus du T55 fournis par le propriétaire, d'origine à confirmer (vraisemblablement DJI). À confirmer : droit d'utiliser ces rendus comme références, et représentation fidèle d'un produit protégé par ses droits de design (section 1.3). Les visuels portent la mention « Illustration générée par IA ». |
 | 4 | Marques DJI et AGRAS, nom du modèle | **À faire vérifier par un juriste local** | Usage limité à la désignation du drone prévu, mention d'indépendance sur la page Équipement et dans les mentions légales, aucun logo ajouté. À confirmer : usage descriptif admissible, et absence de confusion avec un revendeur ou un partenaire. |
-| 5 | Personnes visibles dans les visuels DJI | **À faire vérifier par un juriste local** | Un opérateur est reconnaissable (en-tête de la page Équipement, image et vidéo) ; des mains apparaissent sur la photo de la radiocommande. Faire confirmer dans l'accord de DJI que les droits à l'image couvrent cet usage. Aucune propriété privée identifiable n'a été repérée dans les visuels retenus. |
+| 5 | Personnes et propriétés visibles | **Conforme** | Aucune personne dans les visuels générés. Décors génériques de terrasses du Lavaux, sans bâtiment ni propriété reconnaissable au premier plan. |
 | 6 | Drone et produits phytosanitaires | **À compléter** | Homologation du T55 par Agroscope non vérifiable en ligne ; autorisation préalable de l'OFAC, permis OPer-A, contrôle du drone, SafetySpray et radiotéléphonie dans le canton de Vaud (section 3.2). Le site dit « drone prévu » et la FAQ l'explique. À obtenir avant la première intervention. |
 | 7 | Conditions générales | **À compléter** | Paiement, annulation, assurance responsabilité civile à ajouter avant tout contrat. |
 | 8 | Hébergement et formulaires futurs | **À compléter** | Les conditions de GitHub limitent l'usage commercial de Pages ; choisir un hébergeur adapté avant d'activer les envois et les comptes clients (section 3.3). |
 | 9 | Référencement | **À compléter** | Indexation volontairement bloquée (`robots.txt` : `Disallow: /`) pendant la phase de lancement. À ouvrir le jour du lancement, avec `preLaunch = false`. |
 | 10 | HTTPS | **À compléter** | Certificat valide avant la mise hors ligne. À revérifier (HTTPS imposé) à la republication. |
 | 11 | Politique de confidentialité (nLPD) | **Conforme** (hors adresse, point 2) | Responsable, finalités, destinataires, pays étrangers et garanties, conservation, droits (section 2.2). |
-| 12 | Sous-traitants et services tiers | **Conforme** | GitHub (hébergement, certifié Swiss-U.S. DPF), swisstopo (fonds de carte, recherche), OpenStreetMap (seulement si choisi). Higgsfield : utilisé une fois pour des essais d'illustration, retirés du site ; il ne reçoit aucune donnée des visiteurs et n'intervient pas dans le site. |
+| 12 | Sous-traitants et services tiers | **Conforme** | GitHub (hébergement, certifié Swiss-U.S. DPF), swisstopo (fonds de carte, recherche), OpenStreetMap (seulement si choisi). Higgsfield : outil de création des illustrations ; il a reçu les 14 rendus de référence et les prompts, aucune donnée des visiteurs, et n'intervient pas dans le site publié. |
 | 13 | Cookies et stockage local (art. 45c LTC) | **Conforme** | Aucun traceur. Stockage technique listé, possibilité de refus expliquée (section 2.3). |
 | 14 | Formulaires | **Conforme** | Mode statique : rien n'est envoyé ; le message l'explique après l'envoi. Case de consentement obligatoire liée à la politique. Validation accessible (résumé des erreurs, focus, `aria-invalid`, annonce `role="alert"`). |
-| 15 | Licences et traçabilité des médias | **Conforme** pour la traçabilité, **bloquant** pour la licence DJI (point 3) | Registre complet : `docs/REGISTRE-MEDIAS.md` (source, date, fichier, transformation, texte alternatif). Photo du Lavaux CC BY-SA 4.0 correctement créditée. Crédits des cartes visibles (section 2.6). |
+| 15 | Licences et traçabilité des médias | **Conforme** (traçabilité) | Registre complet : `docs/REGISTRE-MEDIAS.md` (prompt exact, réglages, références, fichier, coût, statut). Photo du Lavaux CC BY-SA 4.0 correctement créditée. Crédits des cartes visibles (section 2.6). Droits des références : point 3. |
 | 16 | Prix et TVA (OIP, LTVA) | **Conforme** | « TVA éventuelle comprise », taux réduit de 2,6 % (section 2.4). |
 | 17 | Publicité exacte (art. 3 al. 1 let. b LCD) | **Conforme** | Données du T55 vérifiées sur les pages de DJI le 26.9.2026, sans « dernier modèle » ni chiffre non publié (section 2.5). |
 | 18 | Accessibilité | **Conforme** aux contrôles automatisés | Voir `docs/REFONTE-T55.md`, section 7. Un test manuel au lecteur d'écran reste à faire. Aucune obligation légale d'accessibilité n'a été vérifiée pour un site privé ; l'objectif WCAG 2.2 AA vient du cahier des charges. |
@@ -55,19 +55,26 @@ compris pour le courrier électronique ») et par l'art. 19 al. 2 let. a nLPD
 `src/content.js` : `address`, `npa`, `city`. Le téléphone et le numéro IDE sont
 facultatifs : s'ils restent vides, ils ne s'affichent pas.
 
-### 1.3 Visuels DJI sans accord écrit
+### 1.3 Visuels du drone
 
-Le 26 septembre 2026, le propriétaire a choisi de remplacer les illustrations
-générées par IA par les photos et vidéos officielles du DJI Agras T55
-(ag.dji.com/t55). Les conditions du site DJI interdisent de reproduire leur
-contenu « à des fins commerciales » sans « consentement écrit préalable ».
+Le 26 septembre 2026, les photos et vidéos officielles de DJI, un temps
+utilisées, ont été retirées : les conditions du site DJI interdisent de
+reproduire leur contenu « à des fins commerciales » sans « consentement écrit
+préalable ». Elles restent dans l'historique Git.
 
-Mesures prises : crédit « © DJI » visible (accueil, page Équipement, mentions
-légales), aucun logo ajouté, aucune présentation des images comme des
-interventions de VitiAero, mention d'indépendance. Ces mesures ne remplacent pas
-l'accord. Tant qu'il n'est pas obtenu, le risque (loi sur le droit d'auteur)
-reste ouvert. Un modèle de demande figure en annexe. Sans réponse positive, il
-faut retirer ces visuels avant la publication.
+Les visuels actuels sont des illustrations générées par IA (Higgsfield), à
+partir de 14 rendus du T55 fournis par le propriétaire. Ce ne sont pas des
+copies de ces rendus, mais ces rendus leur ont servi de référence et ils
+représentent fidèlement un produit de DJI. Points à faire confirmer par un juriste :
+
+- l'origine des rendus (s'ils viennent de DJI, leur envoi à un service tiers
+  comme référence est-il couvert par les conditions de DJI ?) ;
+- l'absence d'atteinte au design du produit ou à la marque, alors que le site
+  présente le drone réellement prévu, avec la mention d'indépendance.
+
+Mesures prises : mention « Illustration générée par IA » sur l'accueil, sur la
+page Équipement et dans les mentions légales ; FAQ indiquant que les images ne
+montrent pas des interventions réelles ; aucun logo ajouté.
 
 ## 2. Ce qui a été vérifié et corrigé
 
@@ -160,9 +167,9 @@ alors que le rapport du 24.9 les disait affichés. La règle est retirée. Test 
 
 - Photo du Lavaux (CC BY-SA 4.0) : auteur (Joachim Kohler), liens vers la source
   et la licence, modification signalée (recadrée et redimensionnée).
-- Visuels du drone : voir 1.3 et `docs/REGISTRE-MEDIAS.md`. Tous les anciens
-  visuels de l'ancien modèle ont été retirés du site ; ils restent dans
-  l'historique Git.
+- Visuels du drone : voir 1.3 et `docs/REGISTRE-MEDIAS.md`. Les visuels de
+  l'ancien modèle et les photos DJI du T55 ont été retirés du site ; ils restent
+  dans l'historique Git.
 
 ### 2.8 Réglementation des drones
 
@@ -184,8 +191,8 @@ personne titulaire du permis OPer-A (RS 814.812.34).
 
 1. Rendre le site accessible à nouveau (1.1).
 2. Renseigner l'adresse postale (1.2).
-3. Obtenir l'accord écrit de DJI ou retirer les visuels DJI (1.3, annexe).
-4. Faire relire les points 4 et 5 du rapport par un juriste.
+3. Confirmer l'origine des 14 rendus de référence (1.3).
+4. Faire relire les points 3 et 4 du rapport par un juriste.
 
 ### 3.2 Avant la première intervention
 
@@ -261,6 +268,8 @@ Prestataires et titulaires de droits :
 
 ## Annexe : demande d'autorisation à DJI
 
+Utile seulement si vous souhaitez un jour publier les photos et vidéos de DJI,
+ou si le juriste recommande de demander l'accord pour les rendus de référence.
 À envoyer à votre revendeur DJI Agriculture en Suisse, ou à DJI. Gardez la
 réponse écrite.
 
