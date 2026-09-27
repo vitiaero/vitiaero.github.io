@@ -66,6 +66,37 @@ export function prelaunchIdentityNotice(lang) {
   }));
 }
 
+// Entreprise fictive (projet PAE au CPNV) : avis en tete des documents. Le
+// texte depend du document, car certains decrivent aussi des elements reels
+// (hebergement du site, fonds de carte, stockage local).
+const FICTIONAL_NOTICES = {
+  mentions: {
+    fr: 'Entreprise fictive : VitiAero a été imaginée dans le cadre d\'un PAE au CPNV. La raison sociale, la forme juridique, l\'adresse et les numéros ci-dessous sont inventés pour ce projet, et aucune prestation n\'est proposée. L\'hébergement du site par GitHub Pages est réel.',
+    de: 'Fiktives Unternehmen: VitiAero wurde im Rahmen eines PAE am CPNV entwickelt. Firma, Rechtsform, Adresse und Nummern unten sind für dieses Projekt erfunden, und es werden keine Leistungen angeboten. Das Hosting der Website bei GitHub Pages ist real.',
+    en: 'Fictional company: VitiAero was created for a PAE project at the CPNV. The business name, legal form, address and numbers below are invented for this project, and no services are offered. The hosting of the website by GitHub Pages is real.',
+  },
+  privacy: {
+    fr: 'Entreprise fictive : VitiAero a été imaginée dans le cadre d\'un PAE au CPNV. Les prestataires nommés « Exemple » et les durées de conservation sont inventés pour ce projet. Le reste est réel : le site publié n\'enregistre aucune demande, et l\'hébergement par GitHub Pages, les fonds de carte et le stockage local fonctionnent comme décrit ici.',
+    de: 'Fiktives Unternehmen: VitiAero wurde im Rahmen eines PAE am CPNV entwickelt. Die Dienstleister mit dem Namen «Exemple» und die Aufbewahrungsfristen sind für dieses Projekt erfunden. Der Rest ist real: Die veröffentlichte Website speichert keine Anfragen, und das Hosting bei GitHub Pages, die Kartenhintergründe sowie die lokale Speicherung funktionieren wie hier beschrieben.',
+    en: 'Fictional company: VitiAero was created for a PAE project at the CPNV. The providers named "Exemple" and the retention periods are invented for this project. The rest is real: the published website stores no requests, and the hosting by GitHub Pages, the base maps and the local storage work as described here.',
+  },
+  cgv: {
+    fr: 'Entreprise fictive : ces conditions ont été rédigées pour un PAE au CPNV. Elles montrent ce que prévoirait un service réel, mais n\'ont aucune valeur contractuelle : aucune prestation n\'est proposée et aucun contrat ne peut être conclu. L\'assureur nommé « Exemple » est inventé.',
+    de: 'Fiktives Unternehmen: Diese Bedingungen wurden für ein PAE am CPNV verfasst. Sie zeigen, was ein echter Dienst vorsehen würde, haben aber keine Vertragswirkung: Es werden keine Leistungen angeboten, und es kann kein Vertrag geschlossen werden. Der Versicherer mit dem Namen «Exemple» ist erfunden.',
+    en: 'Fictional company: these terms were written for a PAE project at the CPNV. They show what a real service would provide for, but have no contractual value: no services are offered and no contract can be concluded. The insurer named "Exemple" is invented.',
+  },
+  terms: {
+    fr: 'Entreprise fictive : ce site présente VitiAero, une entreprise imaginée dans le cadre d\'un PAE au CPNV. Aucune prestation n\'est proposée, et les demandes envoyées depuis le site publié ne sont pas enregistrées.',
+    de: 'Fiktives Unternehmen: Diese Website stellt VitiAero vor, ein im Rahmen eines PAE am CPNV entwickeltes Unternehmen. Es werden keine Leistungen angeboten, und über die veröffentlichte Website gesendete Anfragen werden nicht gespeichert.',
+    en: 'Fictional company: this website presents VitiAero, a company created for a PAE project at the CPNV. No services are offered, and requests sent from the published website are not stored.',
+  },
+};
+
+export function fictionalNotice(b, lang, doc) {
+  if (b?.fictional !== true || !FICTIONAL_NOTICES[doc]) return null;
+  return notice(tr(lang, FICTIONAL_NOTICES[doc]));
+}
+
 // Prestataires configures, dans un ordre stable, avec leur role.
 export const SERVICE_ROLES = ['siteHosting', 'apiHosting', 'backups', 'mailbox', 'emailSending', 'routing', 'monitoring'];
 

@@ -106,6 +106,20 @@ export default {
     contact: (mail) => `Schreiben Sie uns: ${mail}`,
   },
 
+  // Fiktives Unternehmen (PAE am CPNV): siehe shared/business.js.
+  fictional: {
+    aria: 'Information zum Projekt',
+    label: 'Fiktives Unternehmen.',
+    text: 'VitiAero ist ein im Rahmen eines PAE am CPNV entwickeltes Unternehmen: Es werden keine Leistungen angeboten und keine Anfragen gespeichert.',
+    more: 'Mehr erfahren',
+    footer: 'VitiAero ist ein fiktives Unternehmen, entwickelt für ein PAE am CPNV.',
+    aboutTitle: 'Ein fiktives Unternehmensprojekt',
+    aboutText: 'VitiAero wurde im Rahmen eines PAE am CPNV entwickelt. Diese Website zeigt, wie der Dienst funktionieren würde: Online-Schätzung, Offertanfrage, Kundenbereich und Verwaltung. Kontaktangaben, Bedingungen und Dienstleister sind für dieses Projekt erfunden.',
+    credentialsTitle: 'Bewilligungen',
+    credentialsText: 'VitiAero ist ein fiktives Unternehmen: Es wurde keine Bewilligung beantragt. Ein echtes Unternehmen müsste vor dem ersten Einsatz alle in diesem Abschnitt beschriebenen Bewilligungen einholen.',
+    submit: 'Demonstration: VitiAero ist ein fiktives Unternehmen (PAE am CPNV). Es wurde keine Anfrage gesendet oder gespeichert.',
+  },
+
   formsClosed: {
     title: 'Formular noch nicht geöffnet',
     prelaunch: 'VitiAero befindet sich vor dem Start: Dieses Formular wird mit der Eröffnung des Dienstes geöffnet. Bis dahin werden über die Website keine Daten gesendet.',
@@ -865,6 +879,7 @@ export default {
     'La date n\'est pas valide.': 'Das Datum ist nicht gültig.',
     'Client introuvable.': 'Kunde nicht gefunden.',
     'Intervention introuvable.': 'Einsatz nicht gefunden.',
+    'Entreprise fictive : aucune demande n\'est enregistree.': 'Demonstration: VitiAero ist ein fiktives Unternehmen (PAE am CPNV). Es wurde keine Anfrage gespeichert.',
     'Service pas encore ouvert.': 'Der Dienst ist noch nicht eröffnet: Im Moment können keine Anfragen online gesendet werden.',
     'Merci de confirmer avoir lu la politique de confidentialite.': 'Bitte bestätigen Sie, dass Sie die Datenschutzerklärung gelesen haben.',
     'La page a ete mise a jour : merci de la recharger.': 'Die Seite wurde aktualisiert: Bitte laden Sie sie neu.',

@@ -619,6 +619,8 @@ button { font-family: inherit; cursor: pointer; }
 .footer-legal { display: flex; gap: 1.2rem; flex-wrap: wrap; }
 .footer-legal a { color: #97958c; }
 .footer-legal a:hover { color: #fff; }
+/* Entreprise fictive : rappel en bas de chaque page */
+.footer-fiction { flex-basis: 100%; margin: 0; color: #b5b3aa; }
 
 /* Page Contact : coordonnees en cartes, puis formulaire court */
 .contact-cards {

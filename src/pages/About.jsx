@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
 import { images } from '../content.js';
-import { LAUNCH } from '../launch.js';
+import { FICTIONAL, LAUNCH } from '../launch.js';
 import { useI18n } from '../i18n/index.jsx';
 
 export default function About() {
@@ -19,8 +19,13 @@ export default function About() {
               <h1 className="h1">{a.title}</h1>
               <p className="lead mt-2">{a.lead}</p>
               <p className="mt-2 muted">{a.p1}</p>
-              {/* Etat reel du projet, tant que le service n'est pas ouvert. */}
-              {!LAUNCH.ready && (
+              {/* Etat reel du projet : entreprise fictive, ou service pas encore ouvert. */}
+              {FICTIONAL ? (
+                <div className="status-box">
+                  <h2>{t.fictional.aboutTitle}</h2>
+                  <p>{t.fictional.aboutText}</p>
+                </div>
+              ) : !LAUNCH.ready && (
                 <div className="status-box">
                   <h2>{a.statusTitle}</h2>
                   <p>{a.statusText}</p>

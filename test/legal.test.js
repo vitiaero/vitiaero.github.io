@@ -6,18 +6,19 @@ import { DOCUMENTS, buildContent, buildDocument } from '../shared/legal/index.js
 import { documentToText, LANGS } from '../shared/legal/core.js';
 import { outdatedVersions } from '../shared/legal/hash.js';
 import { currentVersion, knownVersions } from '../shared/legal/current.js';
-import { completeBusiness, confirmedMedia } from './fixtures/complete-business.js';
+import { completeBusiness, confirmedMedia, prelaunchBusiness } from './fixtures/complete-business.js';
 
 const IDS = Object.keys(DOCUMENTS);
-const FORBIDDEN = [/undefined/, /\bnull\b/, /NaN/, /\[object/, /\[A REMPLACER/i, /\[[^\]]*\]/, /projet d.?[ée]tude/i, /CPNV/, /\bPAE\b/, /lorem/i];
+const FORBIDDEN = [/undefined/, /\bnull\b/, /NaN/, /\[object/, /\[A REMPLACER/i, /\[[^\]]*\]/, /lorem/i];
 
 function shape(doc) {
   return doc.sections.map((s) => ({ title: !!s.title, blocks: s.blocks.map((b) => [b.type, b.items?.length ?? b.rows?.length ?? 0]) }));
 }
 
 for (const [label, opts] of [
-  ['configuration actuelle', {}],
-  ['configuration complete (test)', { business: completeBusiness(), media: confirmedMedia() }],
+  ['entreprise fictive (configuration actuelle)', {}],
+  ['entreprise reelle sans information (test)', { business: prelaunchBusiness() }],
+  ['entreprise reelle complete (test)', { business: completeBusiness(), media: confirmedMedia() }],
 ]) {
   test(`${label} : chaque document existe dans les trois langues, sans trou`, () => {
     for (const id of IDS) {
@@ -32,8 +33,30 @@ for (const [label, opts] of [
   });
 }
 
-test('pre-lancement : les donnees manquantes ne sont ni inventees ni affichees', () => {
-  const text = documentToText(buildContent('mentions', 'fr'));
+test('entreprise fictive : chaque document concerne l\'annonce en tete, dans les trois langues', () => {
+  const words = { fr: /Entreprise fictive/, de: /Fiktives Unternehmen/, en: /Fictional company/ };
+  for (const id of ['mentions', 'privacy', 'cgv', 'terms']) {
+    for (const lang of LANGS) {
+      const doc = buildContent(id, lang);
+      const first = documentToText({ title: '', sections: [doc.sections[0]] });
+      assert.match(first, words[lang], `${id}/${lang}`);
+      assert.match(first, /PAE/);
+      assert.match(first, /CPNV/);
+    }
+  }
+  // Donnees visiblement fictives : numero IDE nul, noms « Exemple », aucun telephone.
+  const mentions = documentToText(buildContent('mentions', 'fr'));
+  assert.match(mentions, /CHE-000\.000\.000/);
+  assert.doesNotMatch(mentions, /Téléphone/);
+  const privacy = documentToText(buildContent('privacy', 'fr'));
+  assert.match(privacy, /Exemple Hébergement SA/);
+  // Sans le mode fictif, aucun avis de ce type.
+  const real = documentToText(buildContent('mentions', 'fr', { business: completeBusiness(), media: confirmedMedia() }));
+  assert.doesNotMatch(real, /fictive|CPNV|PAE/);
+});
+
+test('pre-lancement (entreprise reelle) : les donnees manquantes ne sont ni inventees ni affichees', () => {
+  const text = documentToText(buildContent('mentions', 'fr', { business: prelaunchBusiness() }));
   assert.match(text, /pré-lancement|pas encore/i);
   assert.doesNotMatch(text, /CHE-\d{3}/); // aucun numero IDE
   assert.doesNotMatch(text, /Sàrl|\bS\.A\.|\bSA\b|GmbH/); // aucune raison sociale inventee

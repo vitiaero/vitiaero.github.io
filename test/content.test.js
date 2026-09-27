@@ -88,17 +88,34 @@ test('chaque appel a l\'action et chaque formulaire rappellent que ce n\'est pas
   assert.match(en.noOrder.estimate, /neither a firm offer nor an order/);
 });
 
-test('aucune mention de projet d\'etude, de donnee fictive ou de valeur a completer', () => {
+test('aucune valeur a completer ni texte de remplissage', () => {
   const files = [
     ...walk(path.join(ROOT, 'src'), (f) => /\.(js|jsx|css)$/.test(f)),
     ...walk(path.join(ROOT, 'shared'), (f) => f.endsWith('.js')),
     path.join(ROOT, 'index.html'),
   ];
-  const bad = [/projet d.?[ée]tude/i, /study project/i, /Studienprojekt/i, /\bCPNV\b/, /\bPAE\b/, /\[A REMPLACER/i, /lorem ipsum/i, /donn[ée]es fictives/i, /fictitious data/i];
+  const bad = [/\[A REMPLACER/i, /\[(ADRESSE|NPA|VILLE|TELEPHONE)\]/, /lorem ipsum/i];
   for (const f of files) {
     const text = fs.readFileSync(f, 'utf8');
     for (const re of bad) assert.doesNotMatch(text, re, `${path.relative(ROOT, f)} contient ${re}`);
   }
+});
+
+test('entreprise fictive : annoncee dans les trois langues (bandeau, pied de page, a propos, envoi)', () => {
+  for (const d of [fr, de, en]) {
+    for (const k of ['label', 'text', 'footer', 'aboutTitle', 'aboutText', 'credentialsText', 'submit']) {
+      assert.ok(d.fictional[k], k);
+    }
+    for (const k of ['text', 'footer', 'aboutText', 'submit']) {
+      assert.match(d.fictional[k], /PAE/, k);
+      assert.match(d.fictional[k], /CPNV/, k);
+    }
+  }
+  // Bandeau et pied de page affiches en mode fictif.
+  const notice = fs.readFileSync(path.join(ROOT, 'src/components/LaunchNotice.jsx'), 'utf8');
+  assert.match(notice, /FICTIONAL/);
+  const footer = fs.readFileSync(path.join(ROOT, 'src/components/Footer.jsx'), 'utf8');
+  assert.match(footer, /fictional\.footer/);
 });
 
 test('registre des medias : chaque fichier publie est declare et present', () => {

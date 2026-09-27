@@ -6,8 +6,33 @@ import { MEDIA } from '../../shared/media.js';
 
 const clone = (v) => JSON.parse(JSON.stringify(v));
 
+// Entreprise reelle, sans aucune information fournie : l'etat de depart d'un
+// vrai lancement (pre-lancement complet).
+export function prelaunchBusiness() {
+  const b = clone(business);
+  delete b.fictional;
+  b.identity = {
+    ...b.identity,
+    legalName: null, legalForm: null, commercialRegister: null, uid: null, vat: null, phone: null,
+    address: { ...b.identity.address, street: null, postalCode: null, locality: null },
+  };
+  b.customers = null;
+  b.services = { ...b.services, apiHosting: null, backups: null, mailbox: null, emailSending: null, routing: null, monitoring: null };
+  b.retention = { ...b.retention, attachmentsMonths: null, inactiveAccountsMonths: null, backupsDays: null, serverLogsDays: null };
+  b.commercial = {
+    ...b.commercial,
+    quoteValidityDays: null, payment: null, cancellation: null, weatherPostponementFree: null,
+    products: null, complaintsDays: null, governingLanguage: null,
+  };
+  b.insurance = null;
+  b.credentials = [];
+  return b;
+}
+
+// Entreprise reelle dont tout est renseigne (sans le mode fictif).
 export function completeBusiness(today = '2026-09-27') {
   const b = clone(business);
+  delete b.fictional;
   const year = Number(today.slice(0, 4));
   const inTwoYears = `${year + 2}${today.slice(4)}`;
   b.identity = {

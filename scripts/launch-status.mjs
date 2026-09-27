@@ -5,6 +5,7 @@ import { business } from '../shared/business.js';
 import { launchStatus } from '../shared/launch.js';
 
 const GROUPS = {
+  project: 'Projet',
   identity: 'Identite de l\'entreprise',
   privacy: 'Prestataires et donnees',
   retention: 'Durees de conservation',
@@ -15,6 +16,10 @@ const GROUPS = {
 };
 
 const status = launchStatus(business);
+if (business.fictional) {
+  console.log('Entreprise fictive (PAE au CPNV) : le site reste non indexe et n\'enregistre aucune demande en production.');
+  console.log('Controles ci-dessous : ce qu\'une entreprise reelle devrait encore fournir.');
+}
 console.log(status.ready
   ? 'Porte de lancement franchie : le site peut etre ouvert (formulaires, indexation).'
   : `Pre-lancement : ${status.blockers.length} information(s) bloquante(s).`);

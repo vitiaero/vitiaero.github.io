@@ -4,15 +4,39 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { business } from '../shared/business.js';
 import { launchStatus, isText, credentialState, validCredentials, REQUIRED_CREDENTIALS } from '../shared/launch.js';
-import { completeBusiness, confirmedMedia } from './fixtures/complete-business.js';
+import { completeBusiness, confirmedMedia, prelaunchBusiness } from './fixtures/complete-business.js';
 
 const TODAY = new Date('2026-09-27T12:00:00Z');
 
-test('la configuration actuelle est en pre-lancement', () => {
+test('entreprise fictive (PAE au CPNV) : jamais lancee, pages completes', () => {
+  assert.equal(business.fictional, true);
   const s = launchStatus(business, { today: TODAY });
   assert.equal(s.ready, false);
+  // Seuls restent : le mode fictif lui-meme et ce qui ne s'invente pas
+  // (autorisations, droits, relecture, signature, domaine, hebergeur confirme).
+  assert.deepEqual(s.blockers.map((b) => b.id).sort(), [
+    'credentials.agroscope-model-approval', 'credentials.cantonal-spray-requirements',
+    'credentials.foca-spray-authorisation', 'credentials.pilot-competence', 'credentials.pph-permit',
+    'credentials.sprayer-inspection', 'credentials.uas-operator-registration',
+    'fictional', 'launchChecklistSignedOn', 'legalReview', 'media.fpv-epesses', 'media.logo',
+    'services.siteHosting', 'site.domain',
+  ]);
+  // Aucun justificatif invente.
+  assert.deepEqual(business.credentials, []);
+});
+
+test('entreprise fictive : jamais « prete », meme si tout est rempli', () => {
+  const b = completeBusiness();
+  b.fictional = true;
+  const s = launchStatus(b, { today: TODAY, media: confirmedMedia() });
+  assert.equal(s.ready, false);
+  assert.deepEqual(s.blockers.map((x) => x.id), ['fictional']);
+});
+
+test('entreprise reelle sans information : pre-lancement complet', () => {
+  const s = launchStatus(prelaunchBusiness(), { today: TODAY });
+  assert.equal(s.ready, false);
   const refs = new Set(s.blockers.map((b) => b.ref));
-  // Identite, prestataires, justificatifs, medias et relecture manquent.
   for (const ref of ['A1', 'A2', 'A6', 'B4', 'C3', 'D2', 'D11', 'E1', 'E5', 'F1', 'F2', 'G1', 'G3']) {
     assert.ok(refs.has(ref), `controle ${ref} attendu parmi les blocages`);
   }

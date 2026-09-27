@@ -5,10 +5,13 @@ de Vaud : présentation du service, estimation indicative en ligne (sans
 engagement, ce n'est pas une commande), demande de devis, espace client et
 administration.
 
-Le service est en **pré-lancement** : tant qu'une information obligatoire
-manque (entreprise, prestataires, conditions, autorisations, droits sur les
-médias, relecture juridique), les formulaires sont fermés et le site n'est pas
-indexé. Voir `npm run launch:status` et `docs/INFORMATIONS-MANQUANTES.md`.
+**VitiAero est une entreprise fictive**, créée pour un PAE au CPNV. Le site
+l'annonce sur chaque page (bandeau, pied de page, pages juridiques). Les
+coordonnées, conditions et prestataires sont inventés dans
+`shared/business.js` (`fictional: true`) ; le site n'est pas indexé et la
+version publiée n'enregistre aucune demande. Les formulaires fonctionnent en
+local avec `npm run dev`. Les documents de `docs/` décrivent ce qu'il faudrait
+pour lancer réellement un tel service.
 
 ## Démarrer
 

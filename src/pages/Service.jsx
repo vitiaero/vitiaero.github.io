@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
 import { NoOrderNotice } from '../components/Notices.jsx';
-import { business } from '../launch.js';
+import { FICTIONAL, business } from '../launch.js';
 import { validCredentials } from '../../shared/launch.js';
 import { CREDENTIAL_LABELS } from '../../shared/legal/labels.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -79,8 +79,18 @@ function Conditions({ c }) {
 
 // Justificatifs verifies : saisis dans shared/business.js, complets, non echus.
 function Credentials({ r }) {
-  const { lang, locale } = useI18n();
+  const { t, lang, locale } = useI18n();
   const list = validCredentials(business);
+  // Entreprise fictive : aucun justificatif n'est invente ; on explique ce
+  // qu'une entreprise reelle devrait obtenir.
+  if (FICTIONAL) {
+    return (
+      <div className="status-box">
+        <h3>{t.fictional.credentialsTitle}</h3>
+        <p>{t.fictional.credentialsText}</p>
+      </div>
+    );
+  }
   return (
     <div className="status-box">
       <h3>{r.credentialsTitle}</h3>

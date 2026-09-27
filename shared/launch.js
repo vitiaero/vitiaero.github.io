@@ -33,6 +33,9 @@ export const WARN_DAYS = 30; // alerte avant l'echeance d'un justificatif
 
 const DAY = 24 * 60 * 60 * 1000;
 
+// Entreprise fictive (projet PAE au CPNV) : voir shared/business.js.
+export const isFictional = (b = defaultBusiness) => b?.fictional === true;
+
 // Texte reellement renseigne : ni vide, ni valeur a completer entre crochets.
 export const isText = (v) => typeof v === 'string' && v.trim() !== '' && !/[[\]]/.test(v);
 export const isDate = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(`${v}T00:00:00Z`));
@@ -96,6 +99,10 @@ export function launchChecks(b = defaultBusiness, { today = new Date(), media = 
   const cm = b.commercial || {};
   const checks = [];
   const add = (group, ref, key, label, ok) => checks.push({ id: key, ref, group, ok: !!ok, label });
+
+  // Entreprise fictive (projet scolaire) : jamais de lancement reel, meme si
+  // toutes les autres informations sont remplies.
+  add('project', 'P', 'fictional', 'Entreprise fictive (PAE au CPNV) : lancement réel impossible', !b.fictional);
 
   // A. Identite
   add('identity', 'A1', 'identity.legalName', 'Raison sociale exacte', isText(id.legalName));

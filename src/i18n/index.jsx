@@ -85,8 +85,10 @@ export function translateServerError(message) {
   return DICTS[current].serverErrors[message] || message;
 }
 
-// Message affiche quand le site est publie sans serveur.
+// Message affiche quand le site est publie sans serveur (entreprise fictive :
+// rappel qu'il s'agit d'une demonstration).
 export function staticNotice() {
+  if (business.fictional === true) return DICTS[current].fictional.submit;
   return DICTS[current].common.staticNotice(business.identity.email, business.commercial.responseTimeHours);
 }
 

@@ -1,7 +1,7 @@
 // Conditions d'utilisation du site (distinctes des CGV, qui regissent les
 // prestations).
 import { tr, p, link, section } from './core.js';
-import { providerName } from './facts.js';
+import { providerName, fictionalNotice } from './facts.js';
 import { isText } from '../launch.js';
 
 export default function terms(b, lang) {
@@ -15,6 +15,7 @@ export default function terms(b, lang) {
     numbered: true,
     title: tr(lang, { fr: 'Conditions d\'utilisation', de: 'Nutzungsbedingungen', en: 'Terms of use' }),
     sections: [
+      section('fiction', null, [fictionalNotice(b, lang, 'terms')]),
       section('object', tr(lang, { fr: 'Objet', de: 'Gegenstand', en: 'Purpose' }), [
         p(tr(lang, {
           fr: `Le site ${host} présente le service de ${who}. Il permet de calculer une estimation indicative, de demander un devis et de suivre ses demandes dans un espace client.`,

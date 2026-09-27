@@ -579,6 +579,7 @@ function InterventionsTab() {
 // Etat de la porte de lancement (shared/launch.js) et des taches du serveur.
 // Chaque point bloquant renvoie a docs/INFORMATIONS-MANQUANTES.md.
 const GROUPS = {
+  project: 'Projet',
   identity: 'Identité et clientèle',
   privacy: 'Prestataires et données',
   retention: 'Durées de conservation',

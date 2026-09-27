@@ -90,7 +90,7 @@ test('estimation au doigt : trace par touchers sur la carte', async ({ page }) =
   }
   await expect(page.getByRole('button', { name: 'Terminer (3)' })).toBeVisible();
   await page.getByRole('button', { name: 'Continuer' }).tap();
-  await expect(page.locator('.step-heading')).toHaveText(/Étape 2 sur 3/);
+  await expect(page.locator('.step-heading')).toHaveText(/Étape 2 sur 4/);
 });
 
 for (const path of ['/', '/estimation', '/contact']) {

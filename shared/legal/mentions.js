@@ -2,7 +2,7 @@
 // dans shared/business.js sont affichees ; les manques sont signales sans
 // crochets ni valeur d'exemple.
 import { tr, p, lines, link, section } from './core.js';
-import { identityLines, identityComplete, prelaunchIdentityNotice, providerName } from './facts.js';
+import { identityLines, identityComplete, prelaunchIdentityNotice, providerName, fictionalNotice } from './facts.js';
 import { isText, isServiceComplete } from '../launch.js';
 import { countryName } from './core.js';
 
@@ -16,6 +16,7 @@ export default function mentions(b, lang) {
     id: 'mentions',
     title: tr(lang, { fr: 'Mentions légales', de: 'Impressum', en: 'Legal notice' }),
     sections: [
+      section('fiction', null, [fictionalNotice(b, lang, 'mentions')]),
       section('operator', tr(lang, { fr: 'Exploitant du site', de: 'Betreiber der Website', en: 'Website operator' }), [
         identityLines(b, lang),
         !identityComplete(b) && prelaunchIdentityNotice(lang),

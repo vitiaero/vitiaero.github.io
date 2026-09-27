@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { business, LAUNCH } from '../launch.js';
+import { business, FICTIONAL, LAUNCH } from '../launch.js';
 import { useI18n } from '../i18n/index.jsx';
 import { providerName } from '../../shared/legal/facts.js';
 import { isText } from '../../shared/launch.js';
@@ -34,7 +34,7 @@ export default function Footer() {
             <h2 className="footer-title">{t.footer.yourAccount}</h2>
             <ul>
               <li><Link to="/connexion">{t.nav.login}</Link></li>
-              {LAUNCH.ready && <li><Link to="/inscription">{t.common.createAccount}</Link></li>}
+              {(LAUNCH.ready || FICTIONAL) && <li><Link to="/inscription">{t.common.createAccount}</Link></li>}
               <li><Link to="/espace-client">{t.nav.account}</Link></li>
             </ul>
           </div>
@@ -59,6 +59,7 @@ export default function Footer() {
             <Link to="/conditions">{t.footer.termsOfUse}</Link>
             <Link to="/credits">{t.footer.credits}</Link>
           </nav>
+          {FICTIONAL && <p className="footer-fiction">{t.fictional.footer}</p>}
         </div>
       </div>
     </footer>

@@ -15,20 +15,32 @@
 // figurent ; le document reste dans les dossiers du proprietaire.
 //
 // Dates au format AAAA-MM-JJ.
+//
+// ENTREPRISE FICTIVE. VitiAero est une entreprise imaginee pour un PAE au
+// CPNV (fictional: true). Les valeurs ci-dessous marquees « fictif » sont
+// inventees pour le projet : raison sociale, adresse, numeros, prestataires
+// nommes « Exemple ... », durees, conditions et assurance. En mode fictif :
+//   - chaque page l'annonce (bandeau, pied de page, pages legales) ;
+//   - le site n'est jamais indexe et la porte de lancement reste fermee ;
+//   - les formulaires s'affichent pour la demonstration, mais le site publie
+//     n'enregistre rien (seul le serveur local de developpement les traite).
+// Aucun numero de telephone n'est invente : il pourrait appartenir a quelqu'un.
 
 export const business = {
+  fictional: true,
+
   // A. Identite (art. 3 al. 1 let. s LCD, art. 19 nLPD)
   identity: {
     brand: 'VitiAero', // nom commercial affiche sur le site
-    legalName: null, // raison sociale exacte (registre du commerce), ou nom et prenom du titulaire
-    legalForm: null, // code : 'raison-individuelle', 'sarl', 'sa', 'snc', 'cooperative' (libelles dans shared/legal/labels.js)
-    commercialRegister: null, // false (non inscrit) ou { canton: 'VD' } (code du canton du registre)
-    uid: null, // false (aucun) ou 'CHE-123.456.789'
-    vat: null, // false (non assujetti) ou { number: 'CHE-123.456.789 TVA', ratePercent: taux confirme par la fiduciaire }
+    legalName: 'VitiAero Sàrl', // fictif ; raison sociale exacte (registre du commerce), ou nom et prenom du titulaire
+    legalForm: 'sarl', // fictif ; code : 'raison-individuelle', 'sarl', 'sa', 'snc', 'cooperative' (libelles dans shared/legal/labels.js)
+    commercialRegister: { canton: 'VD' }, // fictif ; false (non inscrit) ou { canton: 'VD' } (code du canton du registre)
+    uid: 'CHE-000.000.000', // fictif, volontairement nul ; false (aucun) ou le numero IDE reel
+    vat: false, // fictif : non assujettie ; sinon { number: 'CHE-... TVA', ratePercent: taux confirme par la fiduciaire }
     address: {
-      street: null, // rue et numero
-      postalCode: null, // NPA
-      locality: null, // localite
+      street: 'Chemin du Projet 1', // fictif (rue inexistante) ; rue et numero
+      postalCode: '1803', // NPA de Chardonne, base de depart des deplacements
+      locality: 'Chardonne',
       canton: 'VD', // Vaud, fourni par le proprietaire (septembre 2026)
       country: 'CH',
     },
@@ -43,8 +55,8 @@ export const business = {
     domainHolderConfirmed: null, // date a laquelle le titulaire du domaine a ete verifie (A10)
   },
 
-  // Clientele visee (D1) : 'professionals' ou 'professionals-and-consumers'.
-  customers: null,
+  // Clientele visee (D1) : 'professionals' ou 'professionals-and-consumers'. Fictif.
+  customers: 'professionals-and-consumers',
 
   // B. Prestataires qui recoivent des donnees personnelles.
   // Chaque entree : { name, address, country (code ISO), safeguard, since }
@@ -64,50 +76,61 @@ export const business = {
       // Les regles de GitHub Pages limitent l'usage commercial : decision a prendre.
       confirmedOn: null,
     },
-    apiHosting: null, // serveur, base de donnees et pieces jointes (B4) ; ajouter region et date du contrat
-    backups: null, // stockage des sauvegardes (B5) ; ajouter encrypted: true et frequency
-    mailbox: null, // boite de reception de contact@vitiaero.ch (B6)
-    emailSending: null, // service SMTP des accuses de reception (B6)
+    // Prestataires fictifs (B4 a B6) : les noms « Exemple ... » sont inventes.
+    apiHosting: { name: 'Exemple Hébergement SA', country: 'CH' }, // serveur, base de donnees et pieces jointes
+    backups: { name: 'Exemple Sauvegarde SA', country: 'CH', encrypted: true }, // stockage des sauvegardes
+    mailbox: { name: 'Exemple Messagerie SA', country: 'CH' }, // boite de reception
+    emailSending: { name: 'Exemple Envoi SA', country: 'CH' }, // envoi des accuses de reception
     // Calcul des distances routieres (B7) : false = vol d'oiseau seulement ;
     // { selfHosted: true } = serveur OSRM sur l'hebergement de l'API ;
     // sinon un prestataire { name, country, safeguard }.
-    routing: null,
+    routing: false,
     // Surveillance externe (B8) : false = seulement le controle planifie GitHub
     // Actions fourni avec le depot, qui ne traite aucune donnee de visiteur.
-    monitoring: null,
+    monitoring: false,
   },
 
   // C. Durees de conservation reelles.
   retention: {
     requestsWithoutFollowUpMonths: 24, // choix du proprietaire du 24.9.2026, a confirmer (C1)
     contractRecordsYears: 10, // art. 958f CO, choix du 24.9.2026, a confirmer par la fiduciaire (C2)
-    attachmentsMonths: null, // C3
-    inactiveAccountsMonths: null, // C4
-    backupsDays: null, // C5
-    serverLogsDays: null, // C6, selon le contrat de l'hebergeur de l'API
+    attachmentsMonths: 12, // C3, fictif
+    inactiveAccountsMonths: 36, // C4, fictif
+    backupsDays: 30, // C5, fictif
+    serverLogsDays: 14, // C6, fictif (selon le contrat de l'hebergeur de l'API)
   },
 
   // D. Conditions commerciales. Rien n'est publie comme condition en vigueur
   // tant qu'un element obligatoire manque.
   commercial: {
-    quoteValidityDays: null, // D2
-    payment: null, // D3 : { dueDays, deposit: false | { percent }, methods: ['bank-transfer', 'qr-bill', 'twint', 'cash'], invoicing: 'after-each-job' | 'end-of-season' }
-    cancellation: null, // D5 : { noticeHours, fee: false | { percent } | { chf } }
-    weatherPostponementFree: null, // D6 : true ou false
-    products: null, // D8 : 'customer' (fournis par le client), 'provider' (fournis par VitiAero), 'by-quote'
-    complaintsDays: null, // D9 : delai pour signaler un probleme apres l'intervention
-    governingLanguage: null, // D13 : 'fr' propose
+    // Conditions fictives, inventees pour le projet.
+    quoteValidityDays: 30, // D2
+    payment: { dueDays: 30, deposit: false, methods: ['bank-transfer', 'qr-bill', 'twint'], invoicing: 'after-each-job' }, // D3
+    cancellation: { noticeHours: 48, fee: { percent: 20 } }, // D5
+    weatherPostponementFree: true, // D6
+    products: 'customer', // D8 : 'customer' (fournis par le client), 'provider' (fournis par VitiAero), 'by-quote'
+    complaintsDays: 10, // D9 : delai pour signaler un probleme apres l'intervention
+    governingLanguage: 'fr', // D13
     // L'estimation en ligne n'est pas une commande. Activer une commande en
     // ligne demanderait tout le parcours contractuel (docs/PLAN-MIGRATION.md).
     onlineOrdering: false,
     responseTimeHours: 48, // D15, choix du proprietaire, a confirmer
   },
 
-  // D11 / E8 : assurance responsabilite civile.
+  // D11 / E8 : assurance responsabilite civile. Fictive (assureur « Exemple »).
   // { insurer, policyNumber, sumInsuredCHF, covers: ['drone-operation', 'spray-drift', 'third-party-crops'], validUntil, verifiedOn }
-  insurance: null,
+  insurance: {
+    insurer: 'Exemple Assurances SA',
+    policyNumber: 'FICTIF-0001',
+    sumInsuredCHF: 5000000,
+    covers: ['drone-operation', 'spray-drift', 'third-party-crops'],
+    validUntil: '2027-12-31',
+    verifiedOn: '2026-09-27',
+  },
 
   // E. Justificatifs (autorisations, homologation, controles, permis).
+  // Entreprise fictive : aucun justificatif n'est invente. La page Le service
+  // explique qu'une entreprise reelle devrait les obtenir.
   // Chaque entree : { type, reference, authority, issuedOn, validUntil, verifiedOn }
   // validUntil : date d'echeance, ou false si le document n'en a pas.
   // Types attendus : voir REQUIRED_CREDENTIALS dans shared/launch.js.

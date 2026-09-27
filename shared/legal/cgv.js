@@ -3,7 +3,7 @@
 // affichee ; un avis indique alors que les conditions ne sont pas en vigueur.
 // Clauses a faire valider par un juriste suisse (docs/CHECKLIST-LANCEMENT.md).
 import { tr, p, notice, link, section, fmtCHF } from './core.js';
-import { providerName, identityComplete } from './facts.js';
+import { providerName, identityComplete, fictionalNotice } from './facts.js';
 import { PAYMENT_METHOD_LABELS, INVOICING_LABELS, CUSTOMER_LABELS, INSURANCE_COVER_LABELS } from './labels.js';
 import { PAYMENT_METHODS, INVOICING, PRODUCT_SUPPLY, CUSTOMERS, VAT_RE, isText } from '../launch.js';
 
@@ -57,6 +57,7 @@ export default function cgv(b, lang) {
     numbered: true,
     title: tr(lang, { fr: 'Conditions générales', de: 'Allgemeine Geschäftsbedingungen', en: 'General terms and conditions' }),
     sections: [
+      section('fiction', null, [fictionalNotice(b, lang, 'cgv')]),
       section('status', null, [
         !cgvComplete(b) && notice(tr(lang, {
           fr: 'Pré-lancement : ces conditions ne sont pas encore en vigueur. Les points encore ouverts (paiement, annulation, réclamations, assurance) seront publiés avant l\'ouverture du service. Aucun contrat ne peut être conclu d\'ici là.',

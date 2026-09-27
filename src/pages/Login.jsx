@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { LAUNCH } from '../launch.js';
+import { FICTIONAL, LAUNCH } from '../launch.js';
 
 export default function Login() {
   const { login } = useAuth();
@@ -61,7 +61,7 @@ export default function Login() {
               </button>
             </form>
 
-            {LAUNCH.ready && (
+            {(LAUNCH.ready || FICTIONAL) && (
               <p className="text-center mt-3 muted small-print">
                 {l.noAccount} <Link to="/inscription" className="inline-link">{t.common.createAccount}</Link>
               </p>

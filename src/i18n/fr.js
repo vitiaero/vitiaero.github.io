@@ -108,6 +108,20 @@ export default {
     contact: (mail) => `Nous écrire : ${mail}`,
   },
 
+  // Entreprise fictive (projet PAE au CPNV) : voir shared/business.js.
+  fictional: {
+    aria: 'Information sur le projet',
+    label: 'Entreprise fictive.',
+    text: 'VitiAero est une entreprise imaginée dans le cadre d\'un PAE au CPNV : aucune prestation n\'est proposée et aucune demande n\'est enregistrée.',
+    more: 'En savoir plus',
+    footer: 'VitiAero est une entreprise fictive, créée pour un PAE au CPNV.',
+    aboutTitle: 'Un projet d\'entreprise fictive',
+    aboutText: 'VitiAero a été imaginée dans le cadre d\'un PAE au CPNV. Ce site montre comment le service fonctionnerait : estimation en ligne, demande de devis, espace client et administration. Les coordonnées, les conditions et les prestataires sont inventés pour ce projet.',
+    credentialsTitle: 'Autorisations',
+    credentialsText: 'VitiAero est une entreprise fictive : aucune autorisation n\'a été demandée. Une entreprise réelle devrait obtenir toutes les autorisations décrites dans cette section avant sa première intervention.',
+    submit: 'Démonstration : VitiAero est une entreprise fictive (PAE au CPNV). Aucune demande n\'a été envoyée ni enregistrée.',
+  },
+
   formsClosed: {
     title: 'Formulaire pas encore ouvert',
     prelaunch: 'VitiAero est en pré-lancement : ce formulaire ouvrira au lancement du service. D\'ici là, aucune donnée n\'est envoyée depuis le site.',
@@ -851,6 +865,7 @@ export default {
     'Requete invalide.': 'Requête invalide.',
     'Les donnees envoyees sont trop volumineuses.': 'Les données envoyées sont trop volumineuses.',
     'Format de fichier non accepte.': 'Format de fichier non accepté.',
+    'Entreprise fictive : aucune demande n\'est enregistree.': 'Démonstration : VitiAero est une entreprise fictive (PAE au CPNV). Aucune demande n\'a été enregistrée.',
     'Service pas encore ouvert.': 'Le service n\'est pas encore ouvert : aucune demande ne peut être envoyée en ligne pour le moment.',
     'Merci de confirmer avoir lu la politique de confidentialite.': 'Merci de confirmer avoir lu la politique de confidentialité.',
     'La page a ete mise a jour : merci de la recharger.': 'La page a été mise à jour : merci de la recharger.',

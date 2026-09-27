@@ -1,5 +1,6 @@
-// Site compile en pre-lancement, tel qu'il est publie tant que la porte de
-// lancement est fermee.
+// Site compile tel qu'il est publie : entreprise fictive (PAE au CPNV), donc
+// porte de lancement fermee (aucune indexation, rien n'est enregistre), mais
+// pages completes et formulaires visibles pour la demonstration.
 import { test, expect } from '@playwright/test';
 import { axeViolations } from './a11y.js';
 
@@ -14,7 +15,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('chaque page : bandeau de pre-lancement, aucune indexation, aucun media du fabricant', async ({ page }) => {
+test('chaque page : bandeau « entreprise fictive », aucune indexation, aucun media du fabricant', async ({ page }) => {
   const requests = [];
   page.on('request', (r) => requests.push(r.url()));
   const broken = [];
@@ -25,7 +26,8 @@ test('chaque page : bandeau de pre-lancement, aucune indexation, aucun media du 
     const res = await page.goto(path);
     expect(res.status(), path).toBe(200);
     expect(res.headers()['x-robots-tag'], path).toBe('noindex, nofollow');
-    await expect(page.locator('.launch-notice')).toContainText('Pré-lancement.');
+    await expect(page.locator('.launch-notice')).toContainText('Entreprise fictive.');
+    await expect(page.locator('.footer-fiction')).toContainText('PAE au CPNV');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
     await expect(page.locator('h1').first()).toBeVisible();
   }
@@ -47,22 +49,27 @@ test('fichiers publics : robots.txt bloque tout, pas de plan du site, security.t
   expect(missing.status()).toBe(404);
 });
 
-test('formulaires fermes : contact, devis et inscription n\'envoient rien', async ({ page }) => {
-  const posts = [];
-  page.on('request', (r) => { if (r.method() === 'POST' && !r.url().includes('route-distance')) posts.push(r.url()); });
-  for (const path of ['/contact', '/devis', '/inscription']) {
+test('formulaires de demonstration : visibles, mais rien n\'est enregistre', async ({ page }) => {
+  for (const path of ['/devis', '/inscription']) {
     await page.goto(path);
-    await expect(page.locator('.forms-closed')).toContainText('pas encore ouvert');
-    await expect(page.locator('form input[type="email"]')).toHaveCount(0);
+    await expect(page.locator('form input[type="email"]')).toHaveCount(1);
   }
-  expect(posts).toEqual([]);
+  await page.goto('/contact');
+  await page.locator('#ct-name').fill('Visiteur Test');
+  await page.locator('#ct-email').fill('visiteur@example.ch');
+  await page.locator('#ct-message').fill('Bonjour');
+  await page.locator('#ct-consent').check();
+  const [response] = await Promise.all([
+    page.waitForResponse((r) => r.url().endsWith('/api/contact')),
+    page.getByRole('button', { name: 'Envoyer le message' }).click(),
+  ]);
+  expect(response.status()).toBe(503);
+  await expect(page.locator('.alert-error')).toContainText('entreprise fictive (PAE au CPNV)');
 });
 
-test('estimation au clavier : trace, prix indicatif, mention "pas une commande", rien n\'est envoye', async ({ page }) => {
-  const posts = [];
-  page.on('request', (r) => { if (r.method() === 'POST' && r.url().includes('/api/estimations')) posts.push(r.url()); });
+test('estimation au clavier : trace, prix indicatif, mention "pas une commande", envoi refuse', async ({ page }) => {
   await page.goto('/estimation');
-  await expect(page.locator('.wizard-step')).toHaveCount(3); // pas d'etape "Coordonnees"
+  await expect(page.locator('.wizard-step')).toHaveCount(4);
   await page.getByRole('button', { name: 'Tracer une parcelle' }).first().click();
   const map = page.locator('.map-canvas');
   await map.focus();
@@ -73,15 +80,24 @@ test('estimation au clavier : trace, prix indicatif, mention "pas une commande",
   await page.keyboard.press('Enter');
   await expect(page.locator('.map-panel [role="status"].sr-only')).toHaveText('Point 3 ajouté.');
   await page.getByRole('button', { name: 'Continuer' }).click();
-  await expect(page.locator('.step-heading')).toHaveText(/Étape 2 sur 3/);
+  await expect(page.locator('.step-heading')).toHaveText(/Étape 2 sur 4/);
   await expect(page.locator('.step-heading')).toBeFocused();
   await page.locator('input[name="passes"][value="3"]').check();
+  await page.getByRole('button', { name: 'Continuer' }).click();
+  await page.locator('#est-name').fill('Visiteur Test');
+  await page.locator('#est-email').fill('visiteur@example.ch');
   await page.getByRole('button', { name: 'Voir mon estimation' }).click();
-  await expect(page.locator('.step-heading')).toHaveText(/Étape 3 sur 3/);
+  await expect(page.locator('.step-heading')).toHaveText(/Étape 4 sur 4/);
   await expect(page.locator('.no-order')).toContainText('Ce n\'est pas une commande.');
   await expect(page.locator('.est-bill-total strong')).toContainText('CHF');
-  await expect(page.locator('.forms-closed')).toBeVisible();
-  expect(posts).toEqual([]);
+  await page.locator('#est-consent').check();
+  const [response] = await Promise.all([
+    page.waitForResponse((r) => r.url().endsWith('/api/estimations')),
+    page.getByRole('button', { name: 'Envoyer ma demande (sans engagement)' }).click(),
+  ]);
+  expect(response.status()).toBe(503);
+  await expect(page.locator('.alert-error')).toContainText('entreprise fictive');
+  await expect(page).toHaveURL(/\/estimation$/);
 });
 
 test('carte : credits des fonds de carte visibles', async ({ page }) => {
@@ -93,11 +109,13 @@ test('carte : credits des fonds de carte visibles', async ({ page }) => {
   await expect(attribution).toContainText('OpenStreetMap');
 });
 
-test('pages juridiques : seules les informations reelles, versions datees', async ({ page }) => {
+test('pages juridiques : entreprise fictive annoncee en tete, versions datees', async ({ page }) => {
   await page.goto('/mentions-legales');
   const text = await page.locator('article.legal').innerText();
+  // Premier encadre de la page : l'avertissement, avant les coordonnees.
+  await expect(page.locator('article.legal .alert').first()).toContainText('Entreprise fictive : VitiAero a été imaginée dans le cadre d\'un PAE au CPNV');
   expect(text).toContain('contact@vitiaero.ch');
-  expect(text).not.toMatch(/CHE-\d{3}/);
+  expect(text).toContain('CHE-000.000.000');
   await expect(page.locator('.legal-meta')).toContainText('version 2026-');
   await page.goto('/credits');
   await expect(page.locator('article.legal')).toContainText('Joachim Kohler');
@@ -109,13 +127,13 @@ test('langues : allemand et anglais charges a la demande, choix memorise', async
   await page.locator('.nav-actions .lang-trigger').click();
   await page.getByRole('button', { name: /Deutsch/ }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'de-CH');
-  await expect(page.locator('.launch-notice')).toContainText('Vor dem Start.');
+  await expect(page.locator('.launch-notice')).toContainText('Fiktives Unternehmen.');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('lang', 'de-CH');
   await expect(page.locator('.hero .btn-primary').first()).toHaveText('Unverbindlich schätzen');
   await page.locator('.nav-actions .lang-trigger').click();
   await page.getByRole('button', { name: /English/ }).click();
-  await expect(page.locator('.launch-notice')).toContainText('Pre-launch.');
+  await expect(page.locator('.launch-notice')).toContainText('Fictional company.');
 });
 
 test('proposition de langue pour un navigateur en allemand', async ({ browser }) => {

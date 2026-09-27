@@ -67,7 +67,8 @@ function staticHosting(apiOrigin) {
       ];
       if (problems.length) this.error(`Compilation refusee :\n- ${problems.join('\n- ')}`);
       launch = launchStatus(business);
-      if (launch.ready) this.info('Porte de lancement franchie : site indexable, formulaires ouverts.');
+      if (business.fictional === true) this.info('Entreprise fictive (PAE au CPNV) : site non indexe, aucune demande enregistree en production.');
+      else if (launch.ready) this.info('Porte de lancement franchie : site indexable, formulaires ouverts.');
       else this.warn(`Pre-lancement : ${launch.blockers.length} information(s) bloquante(s). Site non indexe, formulaires fermes (voir docs/INFORMATIONS-MANQUANTES.md).`);
     },
     transformIndexHtml() {

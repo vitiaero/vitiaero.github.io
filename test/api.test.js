@@ -8,6 +8,7 @@ import { all, get, getUploadDir } from '../server/db.js';
 import { processOutbox } from '../server/mail.js';
 import { currentVersion } from '../shared/legal/current.js';
 import { PARCEL, PNG_1PX, consentFor, loginAdmin, openDb, startApp } from './helpers.js';
+import { prelaunchBusiness } from './fixtures/complete-business.js';
 
 let db;
 let s;
@@ -48,7 +49,7 @@ describe('etat du service et en-tetes', () => {
   });
 });
 
-describe('pre-lancement en production : formulaires refuses par le serveur', () => {
+describe('entreprise fictive en production : formulaires refuses par le serveur', () => {
   let prod;
   before(async () => { prod = await startApp({ env: { NODE_ENV: 'production' } }); });
   after(async () => { await prod.close(); });
@@ -65,10 +66,21 @@ describe('pre-lancement en production : formulaires refuses par le serveur', () 
       const count = all('SELECT id FROM messages').length + all('SELECT id FROM estimations').length;
       const r = await prod.api('POST', url, body);
       assert.equal(r.status, 503);
-      assert.equal(r.data.error, 'Service pas encore ouvert.');
+      assert.equal(r.data.error, 'Entreprise fictive : aucune demande n\'est enregistree.');
       assert.equal(all('SELECT id FROM messages').length + all('SELECT id FROM estimations').length, count);
     });
   }
+
+  test('entreprise reelle en pre-lancement : meme refus, message de pre-lancement', async () => {
+    const real = await startApp({ env: { NODE_ENV: 'production' }, business: prelaunchBusiness() });
+    try {
+      const r = await real.api('POST', '/api/contact', { name: 'A', email: 'a@example.ch', message: 'Bonjour', consent: consentFor() });
+      assert.equal(r.status, 503);
+      assert.equal(r.data.error, 'Service pas encore ouvert.');
+    } finally {
+      await real.close();
+    }
+  });
 
   test('la connexion de l\'equipe reste possible (administration)', async () => {
     const token = await loginAdmin(prod.api);

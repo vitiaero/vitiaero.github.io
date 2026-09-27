@@ -46,7 +46,10 @@ describe('conservation limitee', () => {
       ['Retention Test', 'retention@example.ch', 'ancien', 'Traité', monthsAgo(30), monthsAgo(30), 'devis', JSON.stringify([{ id: fileId, name: 'p.png' }])]
     );
 
-    const { summary, skipped } = runRetention(business.retention, NOW);
+    // Durees des categories C3 et C4 non fournies : elles ne doivent jamais
+    // etre remplacees par une valeur inventee.
+    const retention = { ...business.retention, attachmentsMonths: null, inactiveAccountsMonths: null };
+    const { summary, skipped } = runRetention(retention, NOW);
     const ids = all('SELECT id FROM estimations').map((r) => r.id);
     assert.ok(!ids.includes(oldOpen), 'demande sans suite de plus de 24 mois supprimee');
     assert.ok(ids.includes(recentOpen));

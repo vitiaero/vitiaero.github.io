@@ -107,6 +107,20 @@ export default {
     contact: (mail) => `Write to us: ${mail}`,
   },
 
+  // Fictional company (PAE project at the CPNV): see shared/business.js.
+  fictional: {
+    aria: 'Information about the project',
+    label: 'Fictional company.',
+    text: 'VitiAero is a company created for a PAE project at the CPNV: no services are offered and no requests are stored.',
+    more: 'Learn more',
+    footer: 'VitiAero is a fictional company, created for a PAE project at the CPNV.',
+    aboutTitle: 'A fictional company project',
+    aboutText: 'VitiAero was created for a PAE project at the CPNV. This website shows how the service would work: online estimate, quote request, customer area and administration. The contact details, terms and providers are invented for this project.',
+    credentialsTitle: 'Authorisations',
+    credentialsText: 'VitiAero is a fictional company: no authorisation has been applied for. A real company would need to obtain all the authorisations described in this section before its first job.',
+    submit: 'Demonstration: VitiAero is a fictional company (PAE project at the CPNV). No request was sent or stored.',
+  },
+
   formsClosed: {
     title: 'Form not open yet',
     prelaunch: 'VitiAero is in pre-launch: this form will open when the service launches. Until then, no data is sent from the website.',
@@ -872,6 +886,7 @@ export default {
     'La date n\'est pas valide.': 'The date is not valid.',
     'Client introuvable.': 'Customer not found.',
     'Intervention introuvable.': 'Job not found.',
+    'Entreprise fictive : aucune demande n\'est enregistree.': 'Demonstration: VitiAero is a fictional company (PAE project at the CPNV). No request was stored.',
     'Service pas encore ouvert.': 'The service is not open yet: no request can be sent online for the moment.',
     'Merci de confirmer avoir lu la politique de confidentialite.': 'Please confirm that you have read the privacy policy.',
     'La page a ete mise a jour : merci de la recharger.': 'The page has been updated: please reload it.',

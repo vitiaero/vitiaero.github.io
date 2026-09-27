@@ -75,9 +75,13 @@ export function createApp({
   const launch = () => launchStatus(business, { today: clock() });
   const mailReady = !!mailer && mailer.mode !== 'disabled';
   const acceptingSubmissions = () => env.ALLOW_PRELAUNCH_SUBMISSIONS === '1' || !inProduction || (launch().ready && mailReady);
+  // Entreprise fictive (projet PAE au CPNV) : le message le dit clairement.
+  const closedMessage = business.fictional === true
+    ? 'Entreprise fictive : aucune demande n\'est enregistree.'
+    : 'Service pas encore ouvert.';
   const requireOpen = (req, res, next) => (acceptingSubmissions()
     ? next()
-    : res.status(503).json({ error: 'Service pas encore ouvert.' }));
+    : res.status(503).json({ error: closedMessage }));
 
   app.use(requestLogger());
 

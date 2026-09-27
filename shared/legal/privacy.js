@@ -4,7 +4,7 @@
 import { tr, p, ul, notice, link, mail, strong, section, countryName } from './core.js';
 import {
   identityLines, identityComplete, prelaunchIdentityNotice, configuredServices, missingServices,
-  SERVICE_ROLE_LABELS,
+  SERVICE_ROLE_LABELS, fictionalNotice,
 } from './facts.js';
 import { SAFEGUARD_TEXT } from './labels.js';
 import { isText, isServiceComplete } from '../launch.js';
@@ -103,6 +103,7 @@ export default function privacy(b, lang) {
     numbered: true,
     title: tr(lang, { fr: 'Politique de confidentialité', de: 'Datenschutzerklärung', en: 'Privacy policy' }),
     sections: [
+      section('fiction', null, [fictionalNotice(b, lang, 'privacy')]),
       section('intro', null, [
         p(tr(lang, {
           fr: `Cette politique explique quelles données personnelles sont traitées sur le site ${host} et lors des demandes qui y sont faites, dans quel but, avec qui elles sont partagées et quels sont vos droits. Elle suit la loi fédérale sur la protection des données (LPD).`,

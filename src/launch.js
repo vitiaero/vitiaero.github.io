@@ -7,5 +7,11 @@ import { launchStatus } from '../shared/launch.js';
 import { STATIC_ONLY } from './config.js';
 
 export const LAUNCH = launchStatus(business);
-export const FORMS_OPEN = (import.meta.env.DEV || LAUNCH.ready) && !STATIC_ONLY;
+
+// Entreprise fictive (projet PAE au CPNV) : les formulaires s'affichent pour
+// la demonstration. Le site publie n'enregistre rien : sans serveur, un
+// message s'affiche a l'envoi ; en production, le serveur refuse la demande.
+// Seul le serveur de developpement (npm run dev) les traite.
+export const FICTIONAL = business.fictional === true;
+export const FORMS_OPEN = FICTIONAL || ((import.meta.env.DEV || LAUNCH.ready) && !STATIC_ONLY);
 export { business };
