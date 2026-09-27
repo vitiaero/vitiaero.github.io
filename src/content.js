@@ -64,11 +64,14 @@ export const equipVideos = {
 };
 
 // Extrait du vol FPV au-dessus des terrasses d'Epesses (Lavaux), filme par le
-// proprietaire : section « Le vignoble vu du ciel » de l'accueil. 1920 x 1080,
-// H.264, 8 s en boucle (fondu entre la fin et le debut).
-export const film = [
-  { src: asset('/videos/film-lavaux.mp4'), type: 'video/mp4; codecs="avc1.640028"', width: 1920, height: 1080, framerate: 30, bitrate: 6400000 },
-];
+// proprietaire : section « Le vignoble vu du ciel » de l'accueil. Vitesse
+// reelle, 60 images/s comme la source, 6 s en boucle (fondu entre la fin et
+// le debut). 4K pour les grands ecrans, sinon 1080p.
+export const film = withoutUhd([
+  { src: asset('/videos/film-lavaux-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.13M.08"', width: 3840, height: 2160, framerate: 60, bitrate: 16800000 },
+  { src: asset('/videos/film-lavaux-1080.av1.mp4'), type: 'video/mp4; codecs="av01.0.09M.08"', width: 1920, height: 1080, framerate: 60, bitrate: 6900000 },
+  { src: asset('/videos/film-lavaux-1080.mp4'), type: 'video/mp4; codecs="avc1.64002a"', width: 1920, height: 1080, framerate: 60, bitrate: 11400000 },
+]);
 
 // Chemins des images. Si une image manque, un repli sobre s'affiche (voir CSS).
 // Uniquement le DJI Agras T50 : les photos d'autres modeles ont ete retirees.
