@@ -4,9 +4,12 @@ import 'leaflet/dist/leaflet.css';
 import { area as turfArea } from '@turf/turf';
 import { useI18n } from '../i18n/index.jsx';
 
-// Couleur des parcelles : ORANGE, bien visible sur le vert des vignes. Jamais vert.
-const ORANGE = '#e8781f';
-const ORANGE_DARK = '#c85a12';
+// Couleurs des parcelles, celles du site : trait vert citron cerne d'un liseré
+// encre, qui le detache du vert des vignes (satellite) comme du fond clair des
+// cartes.
+const LIME = '#d6f04a';
+const INK = '#141513';
+const halo = { color: INK, opacity: 0.6, fill: false, interactive: false };
 
 // Fonds de carte swisstopo (WMTS, projection Web Mercator) + plan OpenStreetMap.
 // Les libelles affiches sont traduits (t.map.layers), les cles restent fixes.
@@ -233,11 +236,12 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     if (!group) return;
     group.clearLayers();
     (valueRef.current || []).forEach((parcel, idx) => {
+      L.polygon(parcel.points, { ...halo, weight: 5.5 }).addTo(group);
       const poly = L.polygon(parcel.points, {
-        color: ORANGE_DARK,
+        color: LIME,
         weight: 2.5,
-        fillColor: ORANGE,
-        fillOpacity: 0.28,
+        fillColor: LIME,
+        fillOpacity: 0.3,
       }).addTo(group);
       poly.bindTooltip(m.parcel(idx + 1), { sticky: true });
     });
@@ -249,19 +253,21 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     group.clearLayers();
     const pts = pointsRef.current;
     if (pts.length >= 2) {
-      L.polyline(pts, { color: ORANGE, weight: 2.5, dashArray: '6 5' }).addTo(group);
+      L.polyline(pts, { ...halo, weight: 5 }).addTo(group);
+      L.polyline(pts, { color: LIME, weight: 2.5, dashArray: '6 5' }).addTo(group);
     }
     if (pts.length >= 3) {
       L.polygon(pts, {
-        color: ORANGE, weight: 1, fillColor: ORANGE, fillOpacity: 0.12, dashArray: '6 5',
+        color: LIME, weight: 1, fillColor: LIME, fillOpacity: 0.14, dashArray: '6 5',
       }).addTo(group);
     }
+    // Premier point (celui qui ferme la parcelle) en encre cerne de vert.
     pts.forEach((p, i) => {
       L.circleMarker(p, {
         radius: i === 0 ? 7 : 5,
-        color: '#fff',
-        weight: 2,
-        fillColor: i === 0 ? ORANGE_DARK : ORANGE,
+        color: i === 0 ? LIME : INK,
+        weight: i === 0 ? 2.5 : 2,
+        fillColor: i === 0 ? INK : LIME,
         fillOpacity: 1,
       }).addTo(group);
     });
