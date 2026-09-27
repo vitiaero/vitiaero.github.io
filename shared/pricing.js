@@ -4,8 +4,9 @@
 // par le navigateur n'est jamais repris tel quel).
 // Grille fournie par le proprietaire (septembre 2026). Montants en CHF.
 
-// Point de depart des deplacements : centre de la commune de Chardonne (VD),
-// coordonnees swisstopo. [A REMPLACER par l'adresse exacte du depot VitiAero.]
+// Point de depart des deplacements, fourni par le proprietaire : centre de la
+// commune de Chardonne (VD), coordonnees swisstopo. L'adresse exacte du depot
+// reste a confirmer (docs/INFORMATIONS-MANQUANTES.md, D14).
 export const BASE = { label: 'Chardonne', lat: 46.472015, lng: 6.806277 };
 
 // Prix par passage et par hectare, selon le nombre de passages par an (1 a 10).
@@ -89,11 +90,13 @@ export function parcelsCenter(parcels) {
 
 // Estimation annuelle.
 // areaM2 : surface totale ; passes : passages par an (1 a 10) ;
-// distanceKm : distance par la route depuis BASE (null = inconnue) ;
+// distanceKm : distance depuis BASE (null = inconnue) ;
+// distanceApproximate : vrai si la distance n'est pas routiere (vol d'oiseau) :
+//   les frais sont alors chiffres a titre indicatif et a confirmer dans le devis ;
 // urgent / difficult / dispersed : situations particulieres cochees ;
 // promoPercent : reduction du code promo, appliquee au traitement.
 // Les majorations et le code promo portent sur le montant du traitement.
-export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = false, difficult = false, dispersed = false, promoPercent = 0 }) {
+export function computeEstimate({ areaM2, passes, distanceKm = null, distanceApproximate = false, urgent = false, difficult = false, dispersed = false, promoPercent = 0 }) {
   const p = clampPasses(passes);
   const ha = Math.max(0, Number(areaM2) || 0) / 10000;
   const unit = PRICE_PER_HA[p - 1];
@@ -118,7 +121,7 @@ export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = fa
     } else {
       const reduction = travelReduction(p);
       const gross = fee * p;
-      travel = { status: 'ok', km, fee, reduction, gross, discount: round(gross * reduction), total: round(gross * (1 - reduction)) };
+      travel = { status: 'ok', km, fee, reduction, gross, discount: round(gross * reduction), total: round(gross * (1 - reduction)), approximate: !!distanceApproximate };
     }
   }
   const travelTotal = travel.status === 'ok' ? travel.total : 0;
@@ -150,7 +153,7 @@ export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = fa
     promo,
     totalMin,
     totalMax,
-    // Vrai quand tout est chiffre (deplacement connu et dans la zone)
-    complete: travel.status === 'ok',
+    // Vrai quand tout est chiffre sur une distance routiere dans la zone
+    complete: travel.status === 'ok' && !travel.approximate,
   };
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { api, apiUrl, getToken } from '../api.js';
+import { api, apiUrl, getToken, download } from '../api.js';
 import MapDraw from '../components/MapDraw.jsx';
 import { BASE, formatCHF } from '../../shared/pricing.js';
 
@@ -46,20 +46,7 @@ function RequestsTab() {
   }
 
   async function exportGeojson(id) {
-    const res = await fetch(apiUrl(`/api/admin/estimations/${id}/geojson`), {
-      headers: { Authorization: `Bearer ${getToken()}` },
-      credentials: 'omit',
-    });
-    if (!res.ok) return;
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `estimation-${id}.geojson`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    await download(`/api/admin/estimations/${id}/geojson`, `estimation-${id}.geojson`);
   }
 
   if (loading) return <div className="loading-block"><div className="spinner" /> Chargement...</div>;
@@ -113,8 +100,8 @@ function RequestsTab() {
             </div>
 
             <div className="field mt-3">
-              <label>Changer le statut</label>
-              <select className="select" value={r.status} onChange={(e) => changeStatus(r.id, e.target.value)}>
+              <label htmlFor="req-status">Changer le statut</label>
+              <select id="req-status" className="select" value={r.status} onChange={(e) => changeStatus(r.id, e.target.value)}>
                 {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
@@ -377,16 +364,16 @@ function PromosTab() {
         {error && <div className="alert alert-error">{error}</div>}
         <form onSubmit={add}>
           <div className="field">
-            <label>Code</label>
-            <input className="input" value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="VIGNE10" />
+            <label htmlFor="promo-code">Code</label>
+            <input id="promo-code" className="input" value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))}  />
           </div>
           <div className="field">
-            <label>Description</label>
-            <input className="input" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Remise de bienvenue" />
+            <label htmlFor="promo-desc">Description (conditions réelles de l'offre)</label>
+            <input id="promo-desc" className="input" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}  />
           </div>
           <div className="field">
-            <label>Remise (%)</label>
-            <input className="input" type="number" min="0" max="100" value={form.discount} onChange={(e) => setForm((f) => ({ ...f, discount: Number(e.target.value) }))} />
+            <label htmlFor="promo-discount">Remise (%)</label>
+            <input id="promo-discount" className="input" type="number" min="0" max="100" value={form.discount} onChange={(e) => setForm((f) => ({ ...f, discount: Number(e.target.value) }))} />
           </div>
           <button className="btn btn-primary btn-block" type="submit">Ajouter le code</button>
         </form>
@@ -539,7 +526,7 @@ function InterventionsTab() {
           </div>
           <div className="field">
             <label htmlFor="iv-parcel">Parcelle</label>
-            <input id="iv-parcel" className="input" maxLength={160} value={form.parcel_label} onChange={update('parcel_label')} placeholder="En Chatelard, parcelle 1" />
+            <input id="iv-parcel" className="input" maxLength={160} value={form.parcel_label} onChange={update('parcel_label')}  />
           </div>
           <div className="grid grid-2" style={{ gap: '0.8rem' }}>
             <div className="field">
@@ -548,7 +535,7 @@ function InterventionsTab() {
             </div>
             <div className="field">
               <label htmlFor="iv-area">Surface (ha)</label>
-              <input id="iv-area" className="input" inputMode="decimal" maxLength={10} value={form.area_ha} onChange={update('area_ha')} placeholder="0.71" />
+              <input id="iv-area" className="input" inputMode="decimal" maxLength={10} value={form.area_ha} onChange={update('area_ha')}  />
             </div>
           </div>
           <div className="grid grid-2" style={{ gap: '0.8rem' }}>
@@ -567,11 +554,11 @@ function InterventionsTab() {
           </div>
           <div className="field">
             <label htmlFor="iv-product">Produit</label>
-            <input id="iv-product" className="input" maxLength={160} value={form.product} onChange={update('product')} placeholder="Produit fourni par le client" />
+            <input id="iv-product" className="input" maxLength={160} value={form.product} onChange={update('product')}  />
           </div>
           <div className="field">
             <label htmlFor="iv-conditions">Conditions</label>
-            <input id="iv-conditions" className="input" maxLength={200} value={form.conditions} onChange={update('conditions')} placeholder="Vent faible, 18 degres" />
+            <input id="iv-conditions" className="input" maxLength={200} value={form.conditions} onChange={update('conditions')}  />
           </div>
           <div className="field">
             <label htmlFor="iv-notes">Remarques (visibles par le client)</label>
@@ -587,9 +574,211 @@ function InterventionsTab() {
   );
 }
 
+
+/* ------------------------------ Onglet Lancement ------------------------------ */
+// Etat de la porte de lancement (shared/launch.js) et des taches du serveur.
+// Chaque point bloquant renvoie a docs/INFORMATIONS-MANQUANTES.md.
+const GROUPS = {
+  identity: 'Identité et clientèle',
+  privacy: 'Prestataires et données',
+  retention: 'Durées de conservation',
+  commercial: 'Conditions commerciales et assurance',
+  credentials: 'Autorisations et justificatifs',
+  media: 'Droits des médias',
+  review: 'Validation juridique et signature',
+};
+
+function LaunchTab() {
+  const [data, setData] = useState(null);
+  const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  async function load() {
+    setData(await api.get('/api/admin/system'));
+  }
+  useEffect(() => { load(); }, []);
+
+  async function act(url, done) {
+    setBusy(true);
+    setMessage('');
+    try {
+      await api.post(url);
+      setMessage(done);
+      await load();
+    } catch (err) {
+      setMessage(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!data) return <div className="loading-block" role="status"><div className="spinner" aria-hidden="true" /> Chargement...</div>;
+  const { launch } = data;
+  const byGroup = Object.keys(GROUPS).map((g) => [g, launch.blockers.filter((b) => b.group === g)]).filter(([, list]) => list.length);
+
+  return (
+    <div>
+      <div className={`alert ${launch.ready ? 'alert-info' : 'alert-error'}`} role="status">
+        {launch.ready
+          ? 'Toutes les informations obligatoires sont fournies : le site est en exploitation (formulaires ouverts, indexation autorisée après la prochaine publication).'
+          : `Pré-lancement : ${launch.blockers.length} point(s) bloquant(s). Formulaires fermés et indexation bloquée tant qu'ils ne sont pas réglés dans shared/business.js et shared/media.js.`}
+      </div>
+      {message && <p className="hint" role="status">{message}</p>}
+
+      {launch.warnings.length > 0 && (
+        <div className="alert alert-error">
+          <strong>Échéances proches :</strong>
+          <ul>{launch.warnings.map((w) => <li key={w.id}>{w.label} ({w.days} jour(s))</li>)}</ul>
+        </div>
+      )}
+
+      {byGroup.map(([g, list]) => (
+        <div key={g} className="card acc-block">
+          <h2 className="h3">{GROUPS[g]}</h2>
+          <ul className="blocker-list">
+            {list.map((b) => <li key={b.id}><span className="chip">{b.ref}</span> {b.label}</li>)}
+          </ul>
+        </div>
+      ))}
+
+      <div className="grid grid-2 mt-3" style={{ alignItems: 'start' }}>
+        <div className="card">
+          <h2 className="h3">Serveur</h2>
+          <dl className="tl-facts mt-2">
+            <div><dt>Environnement</dt><dd>{data.environment}</dd></div>
+            <div><dt>Envois acceptés</dt><dd>{data.acceptingSubmissions ? 'oui' : 'non (pré-lancement)'}</dd></div>
+            <div><dt>Calcul des distances</dt><dd>{data.routing === 'osrm' ? 'serveur OSRM configuré' : 'à vol d\'oiseau (aucun service externe)'}</dd></div>
+            <div><dt>E-mails</dt><dd>{data.mail.mode} · {data.mail.pending} en attente · {data.mail.failed} en échec</dd></div>
+            <div><dt>Dernière purge</dt><dd>{data.retention.lastRun ? formatDate(data.retention.lastRun) : 'jamais'}</dd></div>
+            <div><dt>Sauvegardes</dt><dd>{data.backup.configured ? `${data.backup.count} · dernière : ${data.backup.lastRun ? formatDate(data.backup.lastRun) : 'jamais'}` : 'non configurées'}</dd></div>
+          </dl>
+          {data.backup.lastError && <p className="field-error" role="alert">Dernière sauvegarde en échec : {data.backup.lastError}</p>}
+          <div className="flex gap-1 wrap mt-3">
+            <button type="button" className="btn btn-outline btn-sm" disabled={busy || !data.backup.configured} onClick={() => act('/api/admin/backup', 'Sauvegarde créée et vérifiée.')}>Sauvegarder maintenant</button>
+            <button type="button" className="btn btn-outline btn-sm" disabled={busy} onClick={() => act('/api/admin/retention/run', 'Purge effectuée.')}>Lancer la purge</button>
+            <button type="button" className="btn btn-outline btn-sm" disabled={busy || data.mail.failed === 0} onClick={() => act('/api/admin/outbox/retry', 'E-mails relancés.')}>Relancer les e-mails en échec</button>
+          </div>
+        </div>
+        <div className="card">
+          <h2 className="h3">Versions des documents</h2>
+          <dl className="tl-facts mt-2">
+            {Object.entries(data.policies).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
+          </dl>
+          <p className="hint mt-2">Chaque demande enregistre la version de la politique de confidentialité lue par la personne.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------- Onglet Donnees personnelles --------------------------- */
+// Demandes d'acces et d'effacement (art. 25 et 32 LPD) faites par e-mail ou
+// courrier. Verifier l'identite de la personne avant d'agir.
+function PrivacyTab() {
+  const [email, setEmail] = useState('');
+  const [found, setFound] = useState(null);
+  const [keep, setKeep] = useState(true);
+  const [message, setMessage] = useState('');
+  const [log, setLog] = useState([]);
+
+  async function loadLog() {
+    const d = await api.get('/api/admin/system');
+    setLog(d.privacyLog);
+  }
+  useEffect(() => { loadLog(); }, []);
+
+  async function lookup(e) {
+    e.preventDefault();
+    setMessage('');
+    try { setFound(await api.get(`/api/admin/privacy/lookup?email=${encodeURIComponent(email)}`)); } catch (err) { setMessage(err.message); }
+  }
+
+  async function exportData() {
+    try {
+      await download(`/api/admin/privacy/export?email=${encodeURIComponent(email)}`, 'export-donnees.json');
+      loadLog();
+    } catch (err) { setMessage(err.message); }
+  }
+
+  async function erase() {
+    if (!window.confirm(`Effacer définitivement les données liées à ${email} ?`)) return;
+    try {
+      const res = await api.post('/api/admin/privacy/erase', { email, keepContractRecords: keep });
+      setMessage(`Effacement effectué. Dossiers liés à un contrat conservés : ${res.summary.keptContractRecords || 0}.`);
+      setFound(null);
+      loadLog();
+    } catch (err) { setMessage(err.message); }
+  }
+
+  return (
+    <div className="grid grid-2" style={{ alignItems: 'start' }}>
+      <div className="card">
+        <h2 className="h3">Demande d'accès ou d'effacement</h2>
+        <p className="hint">Vérifier l'identité de la personne avant tout export ou effacement. Répondre en principe dans les 30 jours.</p>
+        <form className="map-search mt-2" onSubmit={lookup}>
+          <label htmlFor="pv-email" className="sr-only">Adresse e-mail de la personne</label>
+          <input id="pv-email" className="input" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <button type="submit" className="btn btn-dark btn-sm">Rechercher</button>
+        </form>
+        {message && <p className="hint mt-2" role="status">{message}</p>}
+        {found && (
+          <>
+            <dl className="tl-facts mt-3">
+              <div><dt>Compte</dt><dd>{found.account ? 'oui' : 'non'}</dd></div>
+              <div><dt>Demandes d'estimation</dt><dd>{found.estimations}</dd></div>
+              <div><dt>Messages et devis</dt><dd>{found.messages}</dd></div>
+              <div><dt>Pièces jointes</dt><dd>{found.attachments}</dd></div>
+              <div><dt>Interventions</dt><dd>{found.interventions}</dd></div>
+              <div><dt>Preuves de lecture</dt><dd>{found.consents}</dd></div>
+            </dl>
+            <label className="consent mt-3">
+              <input type="checkbox" checked={keep} onChange={(e) => setKeep(e.target.checked)} />
+              <span>Conserver les dossiers liés à un contrat (demande acceptée, intervention réalisée), comme l'exige la durée légale de conservation.</span>
+            </label>
+            <div className="flex gap-1 wrap mt-2">
+              <button type="button" className="btn btn-outline btn-sm" onClick={exportData}>Exporter (JSON)</button>
+              <button type="button" className="btn btn-ghost btn-sm btn-danger" onClick={erase}>Effacer</button>
+            </div>
+          </>
+        )}
+      </div>
+      <div className="card">
+        <h2 className="h3">Journal des demandes</h2>
+        <p className="hint">Type, origine et nombre d'éléments seulement : aucune donnée personnelle n'y est gardée.</p>
+        {log.length === 0 ? <p className="muted mt-2">Aucune demande traitée.</p> : (
+          <div className="table-wrap mt-2">
+            <table className="data">
+              <thead><tr><th scope="col">Date</th><th scope="col">Action</th><th scope="col">Origine</th><th scope="col">Éléments</th></tr></thead>
+              <tbody>
+                {log.map((l, i) => (
+                  <tr key={i}>
+                    <td>{formatDate(l.created_at)}</td>
+                    <td>{l.action === 'erase' ? 'Effacement' : 'Export'}</td>
+                    <td>{l.origin}</td>
+                    <td>{Object.entries(JSON.parse(l.summary || '{}')).map(([k, v]) => `${k} ${v}`).join(', ')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* --------------------------------- Page --------------------------------- */
 export default function Admin() {
-  const [tab, setTab] = useState('demandes');
+  const [tab, setTab] = useState('lancement');
+  const TABS = [
+    ['lancement', 'Lancement'],
+    ['demandes', 'Demandes'],
+    ['messages', 'Messages'],
+    ['interventions', 'Interventions'],
+    ['clients', 'Clients'],
+    ['donnees', 'Données personnelles'],
+    ['promos', 'Codes promo'],
+  ];
   return (
     <div className="page page-head">
       <section className="section">
@@ -599,18 +788,18 @@ export default function Admin() {
             <h1 className="h1">Tableau de bord</h1>
           </div>
 
-          <div className="admin-tabs">
-            <button className={tab === 'demandes' ? 'active' : ''} onClick={() => setTab('demandes')}>Demandes</button>
-            <button className={tab === 'messages' ? 'active' : ''} onClick={() => setTab('messages')}>Messages</button>
-            <button className={tab === 'interventions' ? 'active' : ''} onClick={() => setTab('interventions')}>Interventions</button>
-            <button className={tab === 'clients' ? 'active' : ''} onClick={() => setTab('clients')}>Clients</button>
-            <button className={tab === 'promos' ? 'active' : ''} onClick={() => setTab('promos')}>Codes promo</button>
+          <div className="admin-tabs" role="group" aria-label="Sections de l'administration">
+            {TABS.map(([key, label]) => (
+              <button key={key} type="button" className={tab === key ? 'active' : ''} aria-pressed={tab === key} onClick={() => setTab(key)}>{label}</button>
+            ))}
           </div>
 
+          {tab === 'lancement' && <LaunchTab />}
           {tab === 'demandes' && <RequestsTab />}
           {tab === 'messages' && <MessagesTab />}
           {tab === 'interventions' && <InterventionsTab />}
           {tab === 'clients' && <ClientsTab />}
+          {tab === 'donnees' && <PrivacyTab />}
           {tab === 'promos' && <PromosTab />}
         </div>
       </section>

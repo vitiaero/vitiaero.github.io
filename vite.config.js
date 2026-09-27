@@ -3,6 +3,15 @@ import path from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { apiOriginFrom, buildCsp, SPA_ROUTES } from './shared/security.js';
+import { business } from './shared/business.js';
+import { launchStatus } from './shared/launch.js';
+import { outdatedVersions } from './shared/legal/hash.js';
+import {
+  applyHead, jsonLdScript, organizationJsonLd, pageMeta, robotsTxt, securityTxt, sitemapXml,
+} from './shared/site.js';
+import fr from './src/i18n/fr.js';
+import { checkMedia } from './scripts/check-media.mjs';
+import { collectLicenses, licensesText } from './scripts/third-party-licenses.mjs';
 
 // Le client tourne sur le port 5173 et redirige tous les appels /api
 // vers l'API Express (port 3001). Ainsi le front et le back demarrent
@@ -28,15 +37,38 @@ function normalizeBase(raw) {
   return clean ? `/${clean}/` : '/';
 }
 
-// Compilation uniquement : ajoute la CSP et la politique de referent dans
-// index.html, puis cree une page par route pour l'hebergement statique.
+// Compilation uniquement :
+// - refuse de compiler si un fichier de public/ n'est pas declare dans le
+//   registre des medias, ou si un document juridique a change sans nouvelle
+//   version (celle qui est enregistree avec chaque demande) ;
+// - ajoute la CSP et la politique de referent dans index.html ;
+// - ecrit une page HTML par route, avec son titre, sa description et sa
+//   consigne d'indexation (aucune indexation avant le lancement) ;
+// - produit robots.txt, sitemap.xml (apres lancement seulement), security.txt
+//   et la liste des licences des logiciels tiers inclus.
 function staticHosting(apiOrigin) {
   let outDir = path.resolve('dist');
+  let publicDir = path.resolve('public');
+  let launch = null;
   return {
     name: 'vitiaero-static-hosting',
     apply: 'build',
     configResolved(config) {
       outDir = path.resolve(config.root, config.build.outDir);
+      publicDir = config.publicDir ? path.resolve(config.publicDir) : publicDir;
+    },
+    buildStart() {
+      const media = checkMedia(publicDir);
+      const problems = [
+        ...media.unregistered.map((f) => `public/${f} n'est pas declare dans shared/media.js (auteur, licence, preuve du droit d'usage).`),
+        ...media.missing.map((f) => `public/${f} est declare dans shared/media.js mais absent.`),
+        ...media.errors,
+        ...outdatedVersions().map((d) => `Le document juridique "${d.id}" a change : lancez npm run legal:version, relisez le texte, puis recompilez.`),
+      ];
+      if (problems.length) this.error(`Compilation refusee :\n- ${problems.join('\n- ')}`);
+      launch = launchStatus(business);
+      if (launch.ready) this.info('Porte de lancement franchie : site indexable, formulaires ouverts.');
+      else this.warn(`Pre-lancement : ${launch.blockers.length} information(s) bloquante(s). Site non indexe, formulaires fermes (voir docs/INFORMATIONS-MANQUANTES.md).`);
     },
     transformIndexHtml() {
       return [
@@ -44,17 +76,31 @@ function staticHosting(apiOrigin) {
         { tag: 'meta', attrs: { name: 'referrer', content: 'strict-origin-when-cross-origin' }, injectTo: 'head-prepend' },
       ];
     },
-    closeBundle() {
-      const dist = outDir;
-      const index = path.join(dist, 'index.html');
+    generateBundle(_options, bundle) {
+      const ready = launch.ready;
+      const ids = Object.values(bundle).flatMap((f) => (f.type === 'chunk' ? Object.keys(f.modules) : []));
+      this.emitFile({ type: 'asset', fileName: 'licences-tiers.txt', source: licensesText(collectLicenses(ids)) });
+      this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robotsTxt(business, { ready }) });
+      const sitemap = sitemapXml(business, { ready });
+      if (sitemap) this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemap });
+      const security = securityTxt(business);
+      if (security) this.emitFile({ type: 'asset', fileName: '.well-known/security.txt', source: security });
+    },
+    writeBundle() {
+      const index = path.join(outDir, 'index.html');
       if (!fs.existsSync(index)) return;
-      const html = fs.readFileSync(index);
+      const ready = launch.ready;
+      const template = fs.readFileSync(index, 'utf8');
+      const jsonLd = jsonLdScript(organizationJsonLd(business, { ready }));
+      const opts = { ready, fallbackTitle: fr.meta.fallbackTitle };
+      const page = (route) => applyHead(template, { ...pageMeta(business, route, fr.meta.pages, opts), jsonLd });
+      fs.writeFileSync(index, page('/'));
       // /le-service -> le-service.html (servi en 200 par GitHub Pages).
-      for (const route of SPA_ROUTES) fs.writeFileSync(path.join(dist, `${route}.html`), html);
+      for (const route of SPA_ROUTES) fs.writeFileSync(path.join(outDir, `${route}.html`), page(`/${route}`));
       // Toute autre adresse : l'application affiche sa propre page introuvable.
-      fs.writeFileSync(path.join(dist, '404.html'), html);
+      fs.writeFileSync(path.join(outDir, '404.html'), applyHead(template, pageMeta(business, '/404', fr.meta.pages, opts)));
       // Pas de traitement Jekyll : les fichiers sont publies tels quels.
-      fs.writeFileSync(path.join(dist, '.nojekyll'), '');
+      fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
     },
   };
 }
@@ -77,7 +123,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 5173,
-      open: true,
+      open: env.VITE_OPEN !== '0', // les tests automatises n'ouvrent pas de navigateur
       headers: securityHeaders,
       // Ne pas surveiller les gros fichiers video/capture pouvant se trouver a la
       // racine (ex. une capture d'ecran en cours, verrouillee) : ils feraient
@@ -87,7 +133,7 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: 'http://localhost:3001',
+          target: env.VITE_API_PROXY || 'http://localhost:3001',
           changeOrigin: true,
         },
       },

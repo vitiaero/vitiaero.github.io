@@ -1,25 +1,20 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { area as turfArea } from '@turf/turf';
+import { area as turfArea } from '@turf/area';
 import { useI18n } from '../i18n/index.jsx';
+import { STORAGE_KEYS, readStorage, writeStorage } from '../../shared/storage.js';
+import { CADASTRE_CREDIT } from '../../shared/legal/credits.js';
 
 // Couleur des parcelles : ORANGE, bien visible sur le vert des vignes. Jamais vert.
 const ORANGE = '#e8781f';
 const ORANGE_DARK = '#c85a12';
 
 // Fonds de carte swisstopo (WMTS, projection Web Mercator) + plan OpenStreetMap.
-// Les libelles affiches sont traduits (t.map.layers), les cles restent fixes.
-//
-// Credits exiges par chaque fournisseur, affiches sur la carte. Aucun ne doit
-// etre masque : conditions swisstopo (OGD, 1.3.2021), politique d'usage des
-// tuiles OpenStreetMap, licence CadastralWebMap (9.5.2012), qui impose en plus
-// sa formule exacte dans la langue du lecteur.
-const CADASTRE_CREDIT = {
-  fr: '&copy; Mensuration Officielle Suisse / FL',
-  de: '&copy; Amtliche Vermessung Schweiz / FL',
-  en: '&copy; Cadastral Surveying Switzerland / FL',
-};
+// Credits exiges par chaque fournisseur, toujours affiches sur la carte :
+// conditions swisstopo (OGD), politique des tuiles OpenStreetMap, licence
+// CadastralWebMap (formule imposee, dans la langue du lecteur).
+const OSM_CREDIT = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors';
 const BASE_LAYERS = {
   satellite: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',
@@ -31,18 +26,13 @@ const BASE_LAYERS = {
   },
   plan: {
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    credit: () => '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+    credit: () => OSM_CREDIT,
   },
-  // Plan cadastral officiel (limites et numeros de parcelles) des cantons,
-  // diffuse par l'infrastructure federale de geodonnees.
   cadastre: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.kantone.cadastralwebmap-farbe/default/current/3857/{z}/{x}/{y}.png',
-    credit: (lang) => CADASTRE_CREDIT[lang] || CADASTRE_CREDIT.fr,
+    credit: (lang) => (CADASTRE_CREDIT[lang] || CADASTRE_CREDIT.fr).replace('©', '&copy;'),
   },
 };
-
-// Memorise que le mini tutoriel a ete vu (stockage technique, liste sur la page cookies).
-const TIP_KEY = 'vitiaero_map_tip';
 
 // --- Import de parcelles deja dessinees ailleurs (GeoJSON ou KML) ---
 // Le fichier est lu dans le navigateur, rien n'est envoye avant la demande.
@@ -52,8 +42,7 @@ const MAX_POINTS = 500;
 
 // Meme zone que le serveur : la Suisse et ses abords.
 function inServiceArea(lat, lng) {
-  return Number.isFinite(lat) && Number.isFinite(lng)
-    && lat > 45.7 && lat < 47.9 && lng > 5.8 && lng < 10.6;
+  return Number.isFinite(lat) && Number.isFinite(lng) && lat > 45.7 && lat < 47.9 && lng > 5.8 && lng < 10.6;
 }
 
 // Un anneau GeoJSON ([[lng, lat], ...]) devient une liste de points Leaflet.
@@ -67,32 +56,23 @@ function ringToPoints(ring) {
     if (!inServiceArea(lat, lng)) return null;
     pts.push([lat, lng]);
   }
-  // Le dernier point repete le premier dans un anneau ferme : on le retire.
   if (pts.length > 3) {
     const a = pts[0];
     const b = pts[pts.length - 1];
-    if (a[0] === b[0] && a[1] === b[1]) pts.pop();
+    if (a[0] === b[0] && a[1] === b[1]) pts.pop(); // anneau ferme : dernier point = premier
   }
   return pts.length >= 3 ? pts.slice(0, MAX_POINTS) : null;
 }
 
-// Parcourt un objet GeoJSON et en sort les contours de polygones.
 function ringsFromGeoJSON(node, out = []) {
   if (!node || typeof node !== 'object' || out.length >= MAX_PARCELS) return out;
-  if (Array.isArray(node)) {
-    node.forEach((n) => ringsFromGeoJSON(n, out));
-    return out;
-  }
+  if (Array.isArray(node)) { node.forEach((n) => ringsFromGeoJSON(n, out)); return out; }
   if (node.type === 'FeatureCollection') return ringsFromGeoJSON(node.features, out);
   if (node.type === 'Feature') return ringsFromGeoJSON(node.geometry, out);
   if (node.type === 'GeometryCollection') return ringsFromGeoJSON(node.geometries, out);
-  if (node.type === 'Polygon') {
-    out.push(node.coordinates?.[0]); // contour exterieur uniquement
-    return out;
-  }
+  if (node.type === 'Polygon') { out.push(node.coordinates?.[0]); return out; } // contour exterieur uniquement
   if (node.type === 'MultiPolygon') {
     (node.coordinates || []).forEach((poly) => { if (out.length < MAX_PARCELS) out.push(poly?.[0]); });
-    return out;
   }
   return out;
 }
@@ -106,34 +86,38 @@ function ringsFromKML(text) {
     if (rings.length >= MAX_PARCELS) return;
     const node = poly.querySelector('outerBoundaryIs coordinates') || poly.querySelector('coordinates');
     if (!node) return;
-    const ring = (node.textContent || '').trim().split(/\s+/).map((triple) => {
+    rings.push((node.textContent || '').trim().split(/\s+/).map((triple) => {
       const [lng, lat] = triple.split(',');
       return [Number(lng), Number(lat)];
-    });
-    rings.push(ring);
+    }));
   });
   return rings;
 }
 
 function formatArea(m2, locale) {
-  const rounded = Math.round(m2);
-  const ha = m2 / 10000;
   return {
-    m2: rounded.toLocaleString(locale),
-    ha: ha.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 3 }),
+    m2: Math.round(m2).toLocaleString(locale),
+    ha: (m2 / 10000).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 3 }),
   };
 }
 
-// Aire d'un polygone (points = [[lat,lng], ...]) via Turf, en m2.
 function polygonArea(points) {
   if (!points || points.length < 3) return 0;
   const ring = points.map(([lat, lng]) => [lng, lat]);
-  ring.push(ring[0]); // ferme l'anneau
-  try {
-    return turfArea({ type: 'Polygon', coordinates: [ring] });
-  } catch {
-    return 0;
-  }
+  ring.push(ring[0]);
+  try { return turfArea({ type: 'Polygon', coordinates: [ring] }); } catch { return 0; }
+}
+
+function LayerSwitch({ base, onChange, m }) {
+  return (
+    <div className="layer-switch" role="group" aria-label={m.layersAria}>
+      {Object.keys(BASE_LAYERS).map((key) => (
+        <button key={key} type="button" className={base === key ? 'active' : ''} aria-pressed={base === key} onClick={() => onChange(key)}>
+          {m.layers[key]}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = false }, ref) {
@@ -157,23 +141,21 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
   const [drawing, setDrawing] = useState(false);
   const [pointsCount, setPointsCount] = useState(0);
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(null); // null : aucune recherche faite
   const [searching, setSearching] = useState(false);
+  const [announce, setAnnounce] = useState(''); // annonces pour les lecteurs d'ecran
   const fileRef = useRef(null);
   const [importMsg, setImportMsg] = useState(null); // { ok: bool, text }
 
   // Mini tutoriel : bulle d'aide affichee a la premiere visite seulement.
-  const [showTip, setShowTip] = useState(() => {
-    if (readOnly) return false;
-    try { return localStorage.getItem(TIP_KEY) !== '1'; } catch { return true; }
-  });
+  const [showTip, setShowTip] = useState(() => !readOnly && readStorage(STORAGE_KEYS.mapTip) !== '1');
   const dismissTip = () => {
     setShowTip(false);
-    try { localStorage.setItem(TIP_KEY, '1'); } catch { /* ignore */ }
+    writeStorage(STORAGE_KEYS.mapTip, '1');
   };
 
   useEffect(() => {
-    if (!showTip) return;
+    if (!showTip) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') dismissTip(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -189,27 +171,20 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
       zoom: 13,
       maxZoom: 19,
       zoomControl: true,
+      keyboard: true, // fleches pour deplacer, + et - pour zoomer
       attributionControl: false,
     });
     mapRef.current = map;
-    // Credits des fonds de carte, en bas a droite (sans le lien Leaflet, que sa
-    // licence n'exige pas a l'ecran).
+    // Credits des fonds de carte, en bas a droite, toujours visibles.
     L.control.attribution({ prefix: false }).addTo(map);
 
-    baseLayerRef.current = L.tileLayer(BASE_LAYERS.satellite.url, {
-      maxZoom: 19,
-      attribution: BASE_LAYERS.satellite.credit(lang),
-    }).addTo(map);
-
+    baseLayerRef.current = L.tileLayer(BASE_LAYERS.satellite.url, { maxZoom: 19, attribution: BASE_LAYERS.satellite.credit(lang) }).addTo(map);
     drawnGroupRef.current = L.layerGroup().addTo(map);
     tempGroupRef.current = L.layerGroup().addTo(map);
     searchGroupRef.current = L.layerGroup().addTo(map);
 
     if (!readOnly) map.on('click', onMapClick);
 
-    // La carte peut etre demontee avant que ce minuteur ne se declenche
-    // (double montage de React en mode strict) : on garde une reference et on
-    // verifie que la carte existe toujours avant d'appeler invalidateSize.
     const sizeTimer = setTimeout(() => { if (mapRef.current) map.invalidateSize(); }, 200);
     const onResize = () => { if (mapRef.current) map.invalidateSize(); };
     window.addEventListener('resize', onResize);
@@ -228,9 +203,6 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
   // --- Redessine les parcelles terminees quand la valeur change ---
   useEffect(() => {
     redrawParcels();
-    // Ajuste la vue sur les parcelles au premier affichage si elles existent.
-    // Les limites sont calculees sur les points : un layerGroup n'a pas de
-    // getBounds, contrairement a un featureGroup.
     if (!didFitRef.current && value.length > 0 && mapRef.current) {
       const points = value.flatMap((p) => p.points || []);
       if (points.length > 0) {
@@ -247,13 +219,9 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     if (!group) return;
     group.clearLayers();
     (valueRef.current || []).forEach((parcel, idx) => {
-      const poly = L.polygon(parcel.points, {
-        color: ORANGE_DARK,
-        weight: 2.5,
-        fillColor: ORANGE,
-        fillOpacity: 0.28,
-      }).addTo(group);
-      poly.bindTooltip(m.parcel(idx + 1), { sticky: true });
+      L.polygon(parcel.points, { color: ORANGE_DARK, weight: 2.5, fillColor: ORANGE, fillOpacity: 0.28 })
+        .addTo(group)
+        .bindTooltip(m.parcel(idx + 1), { sticky: true });
     });
   }
 
@@ -262,22 +230,10 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     if (!group) return;
     group.clearLayers();
     const pts = pointsRef.current;
-    if (pts.length >= 2) {
-      L.polyline(pts, { color: ORANGE, weight: 2.5, dashArray: '6 5' }).addTo(group);
-    }
-    if (pts.length >= 3) {
-      L.polygon(pts, {
-        color: ORANGE, weight: 1, fillColor: ORANGE, fillOpacity: 0.12, dashArray: '6 5',
-      }).addTo(group);
-    }
+    if (pts.length >= 2) L.polyline(pts, { color: ORANGE, weight: 2.5, dashArray: '6 5' }).addTo(group);
+    if (pts.length >= 3) L.polygon(pts, { color: ORANGE, weight: 1, fillColor: ORANGE, fillOpacity: 0.12, dashArray: '6 5' }).addTo(group);
     pts.forEach((p, i) => {
-      L.circleMarker(p, {
-        radius: i === 0 ? 7 : 5,
-        color: '#fff',
-        weight: 2,
-        fillColor: i === 0 ? ORANGE_DARK : ORANGE,
-        fillOpacity: 1,
-      }).addTo(group);
+      L.circleMarker(p, { radius: i === 0 ? 7 : 5, color: '#fff', weight: 2, fillColor: i === 0 ? ORANGE_DARK : ORANGE, fillOpacity: 1 }).addTo(group);
     });
   }
 
@@ -285,7 +241,15 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     tempGroupRef.current?.clearLayers();
   }
 
-  // --- Gestion du trace ---
+  function addPoint(latlng) {
+    const pts = pointsRef.current;
+    pts.push([latlng.lat, latlng.lng]);
+    redrawTemp();
+    setPointsCount(pts.length);
+    setAnnounce(m.pointAdded(pts.length));
+  }
+
+  // --- Gestion du trace a la souris ou au doigt ---
   function onMapClick(e) {
     if (!drawingRef.current) return;
     const map = mapRef.current;
@@ -303,16 +267,22 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     // Clic sur le premier point : ferme le polygone
     if (pts.length >= 3) {
       const p1 = map.latLngToContainerPoint(pts[0]);
-      const p2 = e.containerPoint;
-      if (p1.distanceTo(p2) < 14) {
-        finishDrawing();
-        return;
-      }
+      if (p1.distanceTo(e.containerPoint) < 14) { finishDrawing(); return; }
     }
+    addPoint(e.latlng);
+  }
 
-    pts.push([e.latlng.lat, e.latlng.lng]);
-    redrawTemp();
-    setPointsCount(pts.length);
+  // Trace au clavier : la carte se deplace avec les fleches, le point est
+  // pose au centre (reticule) avec le bouton ou la touche Entree.
+  function addCenterPoint() {
+    if (!drawingRef.current || !mapRef.current) return;
+    addPoint(mapRef.current.getCenter());
+  }
+
+  function onMapKeyDown(e) {
+    if (!drawingRef.current) return;
+    if (e.key === 'Enter') { e.preventDefault(); addCenterPoint(); }
+    if (e.key === 'Backspace') { e.preventDefault(); removeLastPoint(); }
   }
 
   function startDrawing() {
@@ -324,9 +294,9 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     clearTemp();
     setDrawing(true);
     setPointsCount(0);
-    const map = mapRef.current;
-    map.doubleClickZoom.disable();
+    mapRef.current.doubleClickZoom.disable();
     containerRef.current.style.cursor = 'crosshair';
+    setAnnounce(m.drawingStarted);
   }
 
   // Ferme le trace en cours et l'ajoute aux parcelles s'il a au moins trois
@@ -337,15 +307,14 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     if (pts.length >= 3) {
       list = [...list, { points: pts.slice(), area_m2: polygonArea(pts) }];
       onChangeRef.current?.(list);
+      setAnnounce(m.parcelAdded(list.length, formatArea(polygonArea(pts), locale).ha));
     }
     stopDrawing();
     return list;
   }
 
   // Appele par la page au clic sur "Continuer" : un trace en cours se ferme
-  // tout seul, comme avec "Terminer". Renvoie la liste a jour, ou null si le
-  // trace n'a qu'un ou deux points : ce n'est pas encore une parcelle, et on ne
-  // le jette pas sans prevenir.
+  // tout seul. Renvoie null si le trace n'a qu'un ou deux points.
   useImperativeHandle(ref, () => ({
     commitDraft() {
       if (!drawingRef.current) return valueRef.current || [];
@@ -370,19 +339,23 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
 
   function removeLastPoint() {
     const pts = pointsRef.current;
+    if (pts.length === 0) return;
     pts.pop();
     redrawTemp();
     setPointsCount(pts.length);
+    setAnnounce(m.pointRemoved(pts.length));
   }
 
   function clearAll() {
     stopDrawing();
     onChangeRef.current?.([]);
-    didFitRef.current = true; // n'ajuste plus la vue apres effacement
+    didFitRef.current = true;
+    setAnnounce(m.cleared);
   }
 
   function removeParcel(idx) {
     onChangeRef.current?.((valueRef.current || []).filter((_, i) => i !== idx));
+    setAnnounce(m.parcelRemoved(idx + 1));
   }
 
   // --- Import d'un fichier de parcelles (GeoJSON ou KML) ---
@@ -391,10 +364,7 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     ev.target.value = ''; // permet de reimporter le meme fichier
     if (!file) return;
     setImportMsg(null);
-    if (file.size > MAX_FILE_BYTES) {
-      setImportMsg({ ok: false, text: m.importTooBig });
-      return;
-    }
+    if (file.size > MAX_FILE_BYTES) { setImportMsg({ ok: false, text: m.importTooBig }); return; }
     let rings;
     try {
       const text = await file.text();
@@ -403,27 +373,13 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     } catch {
       rings = null;
     }
-    if (!rings) {
-      setImportMsg({ ok: false, text: m.importError });
-      return;
-    }
-    if (rings.length === 0) {
-      setImportMsg({ ok: false, text: m.importNone });
-      return;
-    }
-
-    const parcels = rings.map(ringToPoints).filter(Boolean)
-      .map((points) => ({ points, area_m2: polygonArea(points) }));
-    if (parcels.length === 0) {
-      // Des polygones existent, mais aucun n'est situe dans la zone de service.
-      setImportMsg({ ok: false, text: m.importOutside });
-      return;
-    }
-
+    if (!rings) { setImportMsg({ ok: false, text: m.importError }); return; }
+    if (rings.length === 0) { setImportMsg({ ok: false, text: m.importNone }); return; }
+    const parcels = rings.map(ringToPoints).filter(Boolean).map((points) => ({ points, area_m2: polygonArea(points) }));
+    if (parcels.length === 0) { setImportMsg({ ok: false, text: m.importOutside }); return; }
     stopDrawing();
     if (showTip) dismissTip();
-    const merged = [...(valueRef.current || []), ...parcels].slice(0, MAX_PARCELS);
-    onChangeRef.current?.(merged);
+    onChangeRef.current?.([...(valueRef.current || []), ...parcels].slice(0, MAX_PARCELS));
     didFitRef.current = false; // ajuste la vue sur les parcelles importees
     setImportMsg({ ok: true, text: m.importOk(parcels.length) });
   }
@@ -433,10 +389,7 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     const map = mapRef.current;
     if (!map || name === base) return;
     if (baseLayerRef.current) map.removeLayer(baseLayerRef.current);
-    baseLayerRef.current = L.tileLayer(BASE_LAYERS[name].url, {
-      maxZoom: 19,
-      attribution: BASE_LAYERS[name].credit(lang),
-    }).addTo(map);
+    baseLayerRef.current = L.tileLayer(BASE_LAYERS[name].url, { maxZoom: 19, attribution: BASE_LAYERS[name].credit(lang) }).addTo(map);
     baseLayerRef.current.bringToBack();
     setBase(name);
   }
@@ -459,19 +412,17 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     const q = query.trim();
     if (!q) return;
     setSearching(true);
-    setResults([]);
+    setResults(null);
     try {
-      const url = `https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=${encodeURIComponent(
-        q
-      )}&type=locations&limit=6&sr=4326&lang=${lang}`;
+      const url = `https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=${encodeURIComponent(q)}&type=locations&limit=6&sr=4326&lang=${lang}`;
       const res = await fetch(url);
       const data = await res.json();
-      const items = (data.results || []).map((r) => ({
+      // Le libelle recu contient des balises HTML : on n'en garde que le texte.
+      setResults((data.results || []).map((r) => ({
         label: (r.attrs.label || '').replace(/<[^>]+>/g, ''),
         lat: r.attrs.lat,
         lon: r.attrs.lon,
-      }));
-      setResults(items);
+      })));
     } catch {
       setResults([]);
     } finally {
@@ -483,28 +434,22 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
     const map = mapRef.current;
     map.setView([item.lat, item.lon], 16);
     searchGroupRef.current.clearLayers();
-    L.circleMarker([item.lat, item.lon], {
-      radius: 8, color: '#14140f', weight: 2, fillColor: '#fff', fillOpacity: 0.9,
-    }).addTo(searchGroupRef.current);
-    setResults([]);
+    L.circleMarker([item.lat, item.lon], { radius: 8, color: '#14140f', weight: 2, fillColor: '#fff', fillOpacity: 0.9 }).addTo(searchGroupRef.current);
+    setResults(null);
     setQuery(item.label);
+    setAnnounce(m.centeredOn(item.label));
+    containerRef.current?.focus();
   }
 
   const total = (value || []).reduce((s, p) => s + (p.area_m2 || 0), 0);
   const fmt = formatArea(total, locale);
 
-  // --- Rendu lecture seule (espace admin) ---
+  // --- Rendu lecture seule (espace client, administration) ---
   if (readOnly) {
     return (
       <div>
-        <div className="layer-switch" role="group" aria-label={m.layersAria}>
-          {Object.keys(BASE_LAYERS).map((key) => (
-            <button key={key} className={base === key ? 'active' : ''} onClick={() => switchBase(key)}>
-              {m.layers[key]}
-            </button>
-          ))}
-        </div>
-        <div ref={containerRef} className="map-canvas readonly" />
+        <LayerSwitch base={base} onChange={switchBase} m={m} />
+        <div ref={containerRef} className="map-canvas readonly" role="region" aria-label={m.readOnlyAria} />
       </div>
     );
   }
@@ -513,67 +458,60 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
   return (
     <div className="map-wrap">
       <div className="map-panel">
-        <h3>{m.title}</h3>
+        <h2 className="h3">{m.title}</h2>
         <p className="tool-hint">{m.intro}</p>
 
-        <form className="map-search mt-2" onSubmit={doSearch}>
-          <input
-            className="input"
-            placeholder={m.searchPh}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+        <form className="map-search mt-2" onSubmit={doSearch} role="search">
+          <label htmlFor="map-search-input" className="sr-only">{m.searchLabel}</label>
+          <input id="map-search-input" className="input" value={query} onChange={(e) => setQuery(e.target.value)} autoComplete="off" aria-describedby="map-search-hint" />
           <button className="btn btn-dark btn-sm" type="submit" disabled={searching}>
-            {searching ? '...' : m.search}
+            {searching ? m.searching : m.search}
           </button>
         </form>
-        {results.length > 0 && (
-          <ul className="search-results">
-            {results.map((r, i) => (
-              <li key={i} onClick={() => goTo(r)}>{r.label}</li>
-            ))}
-          </ul>
+        <p className="hint" id="map-search-hint">{m.searchHint}</p>
+        {results && (
+          results.length > 0 ? (
+            <ul className="search-results" aria-label={m.resultsLabel}>
+              {results.map((r) => (
+                <li key={`${r.lat},${r.lon}`}>
+                  <button type="button" onClick={() => goTo(r)}>{r.label}</button>
+                </li>
+              ))}
+            </ul>
+          ) : <p className="hint" role="status">{m.noResults}</p>
         )}
 
-        <div className="layer-switch mt-3" role="group" aria-label={m.layersAria}>
-          {Object.keys(BASE_LAYERS).map((key) => (
-            <button key={key} className={base === key ? 'active' : ''} onClick={() => switchBase(key)}>
-              {m.layers[key]}
-            </button>
-          ))}
-        </div>
+        <LayerSwitch base={base} onChange={switchBase} m={m} />
 
         {/* Import d'un fichier de parcelles, pour eviter de tout retracer */}
         <div className="map-import mt-3">
-          <button type="button" className="btn btn-outline btn-sm" onClick={() => fileRef.current?.click()}>
+          <button type="button" className="btn btn-outline btn-sm" onClick={() => fileRef.current?.click()} aria-describedby="map-import-hint">
             {m.importBtn}
           </button>
           <input
             ref={fileRef}
             type="file"
             className="sr-only"
+            tabIndex={-1}
             aria-label={m.importAria}
             accept=".geojson,.json,.kml,application/geo+json,application/json,application/vnd.google-earth.kml+xml"
             onChange={importFile}
           />
-          <p className="tool-hint">{m.importHint}</p>
-          {importMsg && (
-            <p className={`import-msg${importMsg.ok ? ' ok' : ''}`} role="status">{importMsg.text}</p>
-          )}
+          <p className="tool-hint" id="map-import-hint">{m.importHint}</p>
+          {importMsg && <p className={`import-msg${importMsg.ok ? ' ok' : ''}`} role="status">{importMsg.text}</p>}
         </div>
 
         <div className="map-tools">
           {!drawing ? (
-            <button className={`btn btn-primary btn-sm${showTip ? ' pulse' : ''}`} onClick={startDrawing}>{m.draw}</button>
+            <button type="button" className={`btn btn-primary btn-sm${showTip ? ' pulse' : ''}`} onClick={startDrawing}>{m.draw}</button>
           ) : (
             <>
-              <button className="btn btn-primary btn-sm" onClick={finishDrawing} disabled={pointsCount < 3}>
+              <button type="button" className="btn btn-primary btn-sm" onClick={finishDrawing} disabled={pointsCount < 3}>
                 {m.finish(pointsCount)}
               </button>
-              <button className="btn btn-outline btn-sm" onClick={removeLastPoint} disabled={pointsCount === 0}>
-                {m.undo}
-              </button>
-              <button className="btn btn-ghost btn-sm" onClick={stopDrawing}>{m.cancel}</button>
+              <button type="button" className="btn btn-outline btn-sm" onClick={addCenterPoint}>{m.centerAdd}</button>
+              <button type="button" className="btn btn-outline btn-sm" onClick={removeLastPoint} disabled={pointsCount === 0}>{m.undo}</button>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={stopDrawing}>{m.cancel}</button>
             </>
           )}
           {showTip && !drawing && value.length === 0 && (
@@ -582,48 +520,49 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
               </button>
               <p id="map-tip-title" className="map-tip-title">{m.tipTitle}</p>
-              <ol>
-                {m.tipSteps.map((s, i) => <li key={i}>{s}</li>)}
-              </ol>
+              <ol>{m.tipSteps.map((s) => <li key={s}>{s}</li>)}</ol>
               <div className="map-tip-actions">
                 <button type="button" className="btn btn-light btn-sm" onClick={startDrawing}>{m.tipStart}</button>
                 <button type="button" className="btn btn-ghost btn-sm" onClick={dismissTip}>{m.tipLater}</button>
               </div>
             </div>
           )}
-          <button className="btn btn-ghost btn-sm" onClick={clearAll} disabled={value.length === 0 && !drawing}>
-            {m.clear}
-          </button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={clearAll} disabled={value.length === 0 && !drawing}>{m.clear}</button>
         </div>
 
-        <p className="tool-hint">
-          {drawing
-            ? m.hintDrawing
-            : m.hintIdle}
-        </p>
+        <p className="tool-hint">{drawing ? m.hintDrawing : m.hintIdle}</p>
+        {drawing && <p className="tool-hint">{m.keyboardHint}</p>}
 
-        <div className="area-box">
+        <div className="area-box" aria-live="polite">
           <div className="big">{fmt.ha} ha</div>
-          <div className="sub">{fmt.m2} m2 &middot; {m.count(value.length)}</div>
+          <div className="sub">{fmt.m2} m² &middot; {m.count(value.length)}</div>
         </div>
 
         {value.length > 0 && (
-          <div className="parcel-list">
+          <ul className="parcel-list">
             {value.map((p, i) => (
-              <div className="row" key={i}>
-                <span>{m.parcel(i + 1)} &middot; {formatArea(p.area_m2, locale).m2} m2</span>
-                <button onClick={() => removeParcel(i)}>{m.remove}</button>
-              </div>
+              <li className="row" key={`${i}-${p.points.length}`}>
+                <span>{m.parcel(i + 1)} &middot; {formatArea(p.area_m2, locale).m2} m²</span>
+                <button type="button" onClick={() => removeParcel(i)} aria-label={m.removeAria(i + 1)}>{m.remove}</button>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
+        <p className="sr-only" role="status" aria-live="polite">{announce}</p>
       </div>
 
       <div className="map-stage">
-        <div ref={containerRef} className="map-canvas" />
-        {drawing && pointsCount === 0 && (
-          <div className="map-chip" role="status">{m.firstPoint}</div>
-        )}
+        <div
+          ref={containerRef}
+          className={`map-canvas${drawing ? ' drawing' : ''}`}
+          role="application"
+          aria-label={m.mapAria}
+          aria-describedby="map-keyboard-help"
+          onKeyDown={onMapKeyDown}
+        />
+        <p id="map-keyboard-help" className="sr-only">{m.keyboardHint}</p>
+        {drawing && <div className="map-crosshair" aria-hidden="true" />}
+        {drawing && pointsCount === 0 && <div className="map-chip" role="status">{m.firstPoint}</div>}
       </div>
     </div>
   );

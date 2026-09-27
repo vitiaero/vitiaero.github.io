@@ -1,0 +1,124 @@
+// Donnees reelles de l'entreprise, fournies par le proprietaire.
+// Source unique pour les pages legales, les e-mails, l'en-tete des PDF, les
+// donnees structurees du site et la porte de lancement (shared/launch.js).
+//
+// Regles de saisie (detail dans docs/INFORMATIONS-MANQUANTES.md) :
+//   null  = pas encore fourni. C'est la valeur par defaut ; elle bloque le
+//           lancement quand l'information est obligatoire.
+//   false = sans objet, declare par le proprietaire (ex. pas de numero TVA
+//           parce que l'entreprise n'est pas assujettie).
+// Jamais de valeur d'exemple ni de texte entre crochets.
+//
+// Ce fichier est PUBLIC (il est compile dans le site). N'y inscrire aucun
+// secret, et ne jamais y copier un document : pour un permis, une autorisation
+// ou une police d'assurance, seules la reference, l'autorite et les dates y
+// figurent ; le document reste dans les dossiers du proprietaire.
+//
+// Dates au format AAAA-MM-JJ.
+
+export const business = {
+  // A. Identite (art. 3 al. 1 let. s LCD, art. 19 nLPD)
+  identity: {
+    brand: 'VitiAero', // nom commercial affiche sur le site
+    legalName: null, // raison sociale exacte (registre du commerce), ou nom et prenom du titulaire
+    legalForm: null, // code : 'raison-individuelle', 'sarl', 'sa', 'snc', 'cooperative' (libelles dans shared/legal/labels.js)
+    commercialRegister: null, // false (non inscrit) ou { canton: 'VD' } (code du canton du registre)
+    uid: null, // false (aucun) ou 'CHE-123.456.789'
+    vat: null, // false (non assujetti) ou { number: 'CHE-123.456.789 TVA', ratePercent: taux confirme par la fiduciaire }
+    address: {
+      street: null, // rue et numero
+      postalCode: null, // NPA
+      locality: null, // localite
+      canton: 'VD', // Vaud, fourni par le proprietaire (septembre 2026)
+      country: 'CH',
+    },
+    email: 'contact@vitiaero.ch', // fourni ; boite a confirmer (A7)
+    phone: null, // false = aucun numero publie
+    contentResponsible: 'Adrien Delhay', // fourni (24.9.2026), a confirmer (A9)
+  },
+
+  // Adresse publique du site, sans barre finale (fournie : fichier CNAME).
+  site: {
+    url: 'https://vitiaero.ch',
+    domainHolderConfirmed: null, // date a laquelle le titulaire du domaine a ete verifie (A10)
+  },
+
+  // Clientele visee (D1) : 'professionals' ou 'professionals-and-consumers'.
+  customers: null,
+
+  // B. Prestataires qui recoivent des donnees personnelles.
+  // Chaque entree : { name, address, country (code ISO), safeguard, since }
+  // safeguard, pour un pays hors de Suisse : 'adequate' (Etat de l'annexe 1
+  // OPDo), 'dpf' (entreprise certifiee Swiss-U.S. Data Privacy Framework),
+  // 'scc' (clauses contractuelles types reconnues par le PFPDT).
+  services: {
+    // Hebergement du site public : GitHub Pages, en place depuis septembre 2026.
+    // Certification DPF verifiee le 24.9.2026 (docs/CONFORMITE.md).
+    siteHosting: {
+      name: 'GitHub, Inc. (GitHub Pages)',
+      address: '88 Colin P. Kelly Jr. St., San Francisco, CA 94107, USA',
+      country: 'US',
+      safeguard: 'dpf',
+      verifiedOn: '2026-09-24',
+      // Date a laquelle le proprietaire confirme garder cet hebergeur (B3).
+      // Les regles de GitHub Pages limitent l'usage commercial : decision a prendre.
+      confirmedOn: null,
+    },
+    apiHosting: null, // serveur, base de donnees et pieces jointes (B4) ; ajouter region et date du contrat
+    backups: null, // stockage des sauvegardes (B5) ; ajouter encrypted: true et frequency
+    mailbox: null, // boite de reception de contact@vitiaero.ch (B6)
+    emailSending: null, // service SMTP des accuses de reception (B6)
+    // Calcul des distances routieres (B7) : false = vol d'oiseau seulement ;
+    // { selfHosted: true } = serveur OSRM sur l'hebergement de l'API ;
+    // sinon un prestataire { name, country, safeguard }.
+    routing: null,
+    // Surveillance externe (B8) : false = seulement le controle planifie GitHub
+    // Actions fourni avec le depot, qui ne traite aucune donnee de visiteur.
+    monitoring: null,
+  },
+
+  // C. Durees de conservation reelles.
+  retention: {
+    requestsWithoutFollowUpMonths: 24, // choix du proprietaire du 24.9.2026, a confirmer (C1)
+    contractRecordsYears: 10, // art. 958f CO, choix du 24.9.2026, a confirmer par la fiduciaire (C2)
+    attachmentsMonths: null, // C3
+    inactiveAccountsMonths: null, // C4
+    backupsDays: null, // C5
+    serverLogsDays: null, // C6, selon le contrat de l'hebergeur de l'API
+  },
+
+  // D. Conditions commerciales. Rien n'est publie comme condition en vigueur
+  // tant qu'un element obligatoire manque.
+  commercial: {
+    quoteValidityDays: null, // D2
+    payment: null, // D3 : { dueDays, deposit: false | { percent }, methods: ['bank-transfer', 'qr-bill', 'twint', 'cash'], invoicing: 'after-each-job' | 'end-of-season' }
+    cancellation: null, // D5 : { noticeHours, fee: false | { percent } | { chf } }
+    weatherPostponementFree: null, // D6 : true ou false
+    products: null, // D8 : 'customer' (fournis par le client), 'provider' (fournis par VitiAero), 'by-quote'
+    complaintsDays: null, // D9 : delai pour signaler un probleme apres l'intervention
+    governingLanguage: null, // D13 : 'fr' propose
+    // L'estimation en ligne n'est pas une commande. Activer une commande en
+    // ligne demanderait tout le parcours contractuel (docs/PLAN-MIGRATION.md).
+    onlineOrdering: false,
+    responseTimeHours: 48, // D15, choix du proprietaire, a confirmer
+  },
+
+  // D11 / E8 : assurance responsabilite civile.
+  // { insurer, policyNumber, sumInsuredCHF, covers: ['drone-operation', 'spray-drift', 'third-party-crops'], validUntil, verifiedOn }
+  insurance: null,
+
+  // E. Justificatifs (autorisations, homologation, controles, permis).
+  // Chaque entree : { type, reference, authority, issuedOn, validUntil, verifiedOn }
+  // validUntil : date d'echeance, ou false si le document n'en a pas.
+  // Types attendus : voir REQUIRED_CREDENTIALS dans shared/launch.js.
+  // Un justificatif n'est affiche que s'il est complet et non echu.
+  credentials: [],
+
+  // G1 : relecture juridique. { reviewer, date, documents: ['mentions', 'privacy', 'cookies', 'cgv', 'terms', 'forms', 'emails'] }
+  legalReview: null,
+
+  // G3 : date de signature de docs/CHECKLIST-LANCEMENT.md.
+  launchChecklistSignedOn: null,
+};
+
+export default business;

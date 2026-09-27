@@ -1,21 +1,25 @@
 import { Link } from 'react-router-dom';
-import { company } from '../content.js';
+import { business, LAUNCH } from '../launch.js';
 import { useI18n } from '../i18n/index.jsx';
+import { providerName } from '../../shared/legal/facts.js';
+import { isText } from '../../shared/launch.js';
+
+const telHref = (v) => `tel:${String(v).replace(/[^\d+]/g, '')}`;
 
 export default function Footer() {
   const { t } = useI18n();
   const year = new Date().getFullYear();
-  const hasPhone = !!company.phone && !String(company.phone).trim().startsWith('[');
+  const id = business.identity;
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-grid">
           <div>
-            <div className="brand">Viti<span style={{ color: 'var(--accent-bright)' }}>Aero</span></div>
-            <p style={{ color: '#a8a69d', maxWidth: '32ch' }}>{t.footer.tagline}</p>
+            <p className="brand footer-brand">Viti<span>Aero</span></p>
+            <p className="footer-tagline">{t.footer.tagline}</p>
           </div>
-          <div>
-            <h4>{t.footer.navigation}</h4>
+          <nav aria-label={t.footer.navigation}>
+            <h2 className="footer-title">{t.footer.navigation}</h2>
             <ul>
               <li><Link to="/">{t.nav.home}</Link></li>
               <li><Link to="/le-service">{t.nav.service}</Link></li>
@@ -25,36 +29,36 @@ export default function Footer() {
               <li><Link to="/a-propos">{t.nav.about}</Link></li>
               <li><Link to="/contact">{t.nav.contact}</Link></li>
             </ul>
-          </div>
+          </nav>
           <div>
-            <h4>{t.footer.yourAccount}</h4>
+            <h2 className="footer-title">{t.footer.yourAccount}</h2>
             <ul>
               <li><Link to="/connexion">{t.nav.login}</Link></li>
-              <li><Link to="/inscription">{t.common.createAccount}</Link></li>
+              {LAUNCH.ready && <li><Link to="/inscription">{t.common.createAccount}</Link></li>}
               <li><Link to="/espace-client">{t.nav.account}</Link></li>
             </ul>
           </div>
           <div>
-            <h4>{t.footer.contact}</h4>
+            <h2 className="footer-title">{t.footer.contact}</h2>
             <ul>
               <li>{t.footer.region}</li>
-              <li><a href={`mailto:${company.email}`}>{company.email}</a></li>
-              {/* Affiche seulement une fois renseigne : aucun numero invente ici. */}
-              {hasPhone && (
-                <li><a href={`tel:${String(company.phone).replace(/[^\d+]/g, '')}`}>{company.phone}</a></li>
-              )}
+              {isText(id.email) && <li><a href={`mailto:${id.email}`}>{id.email}</a></li>}
+              {/* Affiche seulement une fois renseigne : aucun numero invente. */}
+              {isText(id.phone) && <li><a href={telHref(id.phone)}>{id.phone}</a></li>}
               <li><Link to="/contact">{t.nav.contact}</Link></li>
             </ul>
           </div>
         </div>
         <div className="footer-bottom">
-          <span>&copy; {year} VitiAero - {t.footer.project}</span>
-          <span className="footer-legal">
+          <span>&copy; {year} {providerName(business)}</span>
+          <nav className="footer-legal" aria-label={t.footer.legalAria}>
+            <Link to="/mentions-legales">{t.footer.legal}</Link>
             <Link to="/confidentialite">{t.footer.privacy}</Link>
             <Link to="/cookies">{t.footer.cookies}</Link>
-            <Link to="/mentions-legales">{t.footer.legal}</Link>
             <Link to="/conditions-generales">{t.footer.terms}</Link>
-          </span>
+            <Link to="/conditions">{t.footer.termsOfUse}</Link>
+            <Link to="/credits">{t.footer.credits}</Link>
+          </nav>
         </div>
       </div>
     </footer>

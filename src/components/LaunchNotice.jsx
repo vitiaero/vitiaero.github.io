@@ -1,16 +1,21 @@
-import { preLaunch } from '../content.js';
+import { Link } from 'react-router-dom';
+import { LAUNCH, business } from '../launch.js';
 import { useI18n } from '../i18n/index.jsx';
 
-// Bandeau discret en haut du site : l'activite n'a pas encore demarre.
-// Il disparait des que `preLaunch` passe a false dans src/content.js.
+// Bandeau explicite en haut du site tant que le service n'est pas ouvert
+// (porte de lancement, shared/launch.js). Il disparait de lui-meme quand toutes
+// les informations obligatoires sont fournies.
 export default function LaunchNotice() {
   const { t } = useI18n();
-  if (!preLaunch) return null;
+  if (LAUNCH.ready) return null;
   return (
     <div className="launch-notice" role="note" aria-label={t.launchNotice.aria}>
       <div className="container">
         <span className="launch-dot" aria-hidden="true" />
-        {t.launchNotice.text}
+        <span>
+          <strong>{t.launchNotice.label}</strong> {t.launchNotice.text}{' '}
+          <Link to="/contact">{t.launchNotice.contact(business.identity.email)}</Link>
+        </span>
       </div>
     </div>
   );

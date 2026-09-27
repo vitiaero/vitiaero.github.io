@@ -28,3 +28,8 @@ desktop.ini
 # Outils d analyse locaux : resultats et reglages, hors du site publie
 .agentshield-baseline.json
 .impeccable/
+
+# Resultats des tests navigateur (npm run test:e2e)
+test-results/
+playwright-report/
+blob-report/

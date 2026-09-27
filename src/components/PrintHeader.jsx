@@ -1,28 +1,32 @@
-import { company } from '../content.js';
+import { business } from '../launch.js';
+import { providerName, addressLine } from '../../shared/legal/facts.js';
+import { isText } from '../../shared/launch.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // En-tete visible uniquement a l'impression (et donc dans le PDF enregistre
-// depuis le navigateur). Les coordonnees viennent de `company` : tant qu'une
-// valeur est entre crochets, elle s'affiche telle quelle.
+// depuis le navigateur). Seules les coordonnees reellement fournies
+// (shared/business.js) sont imprimees.
 export default function PrintHeader({ number, title }) {
-  const { t, locale } = useI18n();
+  const { t, lang, locale } = useI18n();
   const p = t.printDoc;
   const date = new Date().toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const address = addressLine(business, lang);
+  const email = business.identity.email;
 
   return (
     <div className="print-only print-head">
       <div>
         <div className="print-brand">VitiAero</div>
         <div className="print-company">
-          {company.name}<br />
-          {company.address}, {company.npa} {company.city}<br />
-          {company.email}
+          {providerName(business)}
+          {address && <><br />{address}</>}
+          {isText(email) && <><br />{email}</>}
         </div>
       </div>
       <div className="print-meta">
         <div className="print-title">{title || p.title}</div>
-        <div>{p.date} : {date}</div>
-        {number ? <div>{p.number} : #{number}</div> : null}
+        <div>{p.dateLine(date)}</div>
+        {number ? <div>{p.numberLine(number)}</div> : null}
       </div>
     </div>
   );

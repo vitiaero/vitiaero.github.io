@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
-import { api } from '../api.js';
+import { api, download } from '../api.js';
 import { useI18n } from '../i18n/index.jsx';
 import MapDraw from '../components/MapDraw.jsx';
 import PrintHeader from '../components/PrintHeader.jsx';
@@ -26,6 +26,81 @@ function yearOf(date) {
 }
 function isoToday() {
   return new Date().toISOString().slice(0, 10);
+}
+
+
+// Vos donnees : telechargement (art. 25 et 28 LPD) et suppression du compte
+// (art. 32 LPD). La suppression demande le mot de passe et une confirmation.
+function DataRights() {
+  const { t } = useI18n();
+  const d = t.account.data;
+  const { forget } = useAuth();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [confirming, setConfirming] = useState(false);
+  const [password, setPassword] = useState('');
+  const passwordRef = useRef(null);
+
+  useEffect(() => { if (confirming) passwordRef.current?.focus(); }, [confirming]);
+
+  async function exportData() {
+    setError('');
+    setBusy(true);
+    try { await download('/api/account/export', 'vitiaero-mes-donnees.json'); } catch (err) { setError(err.message); }
+    setBusy(false);
+  }
+
+  async function removeAccount(ev) {
+    ev.preventDefault();
+    setError('');
+    setBusy(true);
+    try {
+      await api.del('/api/account', { password });
+      forget();
+      navigate('/', { replace: true, state: { accountDeleted: true } });
+    } catch (err) {
+      setError(err.message);
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="card acc-block no-print" id="donnees">
+      <h2 className="h3">{d.title}</h2>
+      <p className="muted mt-1">{d.lead}</p>
+      {error && <div className="alert alert-error mt-2" role="alert">{error}</div>}
+      <div className="print-action">
+        <button type="button" className="btn btn-outline btn-sm" onClick={exportData} disabled={busy}>{d.export}</button>
+        {!confirming && (
+          <button type="button" className="btn btn-ghost btn-sm btn-danger" onClick={() => setConfirming(true)}>{d.delete}</button>
+        )}
+      </div>
+      {confirming && (
+        <form className="danger-zone mt-3" onSubmit={removeAccount}>
+          <p><strong>{d.confirmTitle}</strong> {d.confirmText}</p>
+          <div className="field">
+            <label htmlFor="acc-delete-password">{d.password}</label>
+            <input
+              id="acc-delete-password"
+              ref={passwordRef}
+              className="input"
+              type="password"
+              autoComplete="current-password"
+              maxLength={200}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="flex gap-1 wrap">
+            <button type="submit" className="btn btn-primary btn-sm btn-danger-solid" disabled={busy || !password}>{d.confirm}</button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setConfirming(false); setPassword(''); }}>{d.cancel}</button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
 }
 
 export default function Account() {
@@ -101,7 +176,7 @@ export default function Account() {
   }, [shown]);
 
   if (loading) {
-    return <div className="page page-head"><div className="loading-block"><div className="spinner" /> {a.loading}</div></div>;
+    return <div className="page page-head"><div className="loading-block" role="status"><div className="spinner" aria-hidden="true" /> {a.loading}</div></div>;
   }
 
   // Quatrieme tuile : la prochaine date si une intervention est planifiee,
@@ -130,7 +205,7 @@ export default function Account() {
             <p className="lead mt-2">{a.lead}</p>
           </div>
 
-          {failed && <div className="alert alert-error no-print">{a.failed}</div>}
+          {failed && <div className="alert alert-error no-print" role="alert">{a.failed}</div>}
 
           <div className="printable">
             <PrintHeader title={a.printTitle} />
@@ -139,7 +214,7 @@ export default function Account() {
             <div className="acc-tiles">
               {tiles.map((tile) => (
                 <div key={tile.icon} className="acc-tile">
-                  <Icon name={tile.icon} size={20} />
+                  <Icon name={tile.icon} size={20} aria-hidden="true" />
                   <div className="num">{tile.value}</div>
                   <div className="lbl">{tile.label}</div>
                   {tile.note ? <div className="note">{tile.note}</div> : null}
@@ -310,6 +385,8 @@ export default function Account() {
               <p className="hint">{t.printDoc.hint}</p>
             </div>
           </div>
+
+          <DataRights />
         </div>
       </section>
     </div>

@@ -1,20 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icons.jsx';
+import ConsentCheckbox, { consentPayload } from '../components/ConsentCheckbox.jsx';
+import { FormsClosed } from '../components/Notices.jsx';
 import { api } from '../api.js';
 import { useFormValidation, FieldError, FormErrorSummary, required, emailRule } from '../forms.jsx';
-import { company } from '../content.js';
-import { BASE } from '../../shared/pricing.js';
+import { FORMS_OPEN, business } from '../launch.js';
+import { addressLine } from '../../shared/legal/facts.js';
+import { isText } from '../../shared/launch.js';
+import { BASE, TRAVEL_QUOTE_KM } from '../../shared/pricing.js';
 import { useI18n } from '../i18n/index.jsx';
 
-// Page Contact : coordonnees de l'entreprise et formulaire court, pour les
-// visiteurs qui ne veulent pas tracer de parcelle.
-// Les coordonnees viennent de `company` (src/content.js). Tant qu'une valeur
-// est entre crochets, elle reste affichee telle quelle : rien n'est invente,
-// et aucun lien clicable n'est cree vers une adresse qui n'existe pas.
-const filled = (v) => !!v && !String(v).trim().startsWith('[');
-
-// Champs obligatoires du formulaire, verifies a la sortie du champ et a l'envoi.
+// Page Contact : coordonnees reelles de l'entreprise (shared/business.js) et
+// formulaire court. Une coordonnee non fournie n'est pas affichee.
 const RULES = {
   name: required((x) => x.nameRequired),
   email: emailRule,
@@ -22,13 +20,12 @@ const RULES = {
   consent: (value, values, texts) => (values.consent ? null : texts.consentRequired),
 };
 
-// Numero de telephone au format d'un lien tel: (sans espaces).
-const telHref = (v) => 'tel:' + String(v).replace(/[^\d+]/g, '');
+const telHref = (v) => `tel:${String(v).replace(/[^\d+]/g, '')}`;
 
 function InfoCard({ icon, title, children }) {
   return (
     <div className="contact-card">
-      <span className="contact-icon"><Icon name={icon} size={20} /></span>
+      <span className="contact-icon" aria-hidden="true"><Icon name={icon} size={20} /></span>
       <h2>{title}</h2>
       <div>{children}</div>
     </div>
@@ -36,8 +33,10 @@ function InfoCard({ icon, title, children }) {
 }
 
 export default function Contact() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const c = t.contact;
+  const id = business.identity;
+  const address = addressLine(business, lang);
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', website: '' });
   const [consent, setConsent] = useState(false);
@@ -47,7 +46,6 @@ export default function Contact() {
 
   const { errors, validateAll, fieldProps, summaryRef, reset: resetErrors } = useFormValidation(RULES);
   const values = { ...form, consent };
-
   const update = (k) => (ev) => setForm((f) => ({ ...f, [k]: ev.target.value }));
 
   async function submit(ev) {
@@ -56,7 +54,7 @@ export default function Contact() {
     if (!validateAll(values)) return;
     setSending(true);
     try {
-      await api.post('/api/contact', form);
+      await api.post('/api/contact', { ...form, lang, consent: consentPayload(['privacy']) });
       setSent(true);
     } catch (err) {
       setError(err.message);
@@ -82,25 +80,23 @@ export default function Contact() {
           </div>
 
           <div className="contact-cards">
-            {/* Le telephone est facultatif (la loi exige une adresse e-mail) :
-                sans numero, la carte n'apparait pas. */}
-            {filled(company.phone) && (
+            {isText(id.phone) && (
               <InfoCard icon="phone" title={c.phoneTitle}>
-                <a href={telHref(company.phone)}>{company.phone}</a>
+                <a href={telHref(id.phone)}>{id.phone}</a>
               </InfoCard>
             )}
-            <InfoCard icon="mail" title={c.emailTitle}>
-              {filled(company.email)
-                ? <a href={`mailto:${company.email}`}>{company.email}</a>
-                : <span className="muted">{company.email}</span>}
-            </InfoCard>
-            <InfoCard icon="pin" title={c.addressTitle}>
-              <span className={filled(company.address) ? undefined : 'muted'}>
-                {company.address}<br />{company.npa} {company.city}
-              </span>
-            </InfoCard>
+            {isText(id.email) && (
+              <InfoCard icon="mail" title={c.emailTitle}>
+                <a href={`mailto:${id.email}`}>{id.email}</a>
+              </InfoCard>
+            )}
+            {address && (
+              <InfoCard icon="pin" title={c.addressTitle}>
+                <span>{address}</span>
+              </InfoCard>
+            )}
             <InfoCard icon="map" title={c.areaTitle}>
-              {c.areaText(BASE.label)}
+              {c.areaText(BASE.label, TRAVEL_QUOTE_KM)}
             </InfoCard>
           </div>
 
@@ -108,8 +104,10 @@ export default function Contact() {
             <div className="contact-form">
               <h2 className="h3 mb-2">{c.formTitle}</h2>
 
-              {sent ? (
-                <div className="alert alert-info">
+              {!FORMS_OPEN ? (
+                <FormsClosed />
+              ) : sent ? (
+                <div className="alert alert-info" role="status">
                   <strong>{c.okTitle}</strong> {c.okText}
                   <div className="mt-3">
                     <button type="button" className="btn btn-outline btn-sm" onClick={reset}>{c.again}</button>
@@ -117,7 +115,7 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={submit} noValidate>
-                  {error && <div className="alert alert-error">{error}</div>}
+                  {error && <div className="alert alert-error" role="alert">{error}</div>}
                   <FormErrorSummary
                     errors={errors}
                     summaryRef={summaryRef}
@@ -132,12 +130,12 @@ export default function Contact() {
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="ct-name">{c.name}</label>
-                      <input id="ct-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} {...fieldProps('name', 'ct-name', values)} />
+                      <input id="ct-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} aria-required="true" {...fieldProps('name', 'ct-name', values)} />
                       <FieldError id="ct-name" message={errors.name} />
                     </div>
                     <div className="field">
                       <label htmlFor="ct-email">{c.email}</label>
-                      <input id="ct-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} {...fieldProps('email', 'ct-email', values)} />
+                      <input id="ct-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} aria-required="true" {...fieldProps('email', 'ct-email', values)} />
                       <FieldError id="ct-email" message={errors.email} />
                     </div>
                   </div>
@@ -149,32 +147,24 @@ export default function Contact() {
 
                   <div className="field">
                     <label htmlFor="ct-message">{c.message}</label>
-                    <textarea id="ct-message" maxLength={4000} className="textarea" value={form.message} onChange={update('message')} placeholder={c.messagePh} {...fieldProps('message', 'ct-message', values)} />
+                    <textarea id="ct-message" maxLength={4000} className="textarea" value={form.message} onChange={update('message')} aria-required="true" {...fieldProps('message', 'ct-message', values, 'ct-message-hint')} />
+                    <p className="hint" id="ct-message-hint">{c.messageHint}</p>
                     <FieldError id="ct-message" message={errors.message} />
                   </div>
 
                   {/* Champ piege anti-robot : masque a l'ecran et aux lecteurs d'ecran */}
-                  <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
-                    <label>{c.honeypot}</label>
-                    <input tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
+                  <div aria-hidden="true" className="honeypot">
+                    <label htmlFor="ct-website">{c.honeypot}</label>
+                    <input id="ct-website" tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
                   </div>
 
-                  <label className="consent mt-2">
-                    <input
-                      id="ct-consent"
-                      type="checkbox"
-                      checked={consent}
-                      onChange={(ev) => { setConsent(ev.target.checked); if (ev.target.checked) resetErrors(); }}
-                      aria-invalid={errors.consent ? 'true' : undefined}
-                      aria-describedby={errors.consent ? 'ct-consent-error' : undefined}
-                    />
-                    <span>
-                      {c.consentBefore}
-                      <Link to="/confidentialite" target="_blank" rel="noreferrer">{c.consentLink}</Link>
-                      {c.consentAfter}
-                    </span>
-                  </label>
-                  <FieldError id="ct-consent" message={errors.consent} />
+                  <ConsentCheckbox
+                    id="ct-consent"
+                    checked={consent}
+                    purpose="contact"
+                    error={errors.consent}
+                    onChange={(v) => { setConsent(v); if (v) resetErrors(); }}
+                  />
 
                   <button className="btn btn-primary mt-3" type="submit" disabled={sending}>
                     {sending ? c.sending : c.send}

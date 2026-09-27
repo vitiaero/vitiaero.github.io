@@ -1,27 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
-import BgVideo from '../components/BgVideo.jsx';
-import { equipVideos } from '../content.js';
-import { asset } from '../config.js';
+import Icon from '../components/Icons.jsx';
+import { DroneTopView, SprayDiagram, RoutePlan, ChargingCycle } from '../components/Illustrations.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
-// Page Equipement : le DJI Agras T50 en trois parties (le drone, pulverisation
-// et preparation, GPS et cartographie), puis la fiche technique.
-// Visuels : DJI, et le plan du drone qui se deplie fourni par le proprietaire.
-
-// Scene : image fixe (mobile et avant la lecture), video par-dessus sur ordinateur.
-function Stage({ name, alt, ratio, loop = true, eager = false, className = '' }) {
-  const poster = asset(`/images/equip/${name}.jpg`);
-  return (
-    <div className={`eq-stage ${className}`} style={{ aspectRatio: ratio }}>
-      <img src={poster} alt={alt} loading={eager ? 'eager' : 'lazy'} />
-      {equipVideos[name] && (
-        <BgVideo className="eq-video" variants={equipVideos[name]} poster={poster} loop={loop} />
-      )}
-    </div>
-  );
-}
+// Page Equipement : le drone prevu (DJI Agras T50) en trois parties.
+// Les chiffres viennent des publications du fabricant (sources en bas de page) ;
+// les visuels sont des schemas crees pour VitiAero, pas des images de DJI.
 
 // Sous-menu colle sous l'en-tete : la section visible est mise en evidence.
 function SubNav({ items, label, title }) {
@@ -53,7 +39,6 @@ function SubNav({ items, label, title }) {
   );
 }
 
-// Liste de chiffres : valeur en grand, libelle dessous.
 function Figures({ items, className }) {
   return (
     <dl className={className}>
@@ -73,7 +58,6 @@ export default function Equipement() {
 
   return (
     <div className="page equip-page">
-      {/* En-tete : le drone se deplie */}
       <section className="eq-hero">
         <div className="container">
           <div className="eq-hero-head">
@@ -82,7 +66,9 @@ export default function Equipement() {
             <p className="lead">{e.lead}</p>
           </div>
           <Reveal>
-            <Stage name="t50-deplie" alt={e.heroAlt} ratio="16 / 9" loop={false} eager className="eq-stage-hero" />
+            <figure className="eq-illustration eq-illustration-hero">
+              <DroneTopView title={e.illustrations.drone} unfold />
+            </figure>
           </Reveal>
           <Figures items={e.figures} className="eq-figures" />
         </div>
@@ -90,23 +76,18 @@ export default function Equipement() {
 
       <SubNav items={e.subnav} label={e.subnavLabel} title={e.title} />
 
-      {/* Le drone */}
       <section id="drone" className="section">
         <div className="container">
-          <div className="eq-split">
-            <Reveal>
-              <Stage name="t50-radar" alt={e.drone.alt} ratio="16 / 9" />
-            </Reveal>
-            <Reveal delay={100}>
-              <span className="eyebrow">{e.drone.eyebrow}</span>
-              <h2 className="h2">{e.drone.title}</h2>
-              <p className="lead">{e.drone.text}</p>
-            </Reveal>
-          </div>
+          <Reveal className="eq-head">
+            <span className="eyebrow">{e.drone.eyebrow}</span>
+            <h2 className="h2">{e.drone.title}</h2>
+            <p className="lead">{e.drone.text}</p>
+          </Reveal>
           <div className="eq-points">
             {e.drone.points.map((p, i) => (
               <Reveal key={p.title} delay={i * 60}>
                 <div className="eq-point">
+                  <span className="eq-point-icon" aria-hidden="true"><Icon name={p.icon} size={22} /></span>
                   <h3>{p.title}</h3>
                   <p>{p.text}</p>
                 </div>
@@ -116,7 +97,6 @@ export default function Equipement() {
         </div>
       </section>
 
-      {/* Systeme de pulverisation */}
       <section id="pulverisation" className="eq-dark">
         <div className="container">
           <Reveal className="eq-head">
@@ -125,25 +105,24 @@ export default function Equipement() {
             <p className="lead">{e.spray.text}</p>
           </Reveal>
           <Reveal>
-            <Stage name="spray" alt={e.spray.alt} ratio="16 / 9" />
+            <figure className="eq-illustration eq-illustration-dark">
+              <SprayDiagram title={e.illustrations.spray} />
+            </figure>
           </Reveal>
           <div className="eq-parts">
             {e.spray.parts.map((p, i) => (
-              <Reveal key={p.key} delay={i * 80}>
-                <figure className="eq-part">
-                  <Stage name={p.key} alt={p.alt} ratio="1 / 1" />
-                  <figcaption>
-                    <h3>{p.title}</h3>
-                    <p>{p.text}</p>
-                  </figcaption>
-                </figure>
+              <Reveal key={p.title} delay={i * 80}>
+                <div className="eq-part">
+                  <span className="eq-point-icon" aria-hidden="true"><Icon name={p.icon} size={22} /></span>
+                  <h3>{p.title}</h3>
+                  <p>{p.text}</p>
+                </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Preparation entre deux vols */}
       <section className="section bg-soft">
         <div className="container">
           <div className="eq-split text-first">
@@ -154,18 +133,21 @@ export default function Equipement() {
               <Figures items={e.prep.figures} className="eq-stats" />
             </Reveal>
             <Reveal delay={100}>
-              <Stage name="generateur" alt={e.prep.alt} ratio="3 / 2" />
+              <figure className="eq-illustration">
+                <ChargingCycle title={e.illustrations.charging} />
+              </figure>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* GPS et cartographie */}
       <section id="cartographie" className="section">
         <div className="container">
           <div className="eq-split">
             <Reveal>
-              <Stage name="parcelles" alt={e.map.alt} ratio="968 / 588" />
+              <figure className="eq-illustration">
+                <RoutePlan title={e.illustrations.route} />
+              </figure>
             </Reveal>
             <Reveal delay={100}>
               <span className="eyebrow">{e.map.eyebrow}</span>
@@ -175,11 +157,8 @@ export default function Equipement() {
           </div>
           <div className="eq-cards">
             {e.map.cards.map((c, i) => (
-              <Reveal key={c.key} delay={i * 80}>
+              <Reveal key={c.title} delay={i * 80}>
                 <article className="eq-card">
-                  <div className="eq-stage" style={{ aspectRatio: '16 / 10' }}>
-                    <img src={asset(`/images/equip/${c.key}.webp`)} alt={c.alt} loading="lazy" />
-                  </div>
                   <div className="eq-card-body">
                     <div className="v">{c.v}</div>
                     <h3>{c.title}</h3>
@@ -198,11 +177,11 @@ export default function Equipement() {
           <Reveal className="cta-band">
             <span className="eyebrow">{e.ctaEyebrow}</span>
             <h2 className="h1">{e.ctaTitle}</h2>
-            <p className="lead mt-2" style={{ maxWidth: '48ch', margin: '1rem auto 0' }}>{e.ctaLead}</p>
+            <p className="lead mt-2 cta-lead">{e.ctaLead}</p>
             <Link to="/estimation" className="btn btn-primary">{t.common.requestEstimate}</Link>
           </Reveal>
-          {/* Sources des chiffres et credit des visuels */}
-          <p className="eq-sources">{e.note} {e.credit}</p>
+          {/* Sources des chiffres et nature des visuels */}
+          <p className="eq-sources">{e.note} {e.illustrationNote}</p>
         </div>
       </section>
     </div>

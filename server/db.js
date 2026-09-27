@@ -1,19 +1,26 @@
 // Couche base de donnees : SQLite via sql.js (WASM, aucune compilation native).
-// La base est chargee depuis un fichier si present, sinon creee puis remplie
-// avec un jeu de donnees de demonstration. Chaque ecriture est persistee sur disque.
+// La base est chargee depuis un fichier si present, sinon creee. Chaque
+// ecriture est persistee sur disque de facon atomique : fichier temporaire,
+// synchronisation, puis renommage. Un arret brutal pendant l'ecriture ne peut
+// donc pas corrompre la base (au pire, la derniere ecriture est perdue).
 import initSqlJs from 'sql.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { area as turfArea } from '@turf/turf';
+import { area as turfArea } from '@turf/area';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'app.sqlite');
+export const DEFAULT_DATA_DIR = path.join(__dirname, 'data');
 
 let SQL = null;
 let db = null;
+let dataDir = DEFAULT_DATA_DIR;
+let dbFile = path.join(DEFAULT_DATA_DIR, 'app.sqlite');
+let batchDepth = 0;
+
+export const getDataDir = () => dataDir;
+export const getUploadDir = () => path.join(dataDir, 'uploads');
 
 // --- Securite des mots de passe : hachage PBKDF2-SHA256 (module crypto natif de Node) ---
 // 600 000 iterations (recommandation OWASP pour PBKDF2-SHA256), sel unique.
@@ -76,10 +83,21 @@ export function tokenDigest(token) {
 }
 
 // --- Persistance sur disque ---
+export function exportDb() {
+  return Buffer.from(db.export());
+}
+
 export function persist() {
-  if (!db) return;
-  const data = db.export();
-  fs.writeFileSync(DB_FILE, Buffer.from(data));
+  if (!db || batchDepth > 0) return;
+  const tmp = `${dbFile}.tmp`;
+  const fd = fs.openSync(tmp, 'w');
+  try {
+    fs.writeSync(fd, exportDb());
+    fs.fsyncSync(fd);
+  } finally {
+    fs.closeSync(fd);
+  }
+  fs.renameSync(tmp, dbFile);
 }
 
 // --- Petits utilitaires de requete ---
@@ -102,6 +120,25 @@ export function run(sql, params = []) {
   const row = get('SELECT last_insert_rowid() AS id');
   persist();
   return row ? row.id : null;
+}
+
+// Plusieurs ecritures en une seule transaction, persistee une seule fois.
+// En cas d'erreur, rien n'est garde.
+export function batch(fn) {
+  if (batchDepth > 0) return fn();
+  batchDepth += 1;
+  db.run('BEGIN');
+  try {
+    const out = fn();
+    db.run('COMMIT');
+    batchDepth -= 1;
+    persist();
+    return out;
+  } catch (err) {
+    try { db.run('ROLLBACK'); } catch { /* deja annulee */ }
+    batchDepth -= 1;
+    throw err;
+  }
 }
 
 function createSchema() {
@@ -150,9 +187,11 @@ function createSchema() {
 
     -- Interventions realisees sur les parcelles d'un client. Saisies par
     -- l'equipe dans l'administration : rien n'est genere automatiquement.
+    -- Le nom et l'e-mail du client y sont recopies : un dossier lie a un
+    -- contrat reste identifiable meme apres la suppression du compte.
     CREATE TABLE IF NOT EXISTS interventions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
+      user_id INTEGER,
       estimation_id INTEGER,
       date TEXT NOT NULL,
       commune TEXT,
@@ -165,7 +204,9 @@ function createSchema() {
       duration_min INTEGER,
       notes TEXT,
       status TEXT NOT NULL DEFAULT 'Planifiee',
-      created_at TEXT NOT NULL
+      created_at TEXT NOT NULL,
+      client_name TEXT,
+      client_email TEXT
     );
 
     CREATE TABLE IF NOT EXISTS messages (
@@ -177,173 +218,250 @@ function createSchema() {
       status TEXT NOT NULL DEFAULT 'Nouveau',
       created_at TEXT NOT NULL
     );
+
+    -- Preuve de prise de connaissance d'un document juridique : quel
+    -- document, quelle version, quand, pour quelle finalite, rattachee a
+    -- quel enregistrement. Supprimee avec cet enregistrement.
+    CREATE TABLE IF NOT EXISTS consents (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      record_type TEXT NOT NULL,
+      record_id INTEGER NOT NULL,
+      user_id INTEGER,
+      purpose TEXT NOT NULL,
+      document TEXT NOT NULL,
+      version TEXT NOT NULL,
+      accepted_at TEXT NOT NULL
+    );
+
+    -- E-mails a envoyer. Une ligne est supprimee des que l'e-mail est parti ;
+    -- en cas d'echec repete, elle reste visible pour l'equipe.
+    CREATE TABLE IF NOT EXISTS outbox (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      record_type TEXT,
+      record_id INTEGER,
+      recipient TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      text TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      attempts INTEGER NOT NULL DEFAULT 0,
+      last_error TEXT,
+      next_attempt_at TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+
+    -- Journal des demandes traitees au titre de la LPD (acces, effacement) :
+    -- type, date et nombre d'elements concernes, sans aucune donnee personnelle.
+    CREATE TABLE IF NOT EXISTS privacy_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      action TEXT NOT NULL,
+      origin TEXT NOT NULL,
+      summary TEXT,
+      created_at TEXT NOT NULL
+    );
+
+    -- Etat technique (derniere purge, derniere sauvegarde...).
+    CREATE TABLE IF NOT EXISTS app_state (
+      key TEXT PRIMARY KEY,
+      value TEXT
+    );
   `);
 }
 
-// Colonnes ajoutees apres coup (tarifs en ligne) : ajoutees aux bases existantes
-// sans perdre les donnees.
+// Colonnes ajoutees apres coup : ajoutees aux bases existantes sans perdre les
+// donnees.
 function migrate() {
-  const cols = all('PRAGMA table_info(estimations)').map((c) => c.name);
-  const add = (name, type) => { if (!cols.includes(name)) db.run(`ALTER TABLE estimations ADD COLUMN ${name} ${type}`); };
-  add('passes', 'INTEGER');
-  add('options', 'TEXT'); // JSON { urgent, difficult, dispersed }
-  add('distance_km', 'REAL');
-  add('distance_method', 'TEXT'); // 'route' ou 'direct'
-  add('estimate', 'TEXT'); // JSON du calcul (shared/pricing.js)
+  const addColumns = (table, columns) => {
+    const cols = all(`PRAGMA table_info(${table})`).map((c) => c.name);
+    for (const [name, type] of columns) {
+      if (!cols.includes(name)) db.run(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
+    }
+  };
 
-  // Table messages : le formulaire de devis ajoute quelques champs au contact.
-  const mcols = all('PRAGMA table_info(messages)').map((c) => c.name);
-  const addMsg = (name, type) => { if (!mcols.includes(name)) db.run(`ALTER TABLE messages ADD COLUMN ${name} ${type}`); };
-  addMsg('kind', "TEXT NOT NULL DEFAULT 'contact'"); // 'contact' ou 'devis'
-  addMsg('company', 'TEXT');
-  addMsg('commune', 'TEXT');
-  addMsg('area_ha', 'REAL');
-  addMsg('passes', 'INTEGER');
-  addMsg('files', 'TEXT'); // JSON [{ id, name, type, size }]
+  addColumns('estimations', [
+    ['passes', 'INTEGER'],
+    ['options', 'TEXT'], // JSON { urgent, difficult, dispersed }
+    ['distance_km', 'REAL'],
+    ['distance_method', 'TEXT'], // 'route' ou 'direct'
+    ['estimate', 'TEXT'], // JSON du calcul (shared/pricing.js)
+    ['updated_at', 'TEXT'], // dernier echange, point de depart de la conservation
+    ['lang', 'TEXT'], // langue du site lors de l'envoi
+  ]);
+  addColumns('messages', [
+    ['kind', "TEXT NOT NULL DEFAULT 'contact'"], // 'contact' ou 'devis'
+    ['company', 'TEXT'],
+    ['commune', 'TEXT'],
+    ['area_ha', 'REAL'],
+    ['passes', 'INTEGER'],
+    ['files', 'TEXT'], // JSON [{ id, name, type, size, created_at }]
+    ['updated_at', 'TEXT'],
+    ['lang', 'TEXT'],
+  ]);
+  addColumns('users', [
+    ['last_login_at', 'TEXT'],
+    ['lang', 'TEXT'],
+  ]);
+
+  // interventions.user_id devient facultatif (dossiers conserves apres la
+  // suppression d'un compte) : SQLite impose de reconstruire la table.
+  const userCol = all('PRAGMA table_info(interventions)').find((c) => c.name === 'user_id');
+  if (userCol && userCol.notnull === 1) {
+    db.run(`
+      ALTER TABLE interventions RENAME TO interventions_old;
+      CREATE TABLE interventions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        estimation_id INTEGER,
+        date TEXT NOT NULL,
+        commune TEXT,
+        parcel_label TEXT,
+        area_ha REAL,
+        passes INTEGER,
+        treatment TEXT,
+        product TEXT,
+        conditions TEXT,
+        duration_min INTEGER,
+        notes TEXT,
+        status TEXT NOT NULL DEFAULT 'Planifiee',
+        created_at TEXT NOT NULL,
+        client_name TEXT,
+        client_email TEXT
+      );
+      INSERT INTO interventions (id, user_id, estimation_id, date, commune, parcel_label, area_ha, passes,
+        treatment, product, conditions, duration_min, notes, status, created_at)
+        SELECT id, user_id, estimation_id, date, commune, parcel_label, area_ha, passes,
+          treatment, product, conditions, duration_min, notes, status, created_at FROM interventions_old;
+      DROP TABLE interventions_old;
+    `);
+  }
+  addColumns('interventions', [['client_name', 'TEXT'], ['client_email', 'TEXT']]);
+  db.run(`UPDATE interventions SET
+      client_name = COALESCE(client_name, (SELECT name FROM users WHERE users.id = interventions.user_id)),
+      client_email = COALESCE(client_email, (SELECT email FROM users WHERE users.id = interventions.user_id))
+    WHERE user_id IS NOT NULL`);
+
+  // Point de depart de la conservation pour les anciennes lignes.
+  db.run('UPDATE estimations SET updated_at = created_at WHERE updated_at IS NULL');
+  db.run('UPDATE messages SET updated_at = created_at WHERE updated_at IS NULL');
 
   // Sessions d'avant le stockage par empreinte (jetons en clair) : supprimees.
-  // Les personnes concernees se reconnectent simplement.
   db.run('DELETE FROM sessions WHERE length(token) <> 64');
-
-  // Programme de fidelite retire (sans interet pour un service saisonnier) :
-  // l'espace client montre desormais les parcelles et les interventions.
-  // La colonne users.points des anciennes bases reste, inutilisee.
+  // Programme de fidelite retire : la table n'est plus utilisee.
   db.run('DROP TABLE IF EXISTS points_history');
 }
 
-// Aire d'un polygone (points = [[lat,lng], ...]) en m2, via Turf.
+// Aire d'un polygone (points = [[lat,lng], ...]) en m2.
 export function polygonArea(points) {
   const ring = points.map(([lat, lng]) => [lng, lat]);
   ring.push(ring[0]);
   return turfArea({ type: 'Polygon', coordinates: [ring] });
 }
 
-// Mot de passe d'un compte de demonstration.
-// En local, on garde les mots de passe simples du projet. En ligne, ils
-// viennent des variables d'environnement de l'hebergeur ; si elles ne sont pas
-// definies, un mot de passe aleatoire est genere et affiche une seule fois dans
-// les journaux, pour qu'aucun compte connu de tous ne se retrouve sur internet.
-const inProduction = process.env.NODE_ENV === 'production';
+const inProduction = () => process.env.NODE_ENV === 'production';
 
-function demoPassword(envName, localValue) {
+// Mot de passe d'un compte cree au demarrage. En local, mots de passe simples
+// du projet ; en ligne, variables d'environnement de l'hebergeur, sinon un mot
+// de passe aleatoire est genere et affiche une seule fois dans les journaux.
+function startupPassword(envName, localValue) {
   const fromEnv = process.env[envName];
-  if (fromEnv && fromEnv.length >= 8) return fromEnv;
-  if (!inProduction) return localValue;
-  const generated = crypto.randomBytes(12).toString('base64url');
+  if (fromEnv && fromEnv.length >= 12) return fromEnv;
+  if (fromEnv && inProduction()) {
+    console.warn(`[VitiAero] ${envName} fait moins de 12 caracteres : ignore.`);
+  }
+  if (!inProduction()) return localValue;
+  const generated = crypto.randomBytes(15).toString('base64url');
   console.log(`[VitiAero] ${envName} n'est pas defini. Mot de passe genere : ${generated}`);
   console.log(`[VitiAero] Notez-le, ou definissez ${envName} chez l'hebergeur pour le fixer.`);
   return generated;
 }
 
 // Donnees de demonstration (client fictif, demandes et codes promo d'exemple) :
-// en local uniquement, ou en ligne si DEMO_DATA=1. Ces codes promo figurent
-// dans ce fichier public : ils ne doivent jamais accorder une vraie remise.
-const withDemoData = !inProduction || process.env.DEMO_DATA === '1';
+// uniquement hors production. En production, aucune donnee fictive n'est
+// creee, meme si DEMO_DATA=1 est defini par erreur.
+function withDemoData() {
+  if (inProduction()) {
+    if (process.env.DEMO_DATA === '1') console.warn('[VitiAero] DEMO_DATA ignore en production : aucune donnee fictive.');
+    return false;
+  }
+  return process.env.DEMO_DATA !== '0';
+}
 
 function seed() {
   const now = new Date().toISOString();
   const count = get('SELECT COUNT(*) AS n FROM users');
   if (count.n > 0) return; // deja rempli
 
-  // Compte administrateur
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@vitiaero.ch';
   run(
     'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
-    ['Équipe VitiAero', adminEmail, hashPassword(demoPassword('ADMIN_PASSWORD', 'admin1234')), 'admin', now]
+    ['Équipe VitiAero', adminEmail, hashPassword(startupPassword('ADMIN_PASSWORD', 'admin1234')), 'admin', now]
   );
 
-  if (!withDemoData) return;
+  if (!withDemoData()) return;
 
-  // Client de demonstration
+  // Jeu de demonstration, uniquement en local : il sert a voir l'espace client
+  // et l'administration remplis. Rien de tout cela n'existe en production.
   const clientId = run(
     'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
-    ['Marie Dupont', 'client@vitiaero.ch', hashPassword(demoPassword('CLIENT_PASSWORD', 'client1234')), 'client', now]
+    ['Client de démonstration', 'client@vitiaero.ch', hashPassword(startupPassword('CLIENT_PASSWORD', 'client1234')), 'client', now]
   );
+  run('INSERT INTO promo_codes (code, description, discount, active, created_at) VALUES (?,?,?,?,?)', ['VIGNE10', 'Démonstration locale', 10, 1, now]);
+  run('INSERT INTO promo_codes (code, description, discount, active, created_at) VALUES (?,?,?,?,?)', ['ANCIEN', 'Démonstration locale, inactif', 20, 0, now]);
 
-  // Codes promotionnels de demonstration
-  run('INSERT INTO promo_codes (code, description, discount, active, created_at) VALUES (?,?,?,?,?)', [
-    'VIGNE10', 'Remise de bienvenue', 10, 1, now,
-  ]);
-  run('INSERT INTO promo_codes (code, description, discount, active, created_at) VALUES (?,?,?,?,?)', [
-    'LAVAUX15', 'Offre printemps', 15, 1, now,
-  ]);
-  run('INSERT INTO promo_codes (code, description, discount, active, created_at) VALUES (?,?,?,?,?)', [
-    'ANCIEN', 'Code expire', 20, 0, now,
-  ]);
-
-  // Demandes d'estimation de demonstration (parcelles reelles du Lavaux)
-  const parcelsClient = [
+  const parcels = [
     { points: [[46.4928, 6.7691], [46.4931, 6.7701], [46.4924, 6.7706], [46.4921, 6.7697]] },
-    { points: [[46.4936, 6.7712], [46.4939, 6.7721], [46.4933, 6.7724], [46.4931, 6.7716]] },
   ].map((p) => ({ ...p, area_m2: polygonArea(p.points) }));
-  const areaClient = parcelsClient.reduce((s, p) => s + p.area_m2, 0);
-  const estimationClient = run(
+  const estimationId = run(
     `INSERT INTO estimations
-      (user_id, name, email, phone, commune, address, treatment, period, message, parcels, area_m2, promo_code, status, created_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [clientId, 'Marie Dupont', 'client@vitiaero.ch', '079 123 45 67', 'Lutry', 'En Chatelard',
-     'Protection de la vigne (traitement foliaire)', 'Au printemps',
-     'Parcelles en terrasses, acces par le chemin du haut.',
-     JSON.stringify(parcelsClient), areaClient, 'VIGNE10', 'En etude', now]
+      (user_id, name, email, commune, treatment, period, parcels, area_m2, status, created_at, updated_at, lang)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [clientId, 'Client de démonstration', 'client@vitiaero.ch', 'Lutry', 'Protection de la vigne (traitement foliaire)',
+      'Au printemps', JSON.stringify(parcels), parcels[0].area_m2, 'En etude', now, now, 'fr']
   );
-
-  // Interventions de demonstration, pour voir l'espace client rempli en local.
-  // Elles n'existent jamais en ligne (sauf DEMO_DATA=1) : rien n'est invente
-  // sur un vrai compte, l'equipe saisit chaque intervention a la main.
-  const year = new Date().getFullYear();
-  const demoInterventions = [
-    [`${year}-05-14`, 'Lutry', 'En Chatelard, parcelle 1', 0.71, 1, 'Protection de la vigne (traitement foliaire)',
-     'Produit fourni par le client', 'Vent faible, 17 degres, sol sec', 55,
-     'Survol rang par rang. Bordure du chemin traitee a vitesse reduite.', 'Realisee'],
-    [`${year}-06-04`, 'Lutry', 'En Chatelard, parcelles 1 et 2', 1.18, 1, 'Protection de la vigne (traitement foliaire)',
-     'Produit fourni par le client', 'Vent faible, 21 degres', 80,
-     'Deuxieme passage. Aucun obstacle nouveau signale.', 'Realisee'],
-    [`${year}-07-02`, 'Lutry', 'En Chatelard, parcelles 1 et 2', 1.18, 1, 'Protection de la vigne (traitement foliaire)',
-     null, null, null, 'Date a confirmer selon la meteo.', 'Planifiee'],
-  ];
-  for (const [date, commune, label, area, passes, treatment, product, conditions, duration, notes, status] of demoInterventions) {
-    run(
-      `INSERT INTO interventions
-        (user_id, estimation_id, date, commune, parcel_label, area_ha, passes, treatment, product, conditions, duration_min, notes, status, created_at)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [clientId, estimationClient, date, commune, label, area, passes, treatment, product, conditions, duration, notes, status, now]
-    );
-  }
-
-  const parcelsGuest = [
-    { points: [[46.4901, 6.7802], [46.4905, 6.7815], [46.4897, 6.7819], [46.4894, 6.7808]] },
-  ].map((p) => ({ ...p, area_m2: polygonArea(p.points) }));
-  const areaGuest = parcelsGuest.reduce((s, p) => s + p.area_m2, 0);
   run(
-    `INSERT INTO estimations
-      (user_id, name, email, phone, commune, address, treatment, period, message, parcels, area_m2, promo_code, status, created_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [null, 'Jean Rochat', 'jean.rochat@exemple.ch', '078 987 65 43', 'Epesses', null,
-     'Traitement contre le mildiou / l\'oidium', 'Des que possible', null,
-     JSON.stringify(parcelsGuest), areaGuest, null, 'Nouvelle', now]
+    `INSERT INTO interventions
+      (user_id, estimation_id, date, commune, parcel_label, area_ha, passes, treatment, status, created_at, client_name, client_email)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [clientId, estimationId, now.slice(0, 10), 'Lutry', 'Démonstration', Math.round(parcels[0].area_m2 / 100) / 100, 1,
+      'Protection de la vigne (traitement foliaire)', 'Planifiee', now, 'Client de démonstration', 'client@vitiaero.ch']
   );
 }
 
-export async function initDb() {
-  SQL = await initSqlJs({
-    // Localise le fichier WASM dans le paquet installe
-    locateFile: (file) => path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file),
-  });
+// Ouvre (ou cree) la base. dataDir : dossier des donnees (DATA_DIR sinon).
+export async function initDb({ dataDir: dir } = {}) {
+  dataDir = dir || process.env.DATA_DIR || DEFAULT_DATA_DIR;
+  dbFile = path.join(dataDir, 'app.sqlite');
+  if (!SQL) {
+    SQL = await initSqlJs({
+      locateFile: (file) => path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file),
+    });
+  }
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-  if (fs.existsSync(DB_FILE)) {
-    const buffer = fs.readFileSync(DB_FILE);
-    db = new SQL.Database(buffer);
+  if (fs.existsSync(dbFile)) {
+    db = new SQL.Database(fs.readFileSync(dbFile));
     createSchema();
     migrate();
-    persist();
   } else {
     db = new SQL.Database();
     createSchema();
     migrate();
     seed();
-    persist();
   }
+  persist();
   return db;
+}
+
+export function closeDb() {
+  if (!db) return;
+  persist();
+  db.close();
+  db = null;
+}
+
+export function getState(key) {
+  return get('SELECT value FROM app_state WHERE key = ?', [key])?.value ?? null;
+}
+
+export function setState(key, value) {
+  run('INSERT INTO app_state (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value', [key, String(value)]);
 }

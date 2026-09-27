@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { LAUNCH } from '../launch.js';
 
 export default function Login() {
   const { login } = useAuth();
@@ -44,7 +45,7 @@ export default function Login() {
             <h1 className="h2 text-center">{l.title}</h1>
             <p className="muted text-center mt-1 mb-3">{l.lead}</p>
 
-            {error && <div className="alert alert-error">{error}</div>}
+            {error && <div className="alert alert-error" role="alert">{error}</div>}
 
             <form onSubmit={submit}>
               <div className="field">
@@ -60,15 +61,17 @@ export default function Login() {
               </button>
             </form>
 
-            <p className="text-center mt-3 muted" style={{ fontSize: '0.92rem' }}>
-              {l.noAccount} <Link to="/inscription" style={{ color: 'var(--accent)', fontWeight: 600 }}>{t.common.createAccount}</Link>
-            </p>
+            {LAUNCH.ready && (
+              <p className="text-center mt-3 muted small-print">
+                {l.noAccount} <Link to="/inscription" className="inline-link">{t.common.createAccount}</Link>
+              </p>
+            )}
 
             {/* Comptes de demonstration : uniquement en developpement. En ligne, les
                 mots de passe sont differents et ces boutons n'auraient aucun effet. */}
             {import.meta.env.DEV && (<>
             <div className="divider" />
-            <p className="hint" style={{ marginBottom: '0.5rem' }}>{l.demo}</p>
+            <p className="hint mb-1">{l.demo}</p>
             <div className="flex gap-1 wrap">
               <button type="button" className="btn btn-outline btn-sm" onClick={() => fill('client@vitiaero.ch', 'client1234')}>{l.demoClient}</button>
               <button type="button" className="btn btn-outline btn-sm" onClick={() => fill('admin@vitiaero.ch', 'admin1234')}>{l.demoAdmin}</button>

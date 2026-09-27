@@ -1,67 +1,30 @@
-// Donnees communes a toutes les langues : coordonnees, videos, images.
+// Medias communs a toutes les langues. Les coordonnees de l'entreprise sont
+// dans shared/business.js (source unique, sans valeur inventee), les droits de
+// chaque fichier dans shared/media.js.
 import { asset } from './config.js';
 
-// Coordonnees de l'editeur, source unique pour les pages legales et le pied de
-// page. Obligatoires (art. 3 al. 1 let. s LCD, art. 19 nLPD) : nom, adresse
-// postale, e-mail. Les valeurs entre crochets restent a completer par le
-// proprietaire ; ne rien inventer. Un champ facultatif vide n'est pas affiche.
-export const company = {
-  name: 'VitiAero (Adrien Delhay)',
-  address: '[ADRESSE]',
-  npa: '[NPA]',
-  city: '[VILLE]',
-  canton: 'Vaud',
-  email: 'contact@vitiaero.ch',
-  phone: '', // facultatif
-  ide: '', // numero IDE (CHE-...) si l'entreprise en a un ; facultatif
-  responsable: 'Adrien Delhay',
-  // Hebergeur du site (GitHub Pages), adresse de sa declaration de confidentialite.
-  host: 'GitHub, Inc., 88 Colin P. Kelly Jr. St., San Francisco, CA 94107, USA',
-};
-
-// Phase de lancement : tant que l'activite n'a pas demarre, un bandeau discret
-// l'indique en haut de chaque page et les textes evitent le present d'habitude.
-// Passer a false le jour ou le service est reellement operationnel.
-export const preLaunch = true;
-
-// Les textes (chiffres cles, avantages, etapes, FAQ, equipement...) sont dans
-// src/i18n/fr.js, de.js et en.js, une version par langue.
-
-// Videos d'ambiance, de la meilleure a la plus legere. Le composant BgVideo
-// retient la premiere que l'ecran et l'appareil peuvent lire de facon fluide.
-// type : codec exact, pour que le navigateur sache s'il sait le decoder.
+// Video d'ambiance : images du vignoble d'Epesses filmees par le proprietaire.
+// Le composant BgVideo retient la premiere version que l'appareil lit de facon
+// fluide ; rien n'est charge sur telephone ni en mouvement reduit.
+// type : codec exact (profil et niveau lus dans les fichiers).
 // bitrate : debit moyen reel du fichier (bits par seconde).
 export const videos = {
-  hero: [
-    { src: asset('/videos/hero-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.12M.08"', width: 3840, height: 2160, framerate: 25, bitrate: 5900000 },
-    { src: asset('/videos/hero-2160.mp4'), type: 'video/mp4; codecs="avc1.640033"', width: 3840, height: 2160, framerate: 25, bitrate: 17500000 },
-    { src: asset('/videos/hero-1080.mp4'), type: 'video/mp4; codecs="avc1.640032"', width: 1920, height: 1080, framerate: 25, bitrate: 8100000 },
-  ],
   vignoble: [
-    { src: asset('/videos/vignoble-fpv-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.13M.08"', width: 3840, height: 2160, framerate: 60, bitrate: 22900000 },
-    { src: asset('/videos/vignoble-fpv-2160.mp4'), type: 'video/mp4; codecs="avc1.640034"', width: 3840, height: 2160, framerate: 60, bitrate: 23300000 },
-    { src: asset('/videos/vignoble-fpv-1080.mp4'), type: 'video/mp4; codecs="avc1.640032"', width: 1920, height: 1080, framerate: 60, bitrate: 16400000 },
+    { src: asset('/videos/vignoble-1080.av1.mp4'), type: 'video/mp4; codecs="av01.0.08M.08"', width: 1920, height: 1080, framerate: 30, bitrate: 2220000 },
+    { src: asset('/videos/vignoble-1080.mp4'), type: 'video/mp4; codecs="avc1.640029"', width: 1920, height: 1080, framerate: 30, bitrate: 3580000 },
+    { src: asset('/videos/vignoble-720.mp4'), type: 'video/mp4; codecs="avc1.640028"', width: 1280, height: 720, framerate: 30, bitrate: 1840000 },
   ],
 };
 
-// Visuels de la page Equipement (DJI, et le plan du drone qui se deplie fourni
-// par le proprietaire). Chaque video existe en AV1 puis en H.264, meme
-// definition ; l'image fixe du meme nom est dans /images/equip.
-const equip = (name, width, height, av1, avc, bitrate) => [
-  { src: asset(`/videos/equip/${name}.av1.mp4`), type: `video/mp4; codecs="${av1}"`, width, height, framerate: 25, bitrate: Math.round(bitrate / 2) },
-  { src: asset(`/videos/equip/${name}.mp4`), type: `video/mp4; codecs="${avc}"`, width, height, framerate: 25, bitrate },
-];
-export const equipVideos = {
-  't50-deplie': equip('t50-deplie', 1280, 720, 'av01.0.05M.08', 'avc1.64001f', 2400000),
-  spray: equip('spray', 1920, 1080, 'av01.0.08M.08', 'avc1.640032', 8400000),
-  pompe: equip('pompe', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1600000),
-  gicleur: equip('gicleur', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1800000),
-  electrovanne: equip('electrovanne', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1000000),
-  parcelles: equip('parcelles', 968, 588, 'av01.0.05M.08', 'avc1.64001f', 1100000),
-};
-
-// Chemins des images. Si une image manque, un repli sobre s'affiche (voir CSS).
+// Images, avec leurs dimensions reelles : le navigateur reserve la place avant
+// le chargement (pas de saut de mise en page).
 export const images = {
-  lavaux: asset('/images/lavaux.jpg'),
-  vignes: asset('/images/t50-rows.jpg'),
+  posterWide: { src: asset('/images/vignoble-poster-1920.webp'), width: 1920, height: 1080 },
+  posterSmall: { src: asset('/images/vignoble-poster-960.webp'), width: 960, height: 540 },
+  posterPortrait: { src: asset('/images/vignoble-poster-portrait.webp'), width: 720, height: 1280 },
+  terraces: { src: asset('/images/vignoble-terrasses.webp'), width: 1200, height: 900 },
+  epesses: { src: asset('/images/vignoble-epesses.webp'), width: 1200, height: 900 },
+  lavaux: { src: asset('/images/lavaux-1600.webp'), width: 1600, height: 1177 },
+  logo: { src: asset('/images/logo-vitiaero.webp'), width: 321, height: 120 },
+  logoFull: { src: asset('/images/logo-vitiaero-full.webp'), width: 630, height: 630 },
 };

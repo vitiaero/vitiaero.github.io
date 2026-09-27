@@ -17,7 +17,16 @@ export const SPA_ROUTES = [
   'equipement', 'estimation', 'confirmation', 'le-service', 'devis', 'a-propos',
   'contact', 'connexion', 'inscription', 'espace-client', 'admin',
   'confidentialite', 'mentions-legales', 'conditions-generales', 'cookies', 'conditions',
+  'credits',
 ];
+
+// Pages jamais indexees : espaces prives et fin de parcours.
+export const PRIVATE_ROUTES = ['/admin', '/espace-client', '/connexion', '/inscription', '/confirmation'];
+
+// Pages publiques (plan du site, une fois le service lance).
+export const PUBLIC_ROUTES = ['/', ...SPA_ROUTES.map((r) => `/${r}`).filter((r) => !PRIVATE_ROUTES.includes(r))];
+
+export const isPrivateRoute = (pathname) => PRIVATE_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`));
 
 // Verifie l'adresse de l'API fournie a la compilation et renvoie son origine.
 // HTTPS obligatoire, sauf localhost pour les essais sur l'ordinateur.

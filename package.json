@@ -1,8 +1,8 @@
 {
-  "name": "vitidrone",
+  "name": "vitiaero",
   "version": "1.0.0",
   "private": true,
-  "description": "Service d'epandage viticole par drone en Suisse romande - vitrine + application",
+  "description": "Service d'epandage viticole par drone dans le canton de Vaud - site et application",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k -n API,WEB -c green,cyan \"npm:dev:server\" \"npm:dev:client\"",
@@ -12,18 +12,29 @@
     "serve": "npm run build && node server/index.js",
     "start": "node server/index.js",
     "preview": "vite preview",
-    "images": "node scripts/download-images.js"
+    "test": "node --test test/*.test.js",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run build && npm audit --audit-level=high",
+    "check:media": "node scripts/check-media.mjs",
+    "check:production": "node scripts/check-production.mjs",
+    "launch:status": "node scripts/launch-status.mjs",
+    "legal:version": "node scripts/legal-version.mjs",
+    "backup": "node server/backup-cli.js",
+    "restore": "node server/backup-cli.js --restore"
   },
   "dependencies": {
-    "@turf/turf": "^7.2.0",
+    "@turf/area": "^7.4.0",
     "express": "^4.22.3",
     "leaflet": "^1.9.4",
+    "nodemailer": "^10.0.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.18.3",
     "sql.js": "^1.12.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "1.56.1",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.2",
     "vite": "^7.3.6"

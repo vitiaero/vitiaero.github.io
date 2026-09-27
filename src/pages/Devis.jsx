@@ -2,8 +2,11 @@ import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
+import ConsentCheckbox, { consentPayload } from '../components/ConsentCheckbox.jsx';
+import { FormsClosed, NoOrderNotice } from '../components/Notices.jsx';
 import { api } from '../api.js';
 import { useFormValidation, FieldError, FormErrorSummary, required, emailRule } from '../forms.jsx';
+import { FORMS_OPEN } from '../launch.js';
 import { useI18n } from '../i18n/index.jsx';
 import { PRICE_PER_HA } from '../../shared/pricing.js';
 
@@ -14,7 +17,6 @@ const MAX_FILES = 3;
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf'];
 
-// Champs obligatoires, verifies a la sortie du champ et a l'envoi.
 const RULES = {
   name: required((x) => x.nameRequired),
   email: emailRule,
@@ -29,17 +31,14 @@ const readAsDataUrl = (file) => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
-const formatSize = (bytes) => `${Math.round(bytes / 1024)} Ko`;
+const EMPTY = { name: '', company: '', email: '', phone: '', commune: '', area_ha: '', passes: '', message: '', website: '' };
 
 export default function Devis() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const q = t.quote;
   const fileRef = useRef(null);
 
-  const [form, setForm] = useState({
-    name: '', company: '', email: '', phone: '', commune: '',
-    area_ha: '', passes: '', message: '', website: '',
-  });
+  const [form, setForm] = useState(EMPTY);
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState('');
   const [consent, setConsent] = useState(false);
@@ -49,6 +48,7 @@ export default function Devis() {
   const [sent, setSent] = useState(false);
 
   const update = (k) => (ev) => setForm((f) => ({ ...f, [k]: ev.target.value }));
+  const values = { ...form, consent };
 
   function addFiles(ev) {
     const picked = Array.from(ev.target.files || []);
@@ -69,14 +69,14 @@ export default function Devis() {
   async function submit(ev) {
     ev.preventDefault();
     setError('');
-    if (!validateAll({ ...form, consent })) return;
+    if (!validateAll(values)) return;
     setSending(true);
     try {
       const payload = {
         ...form,
-        files: await Promise.all(files.map(async (f) => ({
-          name: f.name, type: f.type, size: f.size, data: await readAsDataUrl(f),
-        }))),
+        lang,
+        consent: consentPayload(['privacy']),
+        files: await Promise.all(files.map(async (f) => ({ name: f.name, type: f.type, size: f.size, data: await readAsDataUrl(f) }))),
       };
       await api.post('/api/quote', payload);
       setSent(true);
@@ -89,7 +89,7 @@ export default function Devis() {
   }
 
   function reset() {
-    setForm({ name: '', company: '', email: '', phone: '', commune: '', area_ha: '', passes: '', message: '', website: '' });
+    setForm(EMPTY);
     setFiles([]);
     setConsent(false);
     setSent(false);
@@ -109,8 +109,10 @@ export default function Devis() {
             <div className="contact-form">
               <h2 className="h3 mb-2">{q.formTitle}</h2>
 
-              {sent ? (
-                <div className="alert alert-info">
+              {!FORMS_OPEN ? (
+                <FormsClosed />
+              ) : sent ? (
+                <div className="alert alert-info" role="status">
                   <strong>{q.okTitle}</strong> {q.okText}
                   <div className="mt-3">
                     <button type="button" className="btn btn-outline btn-sm" onClick={reset}>{q.again}</button>
@@ -118,7 +120,7 @@ export default function Devis() {
                 </div>
               ) : (
                 <form onSubmit={submit} noValidate>
-                  {error && <div className="alert alert-error">{error}</div>}
+                  {error && <div className="alert alert-error" role="alert">{error}</div>}
                   <FormErrorSummary
                     errors={errors}
                     summaryRef={summaryRef}
@@ -133,7 +135,7 @@ export default function Devis() {
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="dv-name">{q.name}</label>
-                      <input id="dv-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} {...fieldProps('name', 'dv-name', { ...form, consent })} />
+                      <input id="dv-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} aria-required="true" {...fieldProps('name', 'dv-name', values)} />
                       <FieldError id="dv-name" message={errors.name} />
                     </div>
                     <div className="field">
@@ -145,7 +147,7 @@ export default function Devis() {
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="dv-email">{q.email}</label>
-                      <input id="dv-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} {...fieldProps('email', 'dv-email', { ...form, consent })} />
+                      <input id="dv-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} aria-required="true" {...fieldProps('email', 'dv-email', values)} />
                       <FieldError id="dv-email" message={errors.email} />
                     </div>
                     <div className="field">
@@ -157,12 +159,13 @@ export default function Devis() {
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="dv-commune">{q.commune}</label>
-                      <input id="dv-commune" maxLength={120} className="input" autoComplete="address-level2" value={form.commune} onChange={update('commune')} placeholder="Chexbres" {...fieldProps('commune', 'dv-commune', { ...form, consent })} />
+                      <input id="dv-commune" maxLength={120} className="input" autoComplete="address-level2" value={form.commune} onChange={update('commune')} aria-required="true" {...fieldProps('commune', 'dv-commune', values)} />
                       <FieldError id="dv-commune" message={errors.commune} />
                     </div>
                     <div className="field">
                       <label htmlFor="dv-area">{q.area}</label>
-                      <input id="dv-area" maxLength={10} className="input" inputMode="decimal" value={form.area_ha} onChange={update('area_ha')} placeholder="1,2" />
+                      <input id="dv-area" maxLength={10} className="input" inputMode="decimal" value={form.area_ha} onChange={update('area_ha')} aria-describedby="dv-area-hint" />
+                      <p className="hint" id="dv-area-hint">{q.areaHint}</p>
                     </div>
                   </div>
 
@@ -170,70 +173,52 @@ export default function Devis() {
                     <label htmlFor="dv-passes">{q.passes}</label>
                     <select id="dv-passes" className="select" value={form.passes} onChange={update('passes')}>
                       <option value="">{q.passesAny}</option>
-                      {PRICE_PER_HA.map((_, i) => (
-                        <option key={i + 1} value={i + 1}>{i + 1}</option>
-                      ))}
+                      {PRICE_PER_HA.map((_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
                     </select>
                   </div>
 
                   <div className="field">
                     <label htmlFor="dv-message">{q.message}</label>
-                    <textarea id="dv-message" maxLength={4000} className="textarea" value={form.message} onChange={update('message')} placeholder={q.messagePh} />
+                    <textarea id="dv-message" maxLength={4000} className="textarea" value={form.message} onChange={update('message')} aria-describedby="dv-message-hint" />
+                    <p className="hint" id="dv-message-hint">{q.messageHint}</p>
                   </div>
 
-                  {/* Pieces jointes : photo, capture de carte ou plan */}
                   <div className="field">
-                    <span className="label-like">{q.filesLabel}</span>
-                    <p className="hint" style={{ marginTop: 0 }}>{q.filesHint}</p>
-                    <button type="button" className="btn btn-outline btn-sm" onClick={() => fileRef.current?.click()}>
+                    <span className="label-like" id="dv-files-label">{q.filesLabel}</span>
+                    <p className="hint" id="dv-files-hint" style={{ marginTop: 0 }}>{q.filesHint}</p>
+                    <button type="button" className="btn btn-outline btn-sm" onClick={() => fileRef.current?.click()} aria-describedby="dv-files-hint">
                       {q.filesAdd}
                     </button>
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      className="sr-only"
-                      multiple
-                      aria-label={q.filesLabel}
-                      accept={TYPES.join(',')}
-                      onChange={addFiles}
-                    />
-                    {fileError && <p className="import-msg">{fileError}</p>}
+                    <input ref={fileRef} type="file" className="sr-only" multiple aria-labelledby="dv-files-label" accept={TYPES.join(',')} onChange={addFiles} tabIndex={-1} />
+                    {fileError && <p className="import-msg" role="alert">{fileError}</p>}
                     {files.length > 0 && (
                       <ul className="file-list">
                         {files.map((f, i) => (
                           <li key={`${f.name}-${i}`}>
                             <span className="file-icon" aria-hidden="true"><Icon name="tag" size={16} /></span>
                             <span className="file-name">{f.name}</span>
-                            <span className="file-size">{formatSize(f.size)}</span>
-                            <button type="button" onClick={() => removeFile(i)}>{q.filesRemove}</button>
+                            <span className="file-size">{q.fileSize(Math.round(f.size / 1024))}</span>
+                            <button type="button" onClick={() => removeFile(i)} aria-label={q.filesRemoveAria(f.name)}>{q.filesRemove}</button>
                           </li>
                         ))}
                       </ul>
                     )}
                   </div>
 
-                  {/* Champ piege anti-robot */}
-                  <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
-                    <label>{t.contact.honeypot}</label>
-                    <input tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
+                  <div aria-hidden="true" className="honeypot">
+                    <label htmlFor="dv-website">{t.contact.honeypot}</label>
+                    <input id="dv-website" tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
                   </div>
 
-                  <label className="consent mt-2">
-                    <input
-                      id="dv-consent"
-                      type="checkbox"
-                      checked={consent}
-                      onChange={(ev) => { setConsent(ev.target.checked); if (ev.target.checked) resetErrors(); }}
-                      aria-invalid={errors.consent ? 'true' : undefined}
-                      aria-describedby={errors.consent ? 'dv-consent-error' : undefined}
-                    />
-                    <span>
-                      {t.contact.consentBefore}
-                      <Link to="/confidentialite" target="_blank" rel="noreferrer">{t.contact.consentLink}</Link>
-                      {t.contact.consentAfter}
-                    </span>
-                  </label>
-                  <FieldError id="dv-consent" message={errors.consent} />
+                  <NoOrderNotice className="mt-2" />
+
+                  <ConsentCheckbox
+                    id="dv-consent"
+                    checked={consent}
+                    purpose="devis"
+                    error={errors.consent}
+                    onChange={(v) => { setConsent(v); if (v) resetErrors(); }}
+                  />
 
                   <button className="btn btn-primary mt-3" type="submit" disabled={sending}>
                     {sending ? q.sending : q.send}

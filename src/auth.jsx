@@ -2,6 +2,7 @@
 // les actions connexion / inscription / deconnexion.
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { api, getToken, setToken } from './api.js';
+import { consentPayload } from './components/ConsentCheckbox.jsx';
 
 const AuthContext = createContext(null);
 
@@ -15,8 +16,8 @@ export function AuthProvider({ children }) {
     async function load() {
       if (!getToken()) { setLoading(false); return; }
       try {
-        const { user } = await api.get('/api/auth/me');
-        if (active) setUser(user);
+        const { user: u } = await api.get('/api/auth/me');
+        if (active) setUser(u);
       } catch {
         setToken(null);
       } finally {
@@ -28,17 +29,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async (email, password) => {
-    const { token, user } = await api.post('/api/auth/login', { email, password });
+    const { token, user: u } = await api.post('/api/auth/login', { email, password });
     setToken(token);
-    setUser(user);
-    return user;
+    setUser(u);
+    return u;
   }, []);
 
-  const register = useCallback(async (name, email, password) => {
-    const { token, user } = await api.post('/api/auth/register', { name, email, password });
+  // Inscription : versions de la politique et des conditions d'utilisation lues.
+  const register = useCallback(async (name, email, password, lang) => {
+    const { token, user: u } = await api.post('/api/auth/register', {
+      name, email, password, lang, consent: consentPayload(['privacy', 'terms']),
+    });
     setToken(token);
-    setUser(user);
-    return user;
+    setUser(u);
+    return u;
   }, []);
 
   const logout = useCallback(async () => {
@@ -47,16 +51,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
-  // Rafraichit les donnees utilisateur (points, palier...) apres une action
-  const refresh = useCallback(async () => {
-    try {
-      const { user } = await api.get('/api/auth/me');
-      setUser(user);
-    } catch { /* ignore */ }
+  // Compte supprime par son titulaire : la session n'existe plus cote serveur.
+  const forget = useCallback(() => {
+    setToken(null);
+    setUser(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refresh, setUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, forget, setUser }}>
       {children}
     </AuthContext.Provider>
   );

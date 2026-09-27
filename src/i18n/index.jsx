@@ -1,18 +1,21 @@
 // Langue du site : francais (reference), allemand et anglais.
-// Au premier passage, on suit la langue du navigateur ; le choix fait avec le
-// selecteur est ensuite memorise dans ce navigateur (stockage technique local).
+// Le site s'affiche en francais tant que le visiteur n'a pas choisi une autre
+// langue : les robots des moteurs de recherche voient donc toujours la langue
+// principale, les adresses etant communes aux trois langues. Si le navigateur
+// est regle en allemand ou en anglais, une proposition discrete permet de
+// changer (composant LangSuggest). Le choix est garde dans le stockage local.
+// Seul le francais fait partie du chargement initial ; l'allemand et l'anglais
+// sont telecharges a la demande (voir loadLang et src/main.jsx).
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import fr from './fr.js';
-import de from './de.js';
-import en from './en.js';
-import { company } from '../content.js';
+import { business } from '../../shared/business.js';
+import { STORAGE_KEYS, readStorage, writeStorage } from '../../shared/storage.js';
 
 export const LANGS = [
   { code: 'fr', label: 'FR', name: 'Français', locale: 'fr-CH', og: 'fr_CH' },
   { code: 'de', label: 'DE', name: 'Deutsch', locale: 'de-CH', og: 'de_CH' },
-  { code: 'en', label: 'EN', name: 'English', locale: 'en-CH', og: 'en_GB' },
+  { code: 'en', label: 'EN', name: 'English', locale: 'en-GB', og: 'en_GB' },
 ];
-export const LANG_KEY = 'vitiaero_lang';
 
 // Complete une langue avec le francais : une traduction manquante affiche le
 // texte francais au lieu de casser la page. Les listes sont remplacees en bloc.
@@ -25,33 +28,66 @@ function withFallback(base, over) {
   }
   return out;
 }
-const DICTS = { fr, de: withFallback(fr, de), en: withFallback(fr, en) };
+const LOADERS = {
+  de: () => import('./de.js'),
+  en: () => import('./en.js'),
+};
+const SUPPORTED = LANGS.map((l) => l.code);
 
-function detect() {
-  try {
-    const saved = localStorage.getItem(LANG_KEY);
-    if (DICTS[saved]) return saved;
-  } catch { /* stockage indisponible */ }
+// Dictionnaires deja charges.
+export const DICTS = { fr };
+
+// Charge une langue (une seule fois) ; en cas d'echec reseau, le site reste en
+// francais.
+export async function loadLang(code) {
+  if (DICTS[code]) return DICTS[code];
+  if (!LOADERS[code]) return null;
+  const mod = await LOADERS[code]();
+  DICTS[code] = withFallback(fr, mod.default);
+  return DICTS[code];
+}
+
+function savedLang() {
+  const saved = readStorage(STORAGE_KEYS.lang);
+  return SUPPORTED.includes(saved) ? saved : null;
+}
+
+// Langue que le navigateur prefere, si elle est proposee et differente du francais.
+export function browserLang() {
+  if (typeof navigator === 'undefined') return null;
   const prefs = navigator.languages?.length ? navigator.languages : [navigator.language || ''];
   for (const p of prefs) {
     const code = String(p).slice(0, 2).toLowerCase();
-    if (DICTS[code]) return code;
+    if (SUPPORTED.includes(code)) return code === 'fr' ? null : code;
   }
-  return 'fr';
+  return null;
 }
 
 // Langue courante, lisible hors de React (client API, messages d'erreur).
-let current = detect();
+// Elle ne change qu'une fois son dictionnaire charge.
+let current = 'fr';
+export const currentLang = () => current;
+
+// Au demarrage : charge la langue choisie lors d'une visite precedente.
+export async function initLang() {
+  const saved = savedLang();
+  if (!saved || saved === 'fr') return;
+  try {
+    await loadLang(saved);
+    current = saved;
+  } catch {
+    current = 'fr';
+  }
+}
 
 export function translateServerError(message) {
   if (!message) return DICTS[current].common.genericError;
   return DICTS[current].serverErrors[message] || message;
 }
 
-// Message affiche quand le site est publie sans serveur : l'envoi en ligne
-// n'est pas encore actif, on donne l'adresse e-mail a la place.
+// Message affiche quand le site est publie sans serveur.
 export function staticNotice() {
-  return DICTS[current].common.staticNotice(company.email);
+  return DICTS[current].common.staticNotice(business.identity.email, business.commercial.responseTimeHours);
 }
 
 const LangContext = createContext(null);
@@ -59,10 +95,15 @@ const LangContext = createContext(null);
 export function LangProvider({ children }) {
   const [lang, setLangState] = useState(current);
 
-  const setLang = useCallback((code) => {
-    if (!DICTS[code]) return;
+  const setLang = useCallback(async (code) => {
+    if (!SUPPORTED.includes(code)) return;
+    try {
+      await loadLang(code);
+    } catch {
+      return; // hors ligne : la langue actuelle reste affichee
+    }
     current = code;
-    try { localStorage.setItem(LANG_KEY, code); } catch { /* ignore */ }
+    writeStorage(STORAGE_KEYS.lang, code);
     setLangState(code);
   }, []);
 
@@ -75,7 +116,7 @@ export function LangProvider({ children }) {
   }, [info]);
 
   const value = useMemo(
-    () => ({ lang, setLang, t: DICTS[lang], locale: info.locale }),
+    () => ({ lang, setLang, t: DICTS[lang], locale: info.locale, chosen: !!savedLang() }),
     [lang, setLang, info]
   );
   return <LangContext.Provider value={value}>{children}</LangContext.Provider>;

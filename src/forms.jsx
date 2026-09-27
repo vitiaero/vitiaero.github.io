@@ -60,12 +60,13 @@ export function useFormValidation(rules) {
   const reset = useCallback(() => setErrors({}), []);
 
   // Attributs a poser sur le champ, pour relier le message a son controle.
+  // hintId : aide affichee sous le champ, gardee dans aria-describedby.
   const fieldProps = useCallback(
-    (name, id, values) => ({
+    (name, id, values, hintId) => ({
       onBlur: () => validateField(name, values),
       onInput: () => clearField(name),
       'aria-invalid': errors[name] ? 'true' : undefined,
-      'aria-describedby': errors[name] ? `${id}-error` : undefined,
+      'aria-describedby': [errors[name] ? `${id}-error` : null, hintId].filter(Boolean).join(' ') || undefined,
     }),
     [errors, validateField, clearField]
   );

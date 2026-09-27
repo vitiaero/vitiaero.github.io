@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../components/Icons.jsx';
 import PrintHeader from '../components/PrintHeader.jsx';
+import { NoOrderNotice } from '../components/Notices.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { formatCHF } from '../../shared/pricing.js';
 
@@ -23,33 +24,35 @@ export default function Confirmation() {
         <div className="container">
           <div className="confirm-hero printable">
             <PrintHeader number={state?.id} />
-            <div className="confirm-check no-print"><Icon name="check" size={40} /></div>
+            <div className="confirm-check no-print" aria-hidden="true"><Icon name="check" size={40} /></div>
             <span className="eyebrow">{c.eyebrow}</span>
             <h1 className="h1">{c.title}</h1>
             <p className="lead mt-2">{c.lead}</p>
 
+            <NoOrderNotice variant="estimate" className="mt-3 confirm-notice" />
+
             {state?.id && (
-              <div className="area-box mt-4" style={{ textAlign: 'left', maxWidth: 420, margin: '2rem auto 0' }}>
-                <div className="recap">
-                  <div className="line"><span className="k">{c.number}</span><span className="v">#{state.id}</span></div>
-                  <div className="line"><span className="k">{c.area}</span><span className="v">{fmt.ha} ha ({fmt.m2} m2)</span></div>
+              <div className="area-box confirm-box">
+                <dl className="recap">
+                  <div className="line"><dt className="k">{c.number}</dt><dd className="v">#{state.id}</dd></div>
+                  <div className="line"><dt className="k">{c.area}</dt><dd className="v">{fmt.ha} ha ({fmt.m2} m²)</dd></div>
                   {state.estimate && (
                     <div className="line">
-                      <span className="k">{c.estimate}</span>
-                      <span className="v">
+                      <dt className="k">{c.estimate}</dt>
+                      <dd className="v">
                         {state.estimate.totalMin === state.estimate.totalMax
                           ? formatCHF(state.estimate.totalMin)
                           : t.estimation.range(formatCHF(state.estimate.totalMin), formatCHF(state.estimate.totalMax))}
-                      </span>
+                      </dd>
                     </div>
                   )}
-                </div>
+                </dl>
               </div>
             )}
 
             {state?.id && <p className="print-only print-foot">{t.printDoc.footer}</p>}
 
-            <div className="hero-actions no-print" style={{ justifyContent: 'center', marginTop: '2rem' }}>
+            <div className="hero-actions no-print confirm-actions">
               {state?.id && (
                 <button type="button" className="btn btn-outline" onClick={() => window.print()}>
                   {t.printDoc.action}

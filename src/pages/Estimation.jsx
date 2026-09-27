@@ -2,20 +2,25 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import MapDraw from '../components/MapDraw.jsx';
 import PrintHeader from '../components/PrintHeader.jsx';
+import ConsentCheckbox, { consentPayload } from '../components/ConsentCheckbox.jsx';
+import { FormsClosed, NoOrderNotice } from '../components/Notices.jsx';
 import { useAuth } from '../auth.jsx';
 import { api } from '../api.js';
-import { useFormValidation, FieldError, FormErrorSummary, required, emailRule } from '../forms.jsx';
+import { useFormValidation, FormErrorSummary, FieldError, required, emailRule } from '../forms.jsx';
+import { FORMS_OPEN, business } from '../launch.js';
+import { VAT_RE } from '../../shared/launch.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
-  BASE, PRICE_PER_HA, REFERENCE_PRICE, TRAVEL_BANDS, TRAVEL_REDUCTIONS, MIN_PER_PASS,
+  BASE, PRICE_PER_HA, REFERENCE_PRICE, TRAVEL_BANDS, TRAVEL_REDUCTIONS, MIN_PER_PASS, TRAVEL_QUOTE_KM, WAITING_PER_HOUR,
   computeEstimate, formatCHF, parcelsCenter,
 } from '../../shared/pricing.js';
 
-// Champs obligatoires de la derniere etape : verifies a la sortie du champ et
-// a l'envoi. Les parcelles, elles, sont deja exigees pour passer l'etape 1.
-const EST_RULES = {
+// Champs obligatoires des coordonnees, verifies a la sortie du champ et a l'envoi.
+const CONTACT_RULES = {
   name: required((x) => x.nameRequired),
   email: emailRule,
+};
+const CONSENT_RULES = {
   consent: (value, values, texts) => (values.consent ? null : texts.consentRequired),
 };
 
@@ -36,14 +41,10 @@ function formatArea(m2, locale) {
   };
 }
 
-// Montant, ou fourchette quand une situation particuliere est cochee.
 function Total({ est, e }) {
-  return est.totalMin === est.totalMax
-    ? formatCHF(est.totalMin)
-    : e.range(formatCHF(est.totalMin), formatCHF(est.totalMax));
+  return est.totalMin === est.totalMax ? formatCHF(est.totalMin) : e.range(formatCHF(est.totalMin), formatCHF(est.totalMax));
 }
 
-// Kilometres au format de la langue (7,1 en francais, 7.1 en allemand et en anglais).
 const formatKm = (km, locale) => Number(km).toLocaleString(locale, { maximumFractionDigits: 1 });
 
 function distanceText(route, e, locale) {
@@ -53,32 +54,41 @@ function distanceText(route, e, locale) {
   return route.method === 'route' ? e.distanceRoute(km, route.from) : e.distanceDirect(km, route.from);
 }
 
-// Choix du nombre de passages (1 a 10), avec le prix par hectare de chacun.
+// Mention de TVA tiree de la configuration : jamais de taux suppose.
+function vatNote(e) {
+  const vat = business.identity.vat;
+  if (vat === false) return e.vatNone;
+  if (vat && VAT_RE.test(vat.number || '') && vat.ratePercent > 0) return e.vatIncluded(vat.ratePercent);
+  return e.vatPending;
+}
+
+// Choix du nombre de passages (1 a 10) : boutons radio natifs, utilisables
+// au clavier (fleches) et annonces par les lecteurs d'ecran.
 function PassesPicker({ value, onChange, e }) {
   return (
-    <div className="passes" role="radiogroup" aria-label={e.passesLabel}>
-      {PRICE_PER_HA.map((price, i) => {
-        const n = i + 1;
-        return (
-          <button
-            key={n}
-            type="button"
-            role="radio"
-            aria-checked={value === n}
-            className={`pass${value === n ? ' active' : ''}`}
-            onClick={() => onChange(n)}
-          >
-            <span className="pass-n">{n}</span>
-            <span className="pass-price">{formatCHF(price)}{e.perHa}</span>
-          </button>
-        );
-      })}
-    </div>
+    <fieldset className="passes">
+      <legend className="label-like">{e.passesLabel}</legend>
+      <p className="hint" id="passes-hint">{e.passesHint}</p>
+      <div className="passes-grid">
+        {PRICE_PER_HA.map((price, i) => {
+          const n = i + 1;
+          return (
+            <label key={n} className={`pass${value === n ? ' active' : ''}`}>
+              <input type="radio" name="passes" value={n} checked={value === n} onChange={() => onChange(n)} aria-describedby="passes-hint" />
+              <span className="pass-n">{n}</span>
+              <span className="pass-price">{formatCHF(price)}{e.perHa}</span>
+            </label>
+          );
+        })}
+      </div>
+    </fieldset>
   );
 }
 
-// Grille complete des tarifs, repliee par defaut.
-function RatesTable({ e }) {
+// Pourcentage dans les usages de la langue (10 % en francais, 10% en anglais).
+const pct = (rate, locale) => new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(rate);
+
+function RatesTable({ e, locale }) {
   const r = e.rates;
   return (
     <details className="rates">
@@ -87,7 +97,7 @@ function RatesTable({ e }) {
         <div className="table-wrap">
           <table className="data">
             <caption>{r.treatmentTitle}</caption>
-            <thead><tr><th>{r.passes}</th><th>{r.price}</th><th>{r.year}</th><th>{r.savings}</th></tr></thead>
+            <thead><tr><th scope="col">{r.passes}</th><th scope="col">{r.price}</th><th scope="col">{r.year}</th><th scope="col">{r.savings}</th></tr></thead>
             <tbody>
               {PRICE_PER_HA.map((price, i) => {
                 const n = i + 1;
@@ -107,12 +117,10 @@ function RatesTable({ e }) {
           <div className="table-wrap">
             <table className="data">
               <caption>{r.travelTitle}</caption>
-              <thead><tr><th>{r.distance(BASE.label)}</th><th>{r.fee}</th></tr></thead>
+              <thead><tr><th scope="col">{r.distance(BASE.label)}</th><th scope="col">{r.fee}</th></tr></thead>
               <tbody>
-                {TRAVEL_BANDS.map((b) => (
-                  <tr key={b.to}><td>{b.from} - {b.to} km</td><td>{formatCHF(b.fee)}</td></tr>
-                ))}
-                <tr><td>{r.over}</td><td>{r.quote}</td></tr>
+                {TRAVEL_BANDS.map((b) => <tr key={b.to}><td>{b.from} - {b.to} km</td><td>{formatCHF(b.fee)}</td></tr>)}
+                <tr><td>{r.over(TRAVEL_QUOTE_KM)}</td><td>{r.quote}</td></tr>
               </tbody>
             </table>
           </div>
@@ -121,7 +129,7 @@ function RatesTable({ e }) {
               <caption>{r.reductionTitle}</caption>
               <tbody>
                 {TRAVEL_REDUCTIONS.map((x) => (
-                  <tr key={x.from}><td>{r.reductionPasses(x.from, x.to)}</td><td>{x.rate ? `-${Math.round(x.rate * 100)} %` : '0 %'}</td></tr>
+                  <tr key={x.from}><td>{r.reductionPasses(x.from, x.to)}</td><td>{x.rate ? `-${pct(x.rate, locale)}` : pct(0, locale)}</td></tr>
                 ))}
               </tbody>
             </table>
@@ -130,7 +138,7 @@ function RatesTable({ e }) {
             <table className="data">
               <caption>{r.otherTitle}</caption>
               <tbody>
-                {r.other.map(([k, v]) => <tr key={k}><td>{k}</td><td>{v}</td></tr>)}
+                {r.other(formatCHF(MIN_PER_PASS), formatCHF(WAITING_PER_HOUR)).map(([k, v]) => <tr key={k}><td>{k}</td><td>{v}</td></tr>)}
               </tbody>
             </table>
           </div>
@@ -144,24 +152,24 @@ function RatesTable({ e }) {
 function Summary({ est, area, route, e, locale }) {
   const fmt = formatArea(area, locale);
   return (
-    <aside className="est-summary" aria-live="polite">
+    <aside className="est-summary" aria-label={e.summaryTitle}>
       <p className="est-summary-title">{e.summaryTitle}</p>
       <dl className="est-summary-rows">
         <div><dt>{e.summaryArea}</dt><dd>{fmt.ha} ha</dd></div>
         <div><dt>{e.summaryPasses}</dt><dd>{e.passUnit(est.passes)}</dd></div>
         <div><dt>{e.summaryDistance}</dt><dd>{distanceText(route, e, locale)}</dd></div>
       </dl>
-      <div className="est-summary-total">
+      <div className="est-summary-total" aria-live="polite">
         <span>{e.totalYear}</span>
         <strong><Total est={est} e={e} /></strong>
         {est.ha > 0 && <small>{e.perHaYear(formatCHF(est.totalMin / est.ha))}</small>}
       </div>
-      {!est.complete && <p className="est-summary-note">{e.travelPending}</p>}
+      {!est.complete && <p className="est-summary-note">{est.travel.approximate ? e.travelApprox : e.travelPending}</p>}
+      <p className="est-summary-note">{e.summaryNoOrder}</p>
     </aside>
   );
 }
 
-// Detail du prix (etape 4).
 function Breakdown({ est, promo, e, locale }) {
   const l = e.lines;
   const ha = est.ha.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -169,7 +177,6 @@ function Breakdown({ est, promo, e, locale }) {
   const range = (r) => e.range(`+${formatCHF(r[0])}`, formatCHF(r[1]));
   return (
     <div className="est-bill">
-      {/* Rappel des trois chiffres qui determinent le prix */}
       <dl className="est-bill-facts">
         <div><dt>{l.factArea}</dt><dd>{ha} ha</dd></div>
         <div><dt>{l.factPasses}</dt><dd>{est.passes}</dd></div>
@@ -189,7 +196,8 @@ function Breakdown({ est, promo, e, locale }) {
         <div>
           <span className="k">{l.travel}</span>
           {tr.status === 'ok' && <span className="d">{l.travelDetail(est.passes, formatCHF(tr.fee), formatKm(tr.km, locale))}</span>}
-          {tr.status === 'quote' && <span className="d">{l.travelQuote(formatKm(tr.km, locale))}</span>}
+          {tr.status === 'ok' && tr.approximate && <span className="d">{e.travelApprox}</span>}
+          {tr.status === 'quote' && <span className="d">{l.travelQuote(formatKm(tr.km, locale), TRAVEL_QUOTE_KM)}</span>}
           {tr.status === 'unknown' && <span className="d">{l.travelUnknown}</span>}
         </div>
         <span className="v">{tr.status === 'ok' ? formatCHF(tr.gross) : '-'}</span>
@@ -201,15 +209,9 @@ function Breakdown({ est, promo, e, locale }) {
         </div>
       )}
 
-      {est.urgentAmount > 0 && (
-        <div className="est-bill-line"><span className="k">{l.urgent}</span><span className="v">+{formatCHF(est.urgentAmount)}</span></div>
-      )}
-      {est.difficultRange && (
-        <div className="est-bill-line"><span className="k">{l.difficult}</span><span className="v">{range(est.difficultRange)}</span></div>
-      )}
-      {est.dispersedRange && (
-        <div className="est-bill-line"><span className="k">{l.dispersed}</span><span className="v">{range(est.dispersedRange)}</span></div>
-      )}
+      {est.urgentAmount > 0 && <div className="est-bill-line"><span className="k">{l.urgent}</span><span className="v">+{formatCHF(est.urgentAmount)}</span></div>}
+      {est.difficultRange && <div className="est-bill-line"><span className="k">{l.difficult}</span><span className="v">{range(est.difficultRange)}</span></div>}
+      {est.dispersedRange && <div className="est-bill-line"><span className="k">{l.dispersed}</span><span className="v">{range(est.dispersedRange)}</span></div>}
       {est.promo > 0 && promo && (
         <div className="est-bill-line minus">
           <span className="k">{l.promo(promo.code, est.promoPercent)}</span>
@@ -227,14 +229,22 @@ function Breakdown({ est, promo, e, locale }) {
 
 export default function Estimation() {
   const { user } = useAuth();
-  const { t, locale } = useI18n();
+  const { t, lang, locale } = useI18n();
   const e = t.estimation;
   const navigate = useNavigate();
+
+  // Pre-lancement : aucune coordonnee demandee, l'estimation se calcule et
+  // s'imprime, mais rien n'est envoye.
+  const steps = FORMS_OPEN ? e.steps : e.stepsPrelaunch;
+  const RESULT = steps.length; // derniere etape : le detail du prix
+  const CONTACT = FORMS_OPEN ? 3 : null;
 
   const [step, setStep] = useState(1);
   const [parcels, setParcels] = useState([]);
   const mapRef = useRef(null);
   const errorRef = useRef(null);
+  const headingRef = useRef(null);
+  const firstRender = useRef(true);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', commune: '', address: '',
     treatment: TREATMENTS[0], period: PERIODS[0], message: '',
@@ -244,14 +254,14 @@ export default function Estimation() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [consent, setConsent] = useState(false);
-  const { errors, validateAll, fieldProps, summaryRef, reset: resetErrors } = useFormValidation(EST_RULES);
+  const contactValidation = useFormValidation(CONTACT_RULES);
+  const consentValidation = useFormValidation(CONSENT_RULES);
 
-  // Code promo
   const [promoInput, setPromoInput] = useState('');
   const [promo, setPromo] = useState(null); // { code, discount, description }
   const [promoMsg, setPromoMsg] = useState('');
 
-  // Distance par la route depuis le depot (calculee par le serveur)
+  // Distance depuis la base de depart (calculee par le serveur)
   const [route, setRoute] = useState({ status: 'idle' });
   const center = useMemo(() => parcelsCenter(parcels), [parcels]);
 
@@ -270,16 +280,20 @@ export default function Estimation() {
     return () => { active = false; clearTimeout(timer); };
   }, [center?.lat, center?.lng]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Pre-remplit les coordonnees si l'utilisateur est connecte
   useEffect(() => {
     if (user) setForm((f) => ({ ...f, name: f.name || user.name, email: f.email || user.email }));
   }, [user]);
 
-  // Le message d'erreur s'affiche au-dessus de l'etape : on l'amene a l'ecran,
-  // sinon un clic sur "Continuer", sous la carte, semblerait sans effet.
   useEffect(() => {
     if (error) errorRef.current?.scrollIntoView({ block: 'nearest' });
   }, [error]);
+
+  // A chaque etape, le focus va sur son titre : le lecteur d'ecran annonce
+  // la nouvelle etape et la navigation au clavier repart du debut.
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
+    headingRef.current?.focus();
+  }, [step]);
 
   const totalArea = parcels.reduce((s, p) => s + (p.area_m2 || 0), 0);
   const fmt = formatArea(totalArea, locale);
@@ -290,6 +304,7 @@ export default function Estimation() {
     areaM2: totalArea,
     passes: form.passes,
     distanceKm: route.status === 'ok' ? route.km : null,
+    distanceApproximate: route.status === 'ok' && route.method !== 'route',
     urgent: form.urgent,
     difficult: form.difficult,
     dispersed: form.dispersed,
@@ -307,16 +322,12 @@ export default function Estimation() {
 
   function next() {
     if (step === 1) {
-      // Un trace en cours se ferme tout seul : pas besoin de "Terminer" avant.
       const list = mapRef.current ? mapRef.current.commitDraft() : parcels;
       if (list === null) { setError(e.errDraft); return; }
       if (list.length === 0) { setError(e.errParcel); return; }
     }
-    if (step === 3) {
-      if (!form.name.trim() || !form.email.trim()) { setError(e.errRequired); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { setError(e.errEmail); return; }
-    }
-    go(Math.min(4, step + 1));
+    if (step === CONTACT && !contactValidation.validateAll(form)) return;
+    go(Math.min(RESULT, step + 1));
   }
 
   async function validatePromo() {
@@ -340,19 +351,19 @@ export default function Estimation() {
 
   async function submit() {
     setError('');
-    if (!consent) { setError(e.errConsent); return; }
+    if (!consentValidation.validateAll({ consent })) return;
     setSubmitting(true);
     try {
-      const payload = { ...form, parcels, promo_code: promo ? promo.code : null };
+      const payload = { ...form, lang, parcels, promo_code: promo ? promo.code : null, consent: consentPayload(['privacy']) };
       const res = await api.post('/api/estimations', payload);
-      navigate('/confirmation', {
-        state: { id: res.id, area_m2: res.area_m2, connected: !!user, estimate: res.estimate },
-      });
+      navigate('/confirmation', { state: { id: res.id, area_m2: res.area_m2, connected: !!user, estimate: res.estimate } });
     } catch (err) {
       setError(err.message);
       setSubmitting(false);
     }
   }
+
+  const stepTitle = step === 1 ? e.mapStepTitle : step === 2 ? e.needTitle : step === CONTACT ? e.contactTitle : e.resultTitle;
 
   return (
     <div className="page page-head">
@@ -364,46 +375,41 @@ export default function Estimation() {
             <p className="lead mt-2">{e.lead}</p>
           </div>
 
-          {/* Indicateur d'etapes */}
-          <div className="wizard-steps">
-            {e.steps.map((label, i) => {
+          <ol className="wizard-steps" aria-label={e.stepsAria}>
+            {steps.map((label, i) => {
               const n = i + 1;
               const cls = n === step ? 'active' : n < step ? 'done' : '';
               return (
-                <div className={`wizard-step ${cls}`} key={n}>
-                  <span className="n">{n < step ? '✓' : n}</span>
+                <li className={`wizard-step ${cls}`} key={label} aria-current={n === step ? 'step' : undefined}>
+                  <span className="n" aria-hidden="true">{n < step ? '✓' : n}</span>
                   <span className="label">{label}</span>
-                </div>
+                  {n < step && <span className="sr-only">{e.stepDone}</span>}
+                </li>
               );
             })}
-          </div>
+          </ol>
+
+          <h2 className="h3 step-heading" tabIndex={-1} ref={headingRef}>{e.stepOf(step, RESULT, stepTitle)}</h2>
 
           {error && <div className="alert alert-error" role="alert" ref={errorRef}>{error}</div>}
 
-          {/* Etape 1 : carte */}
           {step === 1 && (
             <div>
               <MapDraw ref={mapRef} value={parcels} onChange={setParcels} />
               <div className="wizard-nav">
                 <span />
-                <button className="btn btn-primary" onClick={next}>{e.next}</button>
+                <button type="button" className="btn btn-primary" onClick={next}>{e.next}</button>
               </div>
             </div>
           )}
 
-          {/* Etapes 2 et 3 : formulaire + resume du prix en direct */}
-          {(step === 2 || step === 3) && (
+          {(step === 2 || step === CONTACT) && (
             <div className="est-layout">
               <div>
                 {step === 2 && (
                   <>
-                    <h2 className="h3 mb-2">{e.needTitle}</h2>
-                    <div className="field">
-                      <span className="label-like">{e.passesLabel}</span>
-                      <p className="hint" style={{ marginTop: 0 }}>{e.passesHint}</p>
-                      <PassesPicker value={form.passes} onChange={(n) => setForm((f) => ({ ...f, passes: n }))} e={e} />
-                    </div>
-                    <RatesTable e={e} />
+                    <PassesPicker value={form.passes} onChange={(n) => setForm((f) => ({ ...f, passes: n }))} e={e} />
+                    <RatesTable e={e} locale={locale} />
                     <p className="rates-note">{e.ratesNote}</p>
 
                     <div className="form-row mt-3">
@@ -436,63 +442,68 @@ export default function Estimation() {
                   </>
                 )}
 
-                {step === 3 && (
+                {step === CONTACT && (
                   <>
-                    <h2 className="h3 mb-2">{e.contactTitle}</h2>
+                    <FormErrorSummary
+                      errors={contactValidation.errors}
+                      summaryRef={contactValidation.summaryRef}
+                      fields={[
+                        { name: 'name', id: 'est-name', label: e.name },
+                        { name: 'email', id: 'est-email', label: e.email },
+                      ]}
+                    />
+                    <p className="hint">{e.requiredHint}</p>
                     <div className="form-row">
                       <div className="field">
                         <label htmlFor="est-name">{e.name}</label>
-                        <input id="est-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} placeholder="Marie Dupont" {...fieldProps('name', 'est-name', { ...form, consent })} />
-                        <FieldError id="est-name" message={errors.name} />
+                        <input id="est-name" maxLength={120} className="input" autoComplete="name" value={form.name} onChange={update('name')} aria-required="true" {...contactValidation.fieldProps('name', 'est-name', form)} />
+                        <FieldError id="est-name" message={contactValidation.errors.name} />
                       </div>
                       <div className="field">
                         <label htmlFor="est-email">{e.email}</label>
-                        <input id="est-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} placeholder="marie@exemple.ch" {...fieldProps('email', 'est-email', { ...form, consent })} />
-                        <FieldError id="est-email" message={errors.email} />
+                        <input id="est-email" maxLength={190} className="input" type="email" autoComplete="email" value={form.email} onChange={update('email')} aria-required="true" {...contactValidation.fieldProps('email', 'est-email', form)} />
+                        <FieldError id="est-email" message={contactValidation.errors.email} />
                       </div>
                     </div>
                     <div className="form-row">
                       <div className="field">
                         <label htmlFor="est-phone">{e.phone}</label>
-                        <input id="est-phone" maxLength={40} className="input" type="tel" autoComplete="tel" value={form.phone} onChange={update('phone')} placeholder="079 000 00 00" />
+                        <input id="est-phone" maxLength={40} className="input" type="tel" autoComplete="tel" value={form.phone} onChange={update('phone')} />
                       </div>
                       <div className="field">
                         <label htmlFor="est-commune">{e.commune}</label>
-                        <input id="est-commune" maxLength={120} className="input" value={form.commune} onChange={update('commune')} placeholder="Lutry" />
+                        <input id="est-commune" maxLength={120} className="input" autoComplete="address-level2" value={form.commune} onChange={update('commune')} />
                       </div>
                     </div>
                     <div className="field">
                       <label htmlFor="est-address">{e.address}</label>
-                      <input id="est-address" maxLength={200} className="input" value={form.address} onChange={update('address')} placeholder="Chemin des Vignes 3" />
+                      <input id="est-address" maxLength={200} className="input" value={form.address} onChange={update('address')} />
                     </div>
                     <div className="field">
                       <label htmlFor="est-message">{e.message}</label>
-                      <textarea id="est-message" maxLength={4000} className="textarea" value={form.message} onChange={update('message')} placeholder={e.messagePh} />
+                      <textarea id="est-message" maxLength={4000} className="textarea" value={form.message} onChange={update('message')} aria-describedby="est-message-hint" />
+                      <p className="hint" id="est-message-hint">{e.messageHint}</p>
                     </div>
 
-                    {/* Champ piege anti-robot : masque visuellement et pour les lecteurs d'ecran */}
-                    <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
-                      <label>{e.honeypot}</label>
-                      <input tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
+                    <div aria-hidden="true" className="honeypot">
+                      <label htmlFor="est-website">{e.honeypot}</label>
+                      <input id="est-website" tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
                     </div>
 
-                    {/* Code promo */}
                     <div className="field">
                       <label htmlFor="est-promo">{e.promo}</label>
                       <div className="map-search">
-                        <input id="est-promo" maxLength={40} className="input" value={promoInput} onChange={(ev) => setPromoInput(ev.target.value)} placeholder={e.promoPh} />
+                        <input id="est-promo" maxLength={40} className="input" value={promoInput} onChange={(ev) => setPromoInput(ev.target.value)} autoComplete="off" />
                         <button type="button" className="btn btn-outline btn-sm" onClick={validatePromo}>{e.validate}</button>
                       </div>
-                      {promoMsg && (
-                        <div className="hint" style={{ color: promo ? 'var(--accent-dark)' : 'var(--danger)' }}>{promoMsg}</div>
-                      )}
+                      {promoMsg && <p className={`hint ${promo ? 'hint-ok' : 'hint-error'}`} role="status">{promoMsg}</p>}
                     </div>
                   </>
                 )}
 
                 <div className="wizard-nav">
-                  <button className="btn btn-ghost" onClick={() => go(step - 1)}>{e.back}</button>
-                  <button className="btn btn-primary" onClick={next}>{step === 3 ? e.seePrice : e.next}</button>
+                  <button type="button" className="btn btn-ghost" onClick={() => go(step - 1)}>{e.back}</button>
+                  <button type="button" className="btn btn-primary" onClick={next}>{step === RESULT - 1 ? e.seePrice : e.next}</button>
                 </div>
               </div>
 
@@ -500,85 +511,82 @@ export default function Estimation() {
             </div>
           )}
 
-          {/* Etape 4 : estimation detaillee + envoi */}
-          {step === 4 && (
+          {step === RESULT && (
             <div className="est-result printable">
               <PrintHeader />
               <div className="est-hero">
                 <span className="eyebrow">{e.summaryTitle}</span>
-                <h2 className="h2">{e.resultTitle}</h2>
                 <p className="lead">{e.resultLead}</p>
                 <div className="est-hero-total">
                   <span>{e.totalYear}</span>
                   <strong><Total est={est} e={e} /></strong>
-                  <small>
-                    {fmt.ha} ha · {e.passUnit(est.passes)} · {distanceText(route, e, locale)}
-                  </small>
+                  <small>{fmt.ha} ha · {e.passUnit(est.passes)} · {distanceText(route, e, locale)}</small>
                 </div>
                 {est.savings > 0 && <p className="est-savings">{e.savings(formatCHF(est.savings), est.passes)}</p>}
               </div>
 
+              <NoOrderNotice variant="estimate" className="mt-3" />
+
               <Breakdown est={est} promo={promo} e={e} locale={locale} />
 
               <ul className="est-notes">
-                {e.notes.map((n) => <li key={n}>{n}</li>)}
+                {e.notes(formatCHF(WAITING_PER_HOUR)).map((n) => <li key={n}>{n}</li>)}
+                <li>{vatNote(e)}</li>
               </ul>
 
-              {/* Le navigateur enregistre la page en PDF depuis sa fenetre d'impression */}
               <div className="print-action no-print">
-                <button type="button" className="btn btn-outline btn-sm" onClick={() => window.print()}>
-                  {t.printDoc.action}
-                </button>
+                <button type="button" className="btn btn-outline btn-sm" onClick={() => window.print()}>{t.printDoc.action}</button>
                 <Link to="/devis" className="btn btn-outline btn-sm">{e.quoteCta}</Link>
                 <span className="hint">{t.printDoc.hint}</span>
               </div>
 
               <h3 className="h3 mt-4 mb-2">{e.recapTitle}</h3>
-              <div className="recap">
-                <div className="line"><span className="k">{e.recap.parcels}</span><span className="v">{parcels.length}</span></div>
-                <div className="line"><span className="k">{e.recap.area}</span><span className="v">{fmt.ha} ha ({fmt.m2} m2)</span></div>
-                <div className="line"><span className="k">{e.recap.name}</span><span className="v">{form.name}</span></div>
-                <div className="line"><span className="k">{e.recap.email}</span><span className="v">{form.email}</span></div>
-                {form.phone && <div className="line"><span className="k">{e.recap.phone}</span><span className="v">{form.phone}</span></div>}
-                {form.commune && <div className="line"><span className="k">{e.recap.commune}</span><span className="v">{form.commune}</span></div>}
-                <div className="line"><span className="k">{e.recap.treatment}</span><span className="v">{treatmentLabel(form.treatment)}</span></div>
-                <div className="line"><span className="k">{e.recap.period}</span><span className="v">{periodLabel(form.period)}</span></div>
-                {promo && <div className="line"><span className="k">{e.recap.promo}</span><span className="v">{promo.code} (-{promo.discount}%)</span></div>}
-                {form.message && <div className="line"><span className="k">{e.recap.message}</span><span className="v" style={{ maxWidth: '60%' }}>{form.message}</span></div>}
-              </div>
+              <dl className="recap">
+                <div className="line"><dt className="k">{e.recap.parcels}</dt><dd className="v">{parcels.length}</dd></div>
+                <div className="line"><dt className="k">{e.recap.area}</dt><dd className="v">{fmt.ha} ha ({fmt.m2} m²)</dd></div>
+                {FORMS_OPEN && <div className="line"><dt className="k">{e.recap.name}</dt><dd className="v">{form.name}</dd></div>}
+                {FORMS_OPEN && <div className="line"><dt className="k">{e.recap.email}</dt><dd className="v">{form.email}</dd></div>}
+                {form.phone && <div className="line"><dt className="k">{e.recap.phone}</dt><dd className="v">{form.phone}</dd></div>}
+                {form.commune && <div className="line"><dt className="k">{e.recap.commune}</dt><dd className="v">{form.commune}</dd></div>}
+                <div className="line"><dt className="k">{e.recap.treatment}</dt><dd className="v">{treatmentLabel(form.treatment)}</dd></div>
+                <div className="line"><dt className="k">{e.recap.period}</dt><dd className="v">{periodLabel(form.period)}</dd></div>
+                {promo && <div className="line"><dt className="k">{e.recap.promo}</dt><dd className="v">{promo.code} (-{promo.discount}%)</dd></div>}
+                {form.message && <div className="line"><dt className="k">{e.recap.message}</dt><dd className="v recap-message">{form.message}</dd></div>}
+              </dl>
 
               <p className="print-only print-foot">{t.printDoc.footer}</p>
 
-              <div className="alert alert-info mt-3 no-print">{user ? e.infoUser : e.infoGuest}</div>
-
-              <label className="consent mt-3 no-print">
-                <input
-                  id="est-consent"
-                  type="checkbox"
-                  checked={consent}
-                  onChange={(ev) => { setConsent(ev.target.checked); if (ev.target.checked) resetErrors(); }}
-                  aria-invalid={errors.consent ? 'true' : undefined}
-                  aria-describedby={errors.consent ? 'est-consent-error' : undefined}
-                />
-                <span>{e.consentBefore}<Link to="/confidentialite" target="_blank" rel="noreferrer">{e.consentLink}</Link>{e.consentAfter}</span>
-              </label>
-              <FieldError id="est-consent" message={errors.consent} />
-              <FormErrorSummary
-                errors={errors}
-                summaryRef={summaryRef}
-                fields={[
-                  { name: 'name', id: 'est-name', label: e.name },
-                  { name: 'email', id: 'est-email', label: e.email },
-                  { name: 'consent', id: 'est-consent', label: t.validation.consentLabel },
-                ]}
-              />
-
-              <div className="wizard-nav no-print">
-                <button className="btn btn-ghost" onClick={() => go(3)} disabled={submitting}>{e.back}</button>
-                <button className="btn btn-primary" onClick={submit} disabled={submitting}>
-                  {submitting ? e.sending : e.send}
-                </button>
-              </div>
+              {!FORMS_OPEN ? (
+                <div className="mt-3 no-print">
+                  <FormsClosed />
+                  <div className="wizard-nav">
+                    <button type="button" className="btn btn-ghost" onClick={() => go(step - 1)}>{e.back}</button>
+                    <span />
+                  </div>
+                </div>
+              ) : (
+                <div className="no-print">
+                  <div className="alert alert-info mt-3">{user ? e.infoUser : e.infoGuest}</div>
+                  <FormErrorSummary
+                    errors={consentValidation.errors}
+                    summaryRef={consentValidation.summaryRef}
+                    fields={[{ name: 'consent', id: 'est-consent', label: t.validation.consentLabel }]}
+                  />
+                  <ConsentCheckbox
+                    id="est-consent"
+                    checked={consent}
+                    purpose="estimation"
+                    error={consentValidation.errors.consent}
+                    onChange={(v) => { setConsent(v); if (v) consentValidation.reset(); }}
+                  />
+                  <div className="wizard-nav">
+                    <button type="button" className="btn btn-ghost" onClick={() => go(step - 1)} disabled={submitting}>{e.back}</button>
+                    <button type="button" className="btn btn-primary" onClick={submit} disabled={submitting}>
+                      {submitting ? e.sending : e.send}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

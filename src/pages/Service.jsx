@@ -1,36 +1,43 @@
 import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
+import { NoOrderNotice } from '../components/Notices.jsx';
+import { business } from '../launch.js';
+import { validCredentials } from '../../shared/launch.js';
+import { CREDENTIAL_LABELS } from '../../shared/legal/labels.js';
 import { useI18n } from '../i18n/index.jsx';
 
-// Page "Le service" : le deroulement d'une intervention, les conditions
-// examinees avant d'accepter, le cadre suisse et le rapport remis au client.
-// Aucun chiffre invente : le rapport affiche est un exemple, signale comme tel.
+// Page "Le service" : deroulement d'une intervention, conditions examinees,
+// cadre suisse et rapport remis au client. Aucune donnee fictive : le rapport
+// est presente comme un modele vide, et un justificatif (autorisation,
+// controle, permis) n'apparait que s'il est saisi, complet et non echu.
+
+const fmtDate = (iso, locale) => new Date(`${iso}T00:00:00Z`).toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' });
 
 function Steps({ s }) {
   return (
     <section className="section" id="etapes">
       <div className="container">
         <div className="section-head center">
-          <Reveal>
-            <h2 className="h2">{s.stepsTitle}</h2>
-          </Reveal>
+          <Reveal><h2 className="h2">{s.stepsTitle}</h2></Reveal>
         </div>
-        <div className="flow">
+        <ol className="flow">
           {s.steps.map((step, i) => (
-            <Reveal key={step.title} delay={i * 80}>
-              <article className="flow-step">
-                <div className="flow-head">
-                  <span className="flow-no">{i + 1}</span>
-                  <span className="flow-icon"><Icon name={step.icon} size={22} /></span>
-                </div>
-                <h3 className="h3">{step.title}</h3>
-                <p>{step.text}</p>
-                {step.note && <p className="flow-note">{step.note}</p>}
-              </article>
-            </Reveal>
+            <li key={step.title}>
+              <Reveal delay={i * 80}>
+                <article className="flow-step">
+                  <div className="flow-head">
+                    <span className="flow-no" aria-hidden="true">{i + 1}</span>
+                    <span className="flow-icon" aria-hidden="true"><Icon name={step.icon} size={22} /></span>
+                  </div>
+                  <h3 className="h3">{step.title}</h3>
+                  <p>{step.text}</p>
+                  {step.note && <p className="flow-note">{step.note}</p>}
+                </article>
+              </Reveal>
+            </li>
           ))}
-        </div>
+        </ol>
         <div className="text-center mt-4">
           <a href="#rapport" className="btn btn-outline">{s.stepsCta}</a>
         </div>
@@ -47,14 +54,14 @@ function Conditions({ c }) {
           <Reveal>
             <span className="eyebrow">{c.eyebrow}</span>
             <h2 className="h2">{c.title}</h2>
-            <p className="lead mt-2" style={{ maxWidth: '66ch', margin: '1rem auto 0' }}>{c.lead}</p>
+            <p className="lead mt-2 section-lead">{c.lead}</p>
           </Reveal>
         </div>
         <div className="grid grid-3 grid-cards">
           {c.cards.map((card, i) => (
             <Reveal key={card.title} delay={i * 60}>
               <div className="card">
-                <div className="icon"><Icon name={card.icon} size={24} /></div>
+                <div className="icon" aria-hidden="true"><Icon name={card.icon} size={24} /></div>
                 <h3 className="h3">{card.title}</h3>
                 <p>{card.text}</p>
               </div>
@@ -70,6 +77,34 @@ function Conditions({ c }) {
   );
 }
 
+// Justificatifs verifies : saisis dans shared/business.js, complets, non echus.
+function Credentials({ r }) {
+  const { lang, locale } = useI18n();
+  const list = validCredentials(business);
+  return (
+    <div className="status-box">
+      <h3>{r.credentialsTitle}</h3>
+      {list.length === 0 ? (
+        <p>{r.credentialsNone}</p>
+      ) : (
+        <ul className="credential-list">
+          {list.map((c) => (
+            <li key={`${c.type}-${c.reference}`}>
+              <strong>{CREDENTIAL_LABELS[c.type]?.[lang] || c.type}</strong>
+              <span>{r.credentialRef(c.reference, c.authority)}</span>
+              <span>
+                {c.validUntil === false ? r.noExpiry : r.validUntil(fmtDate(c.validUntil, locale))}
+                {' · '}
+                {r.verifiedOn(fmtDate(c.verifiedOn, locale))}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function Rules({ r, commitments }) {
   return (
     <>
@@ -80,13 +115,11 @@ function Rules({ r, commitments }) {
               <span className="eyebrow">{r.eyebrow}</span>
               <h2 className="h2">{r.title}</h2>
               <p className="lead">{r.lead}</p>
-              <div className="status-box">
-                <h3>{r.statusTitle}</h3>
-                <p>{r.status}</p>
-              </div>
+              <Credentials r={r} />
               <a href="#engagements" className="btn btn-primary btn-sm mt-3">{r.cta}</a>
             </Reveal>
             <Reveal delay={100}>
+              <h3 className="h3 rule-list-title">{r.itemsTitle}</h3>
               <ul className="rule-list">
                 {r.items.map((item) => (
                   <li key={item}>
@@ -95,6 +128,7 @@ function Rules({ r, commitments }) {
                   </li>
                 ))}
               </ul>
+              <p className="hint mt-2">{r.source}</p>
             </Reveal>
           </div>
         </div>
@@ -112,7 +146,7 @@ function Rules({ r, commitments }) {
             {commitments.items.map((item, i) => (
               <Reveal key={item.title} delay={i * 60}>
                 <div className="card">
-                  <div className="icon"><Icon name={item.icon} size={24} /></div>
+                  <div className="icon" aria-hidden="true"><Icon name={item.icon} size={24} /></div>
                   <h3 className="h3">{item.title}</h3>
                   <p>{item.text}</p>
                 </div>
@@ -125,32 +159,32 @@ function Rules({ r, commitments }) {
   );
 }
 
+// Modele de rapport : les libelles seulement, sans aucune valeur inventee.
 function Report({ r }) {
   return (
     <section className="section" id="rapport">
       <div className="container">
         <div className="eq-split">
           <Reveal>
-            {/* Maquette : donnees fictives, signalees sous le document */}
-            <div className="report-doc" aria-describedby="report-sample">
+            <div className="report-doc" aria-describedby="report-template">
               <div className="report-head">
                 <span className="report-brand">VitiAero</span>
                 <span className="report-kind">{r.docTitle}</span>
               </div>
               <dl className="report-grid">
-                {r.fields.map((f) => (
-                  <div key={f.k}>
-                    <dt>{f.k}</dt>
-                    <dd>{f.v}</dd>
+                {r.fields.map((k) => (
+                  <div key={k}>
+                    <dt>{k}</dt>
+                    <dd className="report-blank"><span className="sr-only">{r.blankAria}</span></dd>
                   </div>
                 ))}
               </dl>
-              <div className="report-remarks">
+              <dl className="report-remarks">
                 <dt>{r.remarksKey}</dt>
-                <dd>{r.remarks}</dd>
-              </div>
+                <dd className="report-blank report-blank-tall"><span className="sr-only">{r.blankAria}</span></dd>
+              </dl>
             </div>
-            <p className="report-sample" id="report-sample">{r.sample}</p>
+            <p className="report-sample" id="report-template">{r.template}</p>
           </Reveal>
           <Reveal delay={100}>
             <span className="eyebrow">{r.eyebrow}</span>
@@ -190,8 +224,9 @@ export default function Service() {
           <Reveal className="cta-band">
             <span className="eyebrow">{q.eyebrow}</span>
             <h2 className="h1">{q.title}</h2>
-            <p className="lead mt-2" style={{ maxWidth: '52ch', margin: '1rem auto 0' }}>{q.lead}</p>
+            <p className="lead mt-2 cta-lead">{q.lead}</p>
             <Link to="/devis" className="btn btn-primary">{q.button}</Link>
+            <NoOrderNotice className="mt-3" />
           </Reveal>
           <ul className="service-notes">
             {s.notes.map((n) => <li key={n}>{n}</li>)}

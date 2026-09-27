@@ -15,6 +15,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Chaque lundi : recompile pour renouveler security.txt et appliquer les
+  # echeances des justificatifs (un justificatif echu remet le site en
+  # pre-lancement : formulaires fermes, indexation bloquee).
+  schedule:
+    - cron: '23 5 * * 1'
 
 permissions: {}
 
@@ -56,6 +61,11 @@ jobs:
       - name: Verifier les vulnerabilites connues
         run: npm audit --audit-level=high
 
+      # Tests automatises (porte de lancement, documents juridiques, medias,
+      # formulaires, conservation, sauvegardes) : aucune publication s'ils echouent.
+      - name: Tests
+        run: npm test
+
       # Sans VITE_API_URL, le site est publie seul : les formulaires et la
       # connexion affichent alors un message clair au lieu d'une erreur reseau.
       - name: Compiler le site
@@ -65,10 +75,12 @@ jobs:
           VITE_STATIC_ONLY: ${{ vars.VITE_API_URL == '' && '1' || '0' }}
         run: npm run build
 
+      # include-hidden-files : publie /.well-known/security.txt (sinon ignore).
       - name: Preparer les fichiers pour Pages
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
+          include-hidden-files: true
 
   deploy:
     name: Publier
