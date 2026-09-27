@@ -32,7 +32,7 @@ drone DJI Agras T50). Branche Git : `refonte-lavaux-t50`.
 | « Lutry, VD » au-dessus de l'en-tête | « Canton de Vaud » | Aucune adresse à Lutry n'est confirmée ; ne rien inventer. |
 | Liens vers des ancres de l'accueil (`#service`, `#estimation`...) | Vraies pages du site | Le site a une page par sujet. |
 | Textes raccourcis (FAQ à 7 questions, avantages) | Textes vérifiés du site (12 questions) | Les textes du site sont relus et traduits. |
-| Section « En images » : deux emplacements vides | Un seul plan de 8 s du vol FPV d'Epesses (propriétaire) | `public/videos/film-lavaux.mp4`, 1920 x 1080, en boucle. |
+| Section « En images » : deux emplacements vides | Le vol FPV complet d'Epesses (propriétaire), dans un seul lecteur | `public/videos/film-lavaux-*.mp4` : vitesse réelle, 60 images/s, 4K AV1 pour les grands écrans, 1080p sinon. |
 | Note « À confirmer avant publication » visible | Retirée (fr, de, en) | Remarque interne, pas un texte pour les visiteurs. |
 | Polices chargées depuis Google Fonts | Polices hébergées sur le site | Aucune adresse IP de visiteur envoyée à Google (nLPD). |
 | Vidéos sans bouton d'arrêt | Bouton pause / lecture sur chaque vidéo en boucle | Accessibilité (WCAG 2.2.2). |
@@ -52,7 +52,10 @@ Demandés par le propriétaire après la première version, pour un site plus
   modèle ; elle est remplacée par le T50 en vol. Le site n'affiche plus que le
   DJI Agras T50. Les photos placées à côté des 4 étapes, sans rapport avec
   elles, sont retirées : les étapes forment une liste simple.
-- **Le vignoble vu du ciel** : un seul plan au lieu de deux.
+- **Le vignoble vu du ciel** : un seul lecteur au lieu de deux, avec tout le
+  vol (plongeon depuis la tour compris), à vitesse réelle et 60 images/s. Une
+  première version, ralentie et réduite à 30 images/s, paraissait lente et
+  saccadée.
 - **Menu du téléphone** (trois traits) : il s'ouvrait dans une bande de 56 px.
   Cause : le flou de l'en-tête (`backdrop-filter`) servait de cadre au menu. Le
   flou est désormais porté par un calque (`.header::before`), et le menu occupe
