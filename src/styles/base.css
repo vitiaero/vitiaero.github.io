@@ -92,26 +92,20 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 .hm-h2.lg { font-size: clamp(2.1rem, 4vw, 3.5rem); letter-spacing: -0.035em; line-height: 1.02; }
 .hm-h2.xl { font-size: clamp(2rem, 4.4vw, 3.75rem); letter-spacing: -0.035em; line-height: 1.02; }
 
-/* Intitule au-dessus des titres. Deux formes :
-   - .kicker "01 — Pourquoi le drone" (sections numerotees) ;
-   - .eyebrow (autres pages) : point vert puis texte. */
-.kicker {
-  display: inline-flex; align-items: center; gap: 0.6em;
-  margin: 0 0 18px;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--muted);
-}
-.kicker-no { font-variant-numeric: tabular-nums; }
-.kicker-sep { width: 14px; height: 1px; background: currentColor; opacity: 0.7; }
-.kicker-lime { color: var(--lime); }
-.kicker-light { color: #fff; }
-.eyebrow {
+/* Intitule au-dessus des titres, le meme sur toutes les pages : un point vert
+   puis un texte court en capitales (.kicker dans les nouvelles pages,
+   .eyebrow dans les formulaires et les pages de texte). */
+.kicker, .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
-  margin-bottom: 1rem;
+  margin: 0 0 16px;
   font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--muted);
 }
-.eyebrow::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--dot); flex: none; }
+.kicker::before, .eyebrow::before { content: ''; width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--dot); }
+.kicker-lime { color: var(--lime); }
+.kicker-lime::before { background: var(--lime); }
+.kicker-light { color: #fff; }
+.kicker-light::before { background: var(--lime); }
 
 /* Liens de texte */
 .link-u { color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color 0.2s; }
@@ -128,8 +122,10 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
 .section { padding: clamp(56px, 8vw, 104px) 0; }
 .section-sm { padding: clamp(40px, 6vw, 72px) 0; }
+/* Titres de section alignes a gauche partout, comme sur l'accueil : une
+   seule ligne de lecture d'un bloc a l'autre (.center est garde pour
+   compatibilite, sans effet). */
 .section-head { max-width: 760px; margin-bottom: clamp(32px, 5vw, 56px); }
-.section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
 .section-head p { margin-top: 1rem; }
 .page { min-height: 60vh; }
 .page-head > .section:first-child { padding-top: clamp(32px, 5vw, 64px); }
@@ -257,10 +253,16 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 /* -------------------------------- En-tete -------------------------------- */
 .header {
   position: sticky; top: 0; z-index: 1000;
+  transition: box-shadow 0.3s;
+}
+/* Fond flou pose sur un calque a part : un backdrop-filter sur l'en-tete
+   lui-meme enfermerait le menu mobile (position: fixed) dans l'en-tete, qui
+   ne s'ouvrait plus que sur une bande de quelques pixels. */
+.header::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
   background: rgba(241, 241, 238, 0.86);
   -webkit-backdrop-filter: saturate(160%) blur(14px);
   backdrop-filter: saturate(160%) blur(14px);
-  transition: box-shadow 0.3s, background 0.3s;
 }
 .header.scrolled { box-shadow: 0 1px 0 var(--line), 0 10px 30px rgba(20, 21, 19, 0.06); }
 .header-inner { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
@@ -377,22 +379,9 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 14px; }
 .footer a { transition: color 0.2s; }
 .footer a:hover { color: var(--green); }
-.footer-mark {
-  margin: clamp(48px, 7vw, 80px) 0 0;
-  overflow: hidden; white-space: nowrap;
-  font-size: clamp(64px, 15vw, 220px); font-weight: 600; letter-spacing: -0.06em; line-height: 0.82;
-  padding-bottom: 0.04em;
-  color: var(--ink);
-  user-select: none;
-}
-.footer-mark .viti { color: var(--green-brand); }
-.fm-l { display: inline-block; }
-.footer-mark.reveal.reveal-armed { opacity: 1; transform: none; }
-.footer-mark.reveal-armed .fm-l { transform: translateY(105%); transition: transform 1s var(--ease); transition-delay: calc(var(--i) * 55ms); }
-.footer-mark.reveal-armed.reveal-in .fm-l { transform: none; }
 .footer-bottom {
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-  margin-top: 28px; padding-top: 20px;
+  margin-top: clamp(40px, 6vw, 64px); padding-top: 20px;
   border-top: 1px solid var(--line);
   font-size: 12px; color: var(--muted);
 }
@@ -452,9 +441,6 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 .wr-in { display: inline-block; animation: wordUp 1s var(--ease) both; animation-delay: calc(var(--wr-delay, 0ms) + var(--i, 0) * 70ms); }
 @keyframes wordUp { from { transform: translateY(105%); } to { transform: none; } }
 
-/* Phrase qui s'allume au defilement (ScrollWords) */
-.sw.sw-armed .sw-w { opacity: clamp(0.18, calc(var(--lit, 999) - var(--i)), 1); transition: opacity 0.25s linear; }
-
 /* Changement de page : fondu court */
 .route-view { animation: routeIn 0.6s var(--ease) both; }
 @keyframes routeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -482,10 +468,8 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: 0.01ms !important; transition-delay: 0ms !important; }
   .reveal, .reveal.reveal-armed { opacity: 1 !important; transform: none !important; }
-  .footer-mark .fm-l { transform: none !important; }
 }
 @media print {
   .reveal, .reveal.reveal-armed { opacity: 1 !important; transform: none !important; clip-path: none !important; }
-  .wr-in, .fm-l { transform: none !important; animation: none !important; }
-  .sw .sw-w { opacity: 1 !important; }
+  .wr-in { transform: none !important; animation: none !important; }
 }

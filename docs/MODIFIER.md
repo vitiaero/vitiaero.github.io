@@ -5,7 +5,8 @@ toujours le même cycle :
 
 1. **Modifier** un fichier sur l'ordinateur.
 2. **Vérifier** en local avec `npm run dev` (http://localhost:5173). La page se
-   met à jour toute seule à chaque enregistrement.
+   met à jour toute seule à chaque enregistrement. Pour regarder le site seul,
+   sans l'API : `npm run apercu` (http://localhost:5180).
 3. **Enregistrer dans Git** (« commit ») avec une phrase qui décrit le changement.
 4. **Envoyer sur GitHub** (« push »). L'hébergeur voit le changement, recompile
    et remet le site en ligne en quelques minutes.
@@ -40,12 +41,15 @@ dans GitHub Desktop, **Revert changes in commit**).
 **Corriger une phrase.** Chercher la phrase dans `src/i18n/fr.js` (Ctrl+F),
 la modifier entre les guillemets, enregistrer. Penser à `de.js` et `en.js` si
 la phrase existe aussi dans ces langues. Si une traduction manque, le site
-affiche le texte français à la place, sans rien casser.
+affiche le texte français à la place, sans rien casser. Avant `?`, `!`, `:`
+et `;`, taper une espace normale : le site la rend insécable tout seul, pour
+qu'un « ? » ne se retrouve jamais seul en début de ligne.
 
 **Ajouter le téléphone.** Dans `src/content.js`, remplacer `'[TELEPHONE]'`
 par le numéro, par exemple `'021 123 45 67'`. Le numéro apparaît alors tout
 seul dans la page Contact, le pied de page et le bouton « Appeler » sur mobile.
-Tant qu'une valeur commence par `[`, elle reste masquée.
+Tant qu'une valeur commence par `[`, elle n'est jamais affichée : la page
+Contact indique « Bientôt disponible » à la place (de même pour l'adresse).
 
 **Changer un tarif.** Dans `shared/pricing.js`, la liste `PRICE_PER_HA` donne
 le prix par hectare selon le nombre de passages (1er, 2e, 3e...). Le

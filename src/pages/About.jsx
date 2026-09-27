@@ -37,7 +37,7 @@ export default function About() {
 
       <section className="section bg-soft">
         <div className="container">
-          <div className="section-head center">
+          <div className="section-head">
             <Reveal><h2 className="h2">{a.valuesTitle}</h2></Reveal>
           </div>
           <div className="grid grid-3 grid-cards">
@@ -51,7 +51,7 @@ export default function About() {
               </Reveal>
             ))}
           </div>
-          <div className="text-center mt-4">
+          <div className="mt-4">
             <Link to="/estimation" className="btn btn-primary">{t.common.requestEstimate}</Link>
           </div>
         </div>

@@ -106,14 +106,6 @@ export default {
       title: 'Traitez vos vignes en pente, sans machine au sol.',
       lead: 'Demandez une estimation en ligne pour l\'épandage de vos parcelles par drone. Gratuit, sans engagement. Vous recevez ensuite un devis détaillé.',
       how: 'Comment ça marche',
-      note: 'Drone retenu : DJI Agras T50 - réservoir de pulvérisation de 40 litres.',
-      scrollAria: 'Faire défiler vers le bas',
-      discover: 'Découvrir',
-      place: 'Canton de Vaud',
-      clockLabel: 'Heure en Suisse',
-      chips: ['Vignes en pente', 'Terrasses', 'DJI Agras T50'],
-      flow: ['Estimation gratuite', 'Devis détaillé'],
-      droneLink: 'Voir le drone DJI Agras T50',
     },
     stats: [
       { num: '40 L', label: 'Réservoir de pulvérisation' },
@@ -127,7 +119,6 @@ export default {
       lead: 'Dans le vignoble suisse, beaucoup de parcelles sont en forte pente ou en terrasses. Elles sont pénibles à traiter et souvent inaccessibles aux machines.',
       text: 'Le drone survole la vigne et applique le traitement depuis le ciel. Il atteint les coteaux raides sans qu\'aucun engin ne roule dans les rangs. Le sol reste intact et le travail est plus rapide.',
       cta: 'Estimer ma parcelle',
-      tags: ['Forte pente', 'Terrasses', 'Sol préservé'],
       alt: 'Vignes suisses en terrasses du Lavaux',
     },
     advantages: {
@@ -143,8 +134,6 @@ export default {
       ],
     },
     how: {
-      next: 'Étape suivante',
-      listLabel: 'Les quatre étapes de la demande',
       eyebrow: 'Comment ça marche',
       title: 'Votre estimation en quatre étapes.',
       cta: 'Commencer ma demande',
@@ -156,7 +145,7 @@ export default {
       ],
     },
     drone: {
-      chips: ['Équipement', 'Images : DJI'],
+      credit: 'Images : DJI',
       tankLabel: 'Réservoir de pulvérisation',
       cta: 'Voir l\'équipement',
       eyebrow: 'Notre drone',
@@ -171,10 +160,7 @@ export default {
       ],
     },
     cine: {
-      films: [
-        { label: 'Lavaux, vue d\'ensemble', alt: 'Vol en drone au-dessus des terrasses du Lavaux, le lac Léman en contrebas' },
-        { label: 'Terrasses en gros plan', alt: 'Vol en drone le long des rangs de vigne et des murs de pierre du Lavaux' },
-      ],
+      film: { label: 'Vol au-dessus d\'Epesses (Lavaux)', alt: 'Vol en drone au-dessus des terrasses d\'Epesses, le lac Léman en contrebas' },
       eyebrow: 'En images',
       title: 'Le vignoble vu du ciel.',
       lead: 'Des terrasses du Lavaux au bord du lac Léman, filmées par drone. Les paysages exigeants pour lesquels ce service est pensé.',
@@ -236,7 +222,6 @@ export default {
   // Page Equipement. Donnees publiees par DJI (ag.dji.com, page T50 en
   // francais), reformulees simplement. Rien d'autre n'est avance.
   equipment: {
-    chips: ['Équipement', 'Drone agricole d\'épandage'],
     creditShort: 'Images et vidéos : DJI',
     eyebrow: 'Équipement',
     title: 'DJI Agras T50',
@@ -320,6 +305,7 @@ export default {
     phoneTitle: 'Téléphone',
     emailTitle: 'E-mail',
     addressTitle: 'Adresse',
+    pending: 'Bientôt disponible',
     areaTitle: 'Zone desservie',
     areaText: (base) => `Zone principale : canton de Vaud et Suisse romande. Déplacements jusqu\'à environ 100 km depuis notre base de ${base}. Au-delà, sur devis.`,
     estimateTitle: 'Vous voulez un prix ?',

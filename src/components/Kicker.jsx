@@ -1,11 +1,6 @@
-// Intitule de section numerote, comme "01 — Pourquoi le drone".
-// tone : 'dark' (texte gris sur fond clair), 'lime' (fond sombre), 'light' (sur photo).
-export default function Kicker({ no, children, tone = 'dark', as: Tag = 'p' }) {
-  return (
-    <Tag className={`kicker kicker-${tone}`}>
-      {no && <span className="kicker-no">{no}</span>}
-      {no && <span className="kicker-sep" aria-hidden="true" />}
-      <span>{children}</span>
-    </Tag>
-  );
+// Intitule au-dessus d'un titre : un point vert puis un texte court en
+// capitales, le meme sur toutes les pages (voir .kicker dans base.css).
+// tone : 'dark' (fond clair), 'lime' (fond sombre), 'light' (sur une photo).
+export default function Kicker({ children, tone = 'dark', as: Tag = 'p' }) {
+  return <Tag className={`kicker kicker-${tone}`}>{children}</Tag>;
 }

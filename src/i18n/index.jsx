@@ -25,7 +25,19 @@ function withFallback(base, over) {
   }
   return out;
 }
-const DICTS = { fr, de: withFallback(fr, de), en: withFallback(fr, en) };
+// Typographie francaise : espace insecable avant ? ! : ; » et apres «, pour
+// qu'un signe ne se retrouve jamais seul en debut de ligne (titres, FAQ).
+function frenchSpacing(value) {
+  if (typeof value === 'string') return value.replace(/ ([?!:;»])/g, ' $1').replace(/« /g, '« ');
+  if (typeof value === 'function') return (...args) => frenchSpacing(value(...args));
+  if (Array.isArray(value)) return value.map(frenchSpacing);
+  if (value && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, frenchSpacing(v)]));
+  }
+  return value;
+}
+const frTypo = frenchSpacing(fr);
+const DICTS = { fr: frTypo, de: withFallback(frTypo, de), en: withFallback(frTypo, en) };
 
 function detect() {
   try {

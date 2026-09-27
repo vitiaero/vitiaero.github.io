@@ -70,7 +70,9 @@ export default defineConfig(({ mode }) => {
     define: {
       'import.meta.env.VITE_API_ORIGIN': JSON.stringify(apiOrigin),
       // Publie sans API : les formulaires affichent un message au lieu d'une erreur.
-      'import.meta.env.VITE_STATIC_ONLY': JSON.stringify(env.VITE_STATIC_ONLY === '1' ? '1' : ''),
+      // Meme chose pour l'apercu dans l'application Claude (npm run apercu),
+      // qui ne lance que le serveur des pages.
+      'import.meta.env.VITE_STATIC_ONLY': JSON.stringify(env.VITE_STATIC_ONLY === '1' || mode === 'apercu' ? '1' : ''),
     },
     build: {
       sourcemap: false, // le code source original n'est pas publie
@@ -81,7 +83,9 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 5173,
-      open: true,
+      // L'apercu s'affiche dans le panneau de l'application : pas de fenetre
+      // de navigateur en plus.
+      open: mode !== 'apercu',
       headers: securityHeaders,
       // Ne pas surveiller les gros fichiers video/capture pouvant se trouver a la
       // racine (ex. une capture d'ecran en cours, verrouillee) : ils feraient

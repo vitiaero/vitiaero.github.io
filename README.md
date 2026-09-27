@@ -16,6 +16,7 @@ Autres commandes :
 
 | Commande | Rôle |
 |---|---|
+| `npm run apercu` | Site seul (sans l'API) sur `http://localhost:5180`, sans ouvrir de navigateur : panneau d'aperçu de l'application Claude |
 | `npm run demo` | Crée la version hors ligne : `_hors-projet/site-hors-ligne/index.html`, à ouvrir d'un double-clic, sans serveur |
 | `npm run build` | Compile le site dans `dist/` |
 | `npm run serve` | Compile puis démarre comme en production |

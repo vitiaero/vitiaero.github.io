@@ -19,6 +19,11 @@ le code avant de modifier, garde le style et les conventions, et ne casse rien.
 - Lancer TOUT avec une seule commande : `npm run dev`
   (concurrently → API Express sur `:3001` + client Vite sur `:5173`, proxy `/api`).
 - Base SQLite : `server/data/app.sqlite` (recréée et re-remplie si on la supprime).
+- Aperçu du site seul (sans l'API, aucun navigateur ouvert) : `npm run apercu`
+  → `http://localhost:5180`. C'est l'entrée « VitiAero - nouvelle version
+  (Lavaux T50) » du panneau d'aperçu de l'application Claude.
+- Version hors ligne à ouvrir d'un double-clic : `npm run demo`
+  → `_hors-projet/site-hors-ligne/index.html` (raccourci VitiAero sur le Bureau).
 
 ## Mise en ligne
 - **Deux scenarios** (voir `docs/DEPLOIEMENT.md`) : A. site sur **GitHub Pages**

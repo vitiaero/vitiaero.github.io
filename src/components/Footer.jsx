@@ -1,21 +1,7 @@
 import { Link } from 'react-router-dom';
-import Reveal from './Reveal.jsx';
 import { asset } from '../config.js';
 import { company } from '../content.js';
 import { useI18n } from '../i18n/index.jsx';
-
-// Grand mot "VitiAero" en bas de page : chaque lettre monte a son tour quand
-// le pied de page arrive a l'ecran (decoratif, masque aux lecteurs d'ecran).
-function Wordmark() {
-  const letters = [...'Viti'].map((c) => ({ c, viti: true })).concat([...'Aero'].map((c) => ({ c, viti: false })));
-  return (
-    <Reveal className="footer-mark" aria-hidden="true">
-      {letters.map((l, i) => (
-        <span key={i} className={`fm-l${l.viti ? ' viti' : ''}`} style={{ '--i': i }}>{l.c}</span>
-      ))}
-    </Reveal>
-  );
-}
 
 export default function Footer() {
   const { t } = useI18n();
@@ -62,8 +48,6 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-
-        <Wordmark />
 
         <div className="footer-bottom">
           <span>&copy; {year} VitiAero - {t.footer.project}</span>

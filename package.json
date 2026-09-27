@@ -13,6 +13,7 @@
     "start": "node server/index.js",
     "preview": "vite preview",
     "demo": "node scripts/build-offline.mjs",
+    "apercu": "vite --mode apercu --port 5180 --strictPort",
     "images": "node scripts/download-images.js"
   },
   "dependencies": {

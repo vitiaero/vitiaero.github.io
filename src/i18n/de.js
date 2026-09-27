@@ -105,14 +105,6 @@ export default {
       title: 'Behandeln Sie Ihre Reben in Steillagen, ohne Maschinen am Boden.',
       lead: 'Fordern Sie online eine Schätzung für die Behandlung Ihrer Parzellen per Drohne an. Kostenlos und unverbindlich. Sie erhalten danach eine detaillierte Offerte.',
       how: 'So funktioniert es',
-      note: 'Eingesetzte Drohne: DJI Agras T50 - Sprühtank mit 40 Litern.',
-      scrollAria: 'Nach unten scrollen',
-      discover: 'Entdecken',
-      place: 'Kanton Waadt',
-      clockLabel: 'Uhrzeit in der Schweiz',
-      chips: ['Reben in Hanglage', 'Terrassen', 'DJI Agras T50'],
-      flow: ['Kostenlose Schätzung', 'Detaillierte Offerte'],
-      droneLink: 'Die Drohne DJI Agras T50 ansehen',
     },
     stats: [
       { num: '40 L', label: 'Sprühtank' },
@@ -126,7 +118,6 @@ export default {
       lead: 'Im Schweizer Rebbau liegen viele Parzellen in steilen Hängen oder auf Terrassen. Sie sind mühsam zu behandeln und für Maschinen oft unzugänglich.',
       text: 'Die Drohne überfliegt die Reben und bringt die Behandlung aus der Luft aus. Sie erreicht steile Hänge, ohne dass ein Fahrzeug durch die Rebzeilen fährt. Der Boden bleibt unberührt und die Arbeit geht schneller.',
       cta: 'Meine Parzelle schätzen',
-      tags: ['Steillage', 'Terrassen', 'Boden geschont'],
       alt: 'Schweizer Reben auf Terrassen im Lavaux',
     },
     advantages: {
@@ -142,8 +133,6 @@ export default {
       ],
     },
     how: {
-      next: 'Nächster Schritt',
-      listLabel: 'Die vier Schritte der Anfrage',
       eyebrow: 'So funktioniert es',
       title: 'Ihre Schätzung in vier Schritten.',
       cta: 'Anfrage starten',
@@ -155,7 +144,7 @@ export default {
       ],
     },
     drone: {
-      chips: ['Ausrüstung', 'Bilder: DJI'],
+      credit: 'Bilder: DJI',
       tankLabel: 'Sprühtank',
       cta: 'Zur Ausrüstung',
       eyebrow: 'Unsere Drohne',
@@ -170,10 +159,7 @@ export default {
       ],
     },
     cine: {
-      films: [
-        { label: 'Lavaux, Gesamtansicht', alt: 'Drohnenflug über den Terrassen des Lavaux, unten der Genfersee' },
-        { label: 'Terrassen aus der Nähe', alt: 'Drohnenflug entlang der Rebzeilen und Trockenmauern des Lavaux' },
-      ],
+      film: { label: 'Flug über Epesses (Lavaux)', alt: 'Drohnenflug über den Terrassen von Epesses, unten der Genfersee' },
       eyebrow: 'In Bildern',
       title: 'Die Weinberge von oben.',
       lead: 'Von den Terrassen des Lavaux bis ans Ufer des Genfersees, gefilmt mit der Drohne. Die anspruchsvollen Landschaften, für die dieser Dienst gedacht ist.',
@@ -233,7 +219,6 @@ export default {
   },
 
   equipment: {
-    chips: ['Ausrüstung', 'Landwirtschaftliche Sprühdrohne'],
     creditShort: 'Bilder und Videos: DJI',
     eyebrow: 'Ausrüstung',
     title: 'DJI Agras T50',
@@ -317,6 +302,7 @@ export default {
     phoneTitle: 'Telefon',
     emailTitle: 'E-Mail',
     addressTitle: 'Adresse',
+    pending: 'Bald verfügbar',
     areaTitle: 'Einsatzgebiet',
     areaText: (base) => `Hauptgebiet: Kanton Waadt und Westschweiz. Anfahrten bis rund 100 km ab unserem Stützpunkt in ${base}. Darüber hinaus auf Offerte.`,
     estimateTitle: 'Sie möchten einen Preis?',

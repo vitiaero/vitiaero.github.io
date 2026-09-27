@@ -17,7 +17,8 @@ export default function MobileCta() {
   const phone = filled(company.phone);
   return (
     <div className={`mobile-cta${phone ? '' : ' single'}`}>
-      <Link to="/devis" className="btn btn-primary">{t.quote.button}</Link>
+      {/* Meme action principale que l'en-tete et l'accueil : l'estimation */}
+      <Link to="/estimation" className="btn btn-primary">{t.common.requestEstimate}</Link>
       {phone && (
         <a href={`tel:${String(company.phone).replace(/[^\d+]/g, '')}`} className="btn btn-outline">
           <Icon name="phone" size={18} />

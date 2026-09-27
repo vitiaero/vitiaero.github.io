@@ -14,7 +14,7 @@ function Steps({ s }) {
   return (
     <section className="section" id="etapes">
       <div className="container">
-        <div className="section-head center">
+        <div className="section-head">
           <Reveal>
             <h2 className="h2">{s.stepsTitle}</h2>
           </Reveal>
@@ -34,7 +34,7 @@ function Steps({ s }) {
             </Reveal>
           ))}
         </div>
-        <div className="text-center mt-4">
+        <div className="mt-4">
           <a href="#rapport" className="btn btn-outline">{s.stepsCta}</a>
         </div>
       </div>
@@ -46,11 +46,11 @@ function Conditions({ c }) {
   return (
     <section className="section bg-soft" id="conditions">
       <div className="container">
-        <div className="section-head center">
+        <div className="section-head">
           <Reveal>
             <span className="eyebrow">{c.eyebrow}</span>
             <h2 className="h2">{c.title}</h2>
-            <p className="lead mt-2" style={{ maxWidth: '66ch', margin: '1rem auto 0' }}>{c.lead}</p>
+            <p className="lead mt-2">{c.lead}</p>
           </Reveal>
         </div>
         <div className="grid grid-3 grid-cards">
@@ -105,7 +105,7 @@ function Rules({ r, commitments }) {
 
       <section className="section bg-soft" id="engagements">
         <div className="container">
-          <div className="section-head center">
+          <div className="section-head">
             <Reveal>
               <span className="eyebrow">{commitments.eyebrow}</span>
               <h2 className="h2">{commitments.title}</h2>

@@ -105,14 +105,6 @@ export default {
       title: 'Treat your vines on steep slopes, with no machines on the ground.',
       lead: 'Request an online estimate for spraying your plots by drone. Free, with no obligation. You then receive a detailed quote.',
       how: 'How it works',
-      note: 'Drone used: DJI Agras T50 - 40-litre spray tank.',
-      scrollAria: 'Scroll down',
-      discover: 'Discover',
-      place: 'Canton of Vaud',
-      clockLabel: 'Time in Switzerland',
-      chips: ['Sloping vineyards', 'Terraces', 'DJI Agras T50'],
-      flow: ['Free estimate', 'Detailed quote'],
-      droneLink: 'See the DJI Agras T50 drone',
     },
     stats: [
       { num: '40 L', label: 'Spray tank' },
@@ -126,7 +118,6 @@ export default {
       lead: 'In Swiss vineyards, many plots are on steep slopes or terraces. They are hard work to treat and often out of reach for machines.',
       text: 'The drone flies over the vines and applies the treatment from the air. It reaches steep slopes without any vehicle driving between the rows. The soil stays intact and the work is faster.',
       cta: 'Estimate my plot',
-      tags: ['Steep slopes', 'Terraces', 'Soil preserved'],
       alt: 'Swiss terraced vineyards in Lavaux',
     },
     advantages: {
@@ -142,8 +133,6 @@ export default {
       ],
     },
     how: {
-      next: 'Next step',
-      listLabel: 'The four steps of the request',
       eyebrow: 'How it works',
       title: 'Your estimate in four steps.',
       cta: 'Start my request',
@@ -155,7 +144,7 @@ export default {
       ],
     },
     drone: {
-      chips: ['Equipment', 'Images: DJI'],
+      credit: 'Images: DJI',
       tankLabel: 'Spray tank',
       cta: 'See the equipment',
       eyebrow: 'Our drone',
@@ -170,10 +159,7 @@ export default {
       ],
     },
     cine: {
-      films: [
-        { label: 'Lavaux, overview', alt: 'Drone flight over the Lavaux terraces, with Lake Geneva below' },
-        { label: 'Terraces up close', alt: 'Drone flight along the vine rows and stone walls of Lavaux' },
-      ],
+      film: { label: 'Flight over Epesses (Lavaux)', alt: 'Drone flight over the Epesses terraces, with Lake Geneva below' },
       eyebrow: 'In pictures',
       title: 'The vineyards from above.',
       lead: 'From the terraces of Lavaux to the shores of Lake Geneva, filmed by drone. The demanding landscapes this service is designed for.',
@@ -233,7 +219,6 @@ export default {
   },
 
   equipment: {
-    chips: ['Equipment', 'Agricultural spraying drone'],
     creditShort: 'Images and videos: DJI',
     eyebrow: 'Equipment',
     title: 'DJI Agras T50',
@@ -317,6 +302,7 @@ export default {
     phoneTitle: 'Phone',
     emailTitle: 'Email',
     addressTitle: 'Address',
+    pending: 'Available soon',
     areaTitle: 'Service area',
     areaText: (base) => `Main area: canton of Vaud and French-speaking Switzerland. Travel up to about 100 km from our base in ${base}. Beyond that, by quote.`,
     estimateTitle: 'Looking for a price?',

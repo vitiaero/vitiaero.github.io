@@ -10,8 +10,8 @@ import { useI18n } from '../i18n/index.jsx';
 // Page Contact : coordonnees de l'entreprise et formulaire court, pour les
 // visiteurs qui ne veulent pas tracer de parcelle.
 // Les coordonnees viennent de `company` (src/content.js). Tant qu'une valeur
-// est entre crochets, elle reste affichee telle quelle : rien n'est invente,
-// et aucun lien clicable n'est cree vers une adresse qui n'existe pas.
+// est entre crochets, la carte indique "Bientot disponible" : rien n'est
+// invente, et aucun lien clicable n'est cree vers une adresse qui n'existe pas.
 const filled = (v) => !!v && !String(v).trim().startsWith('[');
 
 // Champs obligatoires du formulaire, verifies a la sortie du champ et a l'envoi.
@@ -85,7 +85,7 @@ export default function Contact() {
             <InfoCard icon="phone" title={c.phoneTitle}>
               {filled(company.phone)
                 ? <a href={telHref(company.phone)}>{company.phone}</a>
-                : <span className="muted">{company.phone}</span>}
+                : <span className="muted">{c.pending}</span>}
             </InfoCard>
             <InfoCard icon="mail" title={c.emailTitle}>
               {filled(company.email)
@@ -93,9 +93,9 @@ export default function Contact() {
                 : <span className="muted">{company.email}</span>}
             </InfoCard>
             <InfoCard icon="pin" title={c.addressTitle}>
-              <span className={filled(company.address) ? undefined : 'muted'}>
-                {company.address}<br />{company.npa} {company.city}
-              </span>
+              {filled(company.address)
+                ? <span>{company.address}<br />{company.npa} {company.city}</span>
+                : <span className="muted">{c.pending}</span>}
             </InfoCard>
             <InfoCard icon="map" title={c.areaTitle}>
               {c.areaText(BASE.label)}
