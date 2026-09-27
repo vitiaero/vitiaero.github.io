@@ -171,7 +171,7 @@ export default {
       title: 'Une solution pour les parcelles difficiles.',
       lead: 'Dans le vignoble suisse, beaucoup de parcelles sont en forte pente ou en terrasses. Elles sont pénibles à traiter et souvent inaccessibles aux machines.',
       text: 'Le drone survole la vigne et applique le traitement depuis le ciel. Il atteint les coteaux raides sans qu\'aucun engin ne roule dans les rangs. Le sol n\'est pas tassé.',
-      cta: 'Estimer ma parcelle',
+      cta: 'Estimer ma parcelle, sans engagement',
       alt: 'Vignes en terrasses d\'Epesses vues du ciel, au-dessus du Léman',
     },
     advantages: {
@@ -188,7 +188,7 @@ export default {
     how: {
       eyebrow: 'Comment ça marche',
       title: 'Votre estimation en quatre étapes.',
-      cta: 'Commencer mon estimation',
+      cta: 'Commencer mon estimation, sans engagement',
       steps: [
         { no: 'Étape 1', title: 'Tracez vos parcelles', text: 'Sur la carte, dessinez vos parcelles point par point, ou importez un fichier. La surface se calcule automatiquement.' },
         { no: 'Étape 2', title: 'Décrivez votre besoin', text: 'Indiquez le nombre de passages, le type de traitement et la période qui vous arrange.' },
@@ -441,7 +441,7 @@ export default {
     eyebrow: 'Devis personnalisé',
     title: 'Votre parcelle mérite une solution adaptée',
     lead: 'Envoyez-nous les informations principales de votre parcelle. Nous évaluons les conditions d\'intervention et vous proposons un devis écrit, gratuit et sans engagement.',
-    button: 'Demander un devis gratuit',
+    button: 'Devis gratuit et sans engagement',
     formTitle: 'Votre parcelle',
     name: 'Nom *',
     company: 'Entreprise ou domaine (facultatif)',
@@ -463,14 +463,14 @@ export default {
     fileTooBig: 'Ce fichier dépasse 4 Mo.',
     fileType: 'Format non accepté. Images et PDF uniquement.',
     fileCount: '3 fichiers au maximum.',
-    send: 'Envoyer ma demande de devis',
+    send: 'Envoyer ma demande de devis (sans engagement)',
     sending: 'Envoi...',
     okTitle: 'Demande envoyée.',
     okText: 'Merci. Un e-mail de confirmation va vous être envoyé. Nous étudions votre parcelle, puis vous proposons un devis écrit, sans engagement.',
     again: 'Envoyer une autre demande',
     mapTitle: 'Vous préférez tracer votre parcelle ?',
     mapText: 'L\'estimation en ligne calcule un prix indicatif à partir de la carte, en quelques minutes.',
-    mapCta: 'Estimer sur la carte',
+    mapCta: 'Estimer sur la carte, sans engagement',
   },
 
   about: {
@@ -530,7 +530,7 @@ export default {
       difficult: { label: 'Parcelle très difficile', hint: 'Forte pente, accès compliqué : +10 à 25 %, confirmé après étude' },
       dispersed: { label: 'Parcelles très dispersées', hint: 'Éloignées les unes des autres : +10 à 30 %, confirmé après étude' },
     },
-    quoteCta: 'Demander un devis personnalisé',
+    quoteCta: 'Demander un devis personnalisé (sans engagement)',
     ratesToggle: 'Voir la grille des tarifs',
     ratesNote: 'Tarifs indicatifs. Le prix définitif est confirmé dans le devis, après étude de la parcelle et des conditions d\'intervention. Produits phytosanitaires non compris, sauf indication contraire dans le devis.',
     rates: {
@@ -715,7 +715,7 @@ export default {
     },
     requests: {
       title: 'Mes demandes d\'estimation',
-      new: 'Nouvelle demande',
+      new: 'Nouvelle estimation, sans engagement',
       empty: 'Vous n\'avez pas encore de demande. Lancez votre première estimation.',
       number: 'N°',
       estimate: 'Estimation par an',

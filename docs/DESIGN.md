@@ -55,7 +55,8 @@ avant le lancement, mais c'est ce qui manque le plus à la crédibilité.
 
 **Trois remplacements honnêtes, sans rien inventer** :
 
-- une photo réelle du matériel, même simple, à la place des visuels DJI ;
+- une photo réelle du matériel, même simple, à côté des schémas (les visuels DJI
+  ont été retirés le 27.9.2026 faute d'accord écrit) ;
 - le cadre réglementaire remonté plus haut : c'est factuel et cela rassure ;
 - le délai de réponse annoncé, déjà présent dans les chiffres.
 
@@ -129,8 +130,9 @@ courte. Une demi-heure.
 - **Le contraste du texte du hero par-dessus la vidéo.** Il est bon à l'œil, un
   dégradé sombre le protège, mais aucune mesure automatique ne sait lire un fond
   vidéo. À vérifier dehors, en plein soleil, cas typique d'un vigneron.
-- **Les droits des visuels DJI** (voir `CREDITS-IMAGES.txt`). Des photos du
-  matériel réel règlent le sujet et améliorent la crédibilité.
+- **Des photos du matériel réel** (voir `CREDITS-IMAGES.txt`) : les visuels DJI
+  sont retirés ; de vraies photos, avec l'accord des personnes visibles,
+  amélioreraient la crédibilité (F4).
 
 ## Par où commencer
 

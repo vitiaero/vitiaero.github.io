@@ -87,6 +87,10 @@ h1, h2, h3, h4 {
   letter-spacing: -0.01em;
   line-height: 1.08;
   color: var(--ink);
+  /* Mots composes allemands (« Geschaeftsbedingungen ») : coupure plutot que
+     debordement sur petit ecran. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 p { margin: 0; }
@@ -169,6 +173,11 @@ button { font-family: inherit; cursor: pointer; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover { filter: brightness(0.92); }
+/* Telephone : un libelle long (« ..., sans engagement ») passe a la ligne au
+   lieu d'elargir la page. */
+@media (max-width: 560px) {
+  .btn { white-space: normal; text-align: center; max-width: 100%; line-height: 1.25; }
+}
 
 /* ------------------------------ Header ------------------------------ */
 /* Bandeau de pre-lancement : affiche tant que la porte de lancement
@@ -1855,7 +1864,7 @@ textarea:focus-visible,
   .mobile-cta.single { grid-template-columns: 1fr; }
   /* Menu ouvert : la barre disparait, elle recouvrait le dernier bouton. */
   body.menu-open .mobile-cta { display: none; }
-  .mobile-cta .btn { width: 100%; min-height: 48px; justify-content: center; gap: 0.45rem; }
+  .mobile-cta .btn { width: 100%; min-height: 48px; justify-content: center; gap: 0.45rem; white-space: normal; text-align: center; line-height: 1.2; padding-left: 0.9rem; padding-right: 0.9rem; }
   /* La barre ne doit jamais masquer le pied de page ni le bandeau vie privee */
   .footer { padding-bottom: 96px; }
   .privacy-banner { bottom: 84px; }

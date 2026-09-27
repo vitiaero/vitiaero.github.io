@@ -60,9 +60,9 @@ export default function privacy(b, lang) {
       en: `Customer accounts: deleted after ${rt.inactiveAccountsMonths} months without a login, except records linked to a contract.`,
     }),
     rt.backupsDays > 0 && tr(lang, {
-      fr: `Sauvegardes chiffrées : ${rt.backupsDays} jours.`,
-      de: `Verschlüsselte Sicherungen: ${rt.backupsDays} Tage.`,
-      en: `Encrypted backups: ${rt.backupsDays} days.`,
+      fr: `Sauvegardes chiffrées : ${rt.backupsDays} jours. Une donnée effacée peut y subsister jusqu'à la fin de ce délai.`,
+      de: `Verschlüsselte Sicherungen: ${rt.backupsDays} Tage. Gelöschte Daten können bis zum Ablauf dieser Frist darin enthalten bleiben.`,
+      en: `Encrypted backups: ${rt.backupsDays} days. Deleted data may remain in them until the end of this period.`,
     }),
     rt.serverLogsDays > 0 && tr(lang, {
       fr: `Journaux techniques du serveur : ${rt.serverLogsDays} jours.`,

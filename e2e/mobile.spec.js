@@ -12,8 +12,11 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-for (const width of [360, 412]) {
-  test(`largeur ${width} px : aucun debordement horizontal`, async ({ page }) => {
+for (const [width, lang] of [[360, 'fr'], [412, 'fr'], [768, 'fr'], [360, 'de'], [360, 'en']]) {
+  test(`largeur ${width} px (${lang}) : aucun debordement horizontal`, async ({ page }) => {
+    await page.addInitScript((l) => {
+      try { localStorage.setItem('vitiaero_lang', l); } catch { /* ignore */ }
+    }, lang);
     await page.setViewportSize({ width, height: 800 });
     const overflow = [];
     for (const path of PAGES) {

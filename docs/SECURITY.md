@@ -5,8 +5,31 @@ qui est en place, ce qui a été corrigé, et surtout **ce qui reste à faire**.
 garantit pas une sécurité totale : aucun site ne peut l'être. La conformité légale
 (textes, sources, points ouverts) est traitée dans `CONFORMITE.md`.
 
-Signaler une faille : écrire à l'adresse de contact du site, sans publier le détail
-dans une issue GitHub publique.
+Signaler une faille : écrire à l'adresse de contact du site (aussi publiée dans
+`/.well-known/security.txt`), sans publier le détail dans une issue GitHub publique.
+
+---
+
+## 0. Mise à jour du 27 septembre 2026
+
+Le code de l'API est passé de `server/index.js` à `server/app.js` (les tableaux
+ci-dessous citent l'ancien emplacement). Ajouts :
+
+| Sujet | Mesure | Fichiers |
+|---|---|---|
+| Pré-lancement | En production, tout envoi est refusé (503) tant que la porte de lancement est fermée ou que l'envoi d'e-mails n'est pas configuré. `ALLOW_PRELAUNCH_SUBMISSIONS` est réservé aux serveurs de test | `server/app.js`, `shared/launch.js` |
+| Preuve de lecture | Seules les versions publiées des documents sont acceptées (409 sinon) ; document, version, date et finalité enregistrés | `server/app.js` |
+| Données de démonstration | Ignorées en production, même avec `DEMO_DATA=1` | `server/db.js` |
+| En-têtes de l'API | `Content-Security-Policy: default-src 'none'`, `Cache-Control: no-store`, `X-Robots-Tag: noindex` | `server/app.js` |
+| Indexation | `robots.txt`, plan du site et `noindex` générés selon l'état de lancement ; espaces privés jamais indexés | `shared/site.js` |
+| security.txt | Publié à la compilation, expire après 180 jours, renouvelé chaque semaine | `shared/site.js` |
+| Journaux | JSON, sans adresse IP, e-mail ni contenu ; identifiants numériques masqués | `server/log.js` |
+| Sauvegardes | AES-256-GCM, clé hors des sauvegardes, nom du fichier authentifié, empreintes, relecture après écriture, restauration sans écrasement ; l'outil en ligne de commande n'ouvre jamais la base en écriture | `server/backup.js`, `server/backup-cli.js` |
+| E-mails | SMTP chiffré (TLS, ou STARTTLS obligatoire en 587), texte brut, file d'attente effacée après envoi, erreurs enregistrées sans détail personnel | `server/mail.js` |
+| Calcul des distances | Serveur public OSRM refusé au démarrage ; OSRM auto-hébergé en option | `server/routing.js` |
+| Données personnelles | Export et suppression du compte (mot de passe exigé), effacement par l'équipe, purge quotidienne, journal LPD sans donnée personnelle | `server/privacy.js` |
+| Chaîne d'approvisionnement | `@turf/turf` remplacé par `@turf/area` ; tests exigés avant chaque publication ; licences des logiciels tiers publiées | `package.json`, `.github/workflows/` |
+| Surveillance | Contrôle horaire du site publié et de l'API | `.github/workflows/surveillance.yml` |
 
 ---
 
@@ -47,8 +70,8 @@ Base de données + pièces jointes (jamais publiques)
   publique par nature).
 - L'API n'accepte les appels du navigateur que depuis l'origine déclarée dans
   `ALLOWED_ORIGINS`.
-- Tant qu'aucune API n'est en ligne, la vitrine fonctionne, mais les formulaires,
-  la connexion et l'administration affichent une erreur. Voir `DEPLOIEMENT.md`.
+- Tant qu'aucune API n'est en ligne, la vitrine fonctionne et les formulaires
+  restent fermés avec un message clair. Voir `DEPLOIEMENT.md`.
 
 ---
 
@@ -71,7 +94,7 @@ authentification.
 ### Moyen (corrigés)
 | Problème | Correction | Fichiers |
 |---|---|---|
-| Codes promo de démonstration (publics dans le dépôt) créés aussi en production | Données de démonstration uniquement en local, ou si `DEMO_DATA=1` | `server/db.js` |
+| Codes promo de démonstration (publics dans le dépôt) créés aussi en production | Données de démonstration uniquement hors production (`DEMO_DATA=1` ignoré en production depuis le 27.9.2026) | `server/db.js` |
 | Boutons « comptes de démonstration » visibles en ligne (adresse admin exposée, boutons inutiles car les mots de passe diffèrent) | Affichés seulement en développement | `src/pages/Login.jsx` |
 | Jetons de session stockés en clair en base | Seule l'empreinte SHA-256 est stockée ; anciennes sessions supprimées | `server/db.js`, `server/index.js` |
 | PBKDF2 à 120 000 itérations, calcul bloquant | 600 000 itérations, calcul asynchrone, mise à niveau automatique à la connexion | `server/db.js`, `server/index.js` |
@@ -115,10 +138,9 @@ authentification.
   onglet ont `rel="noreferrer"` (qui implique `noopener`).
 - Aucune redirection pilotée par un paramètre d'URL.
 - Pas de fichier source (`.map`) publié. Favicon SVG sans script.
-- `robots.txt` bloque l'indexation pendant le lancement et `sitemap.xml` ne liste
-  que des pages publiques. Rappel : `robots.txt` n'est **pas** une protection, il
-  est public et indique au contraire ce qu'on voudrait cacher. `/admin` est protégé
-  par le serveur, pas par ce fichier.
+- `robots.txt` et `sitemap.xml` sont générés selon l'état de lancement (tout
+  bloqué et aucun plan du site en pré-lancement). Rappel : `robots.txt` n'est
+  **pas** une protection, il est public. `/admin` est protégé par le serveur.
 
 ---
 
@@ -225,35 +247,25 @@ envoie déjà tous ces en-têtes (`server/index.js`).
 
 ## 7. Données personnelles (nLPD)
 
-Ce qui est en place : pages confidentialité, mentions légales, cookies (inventaire
-du stockage local et bouton d'effacement), consentement avant envoi, minimisation
-(pas de date de naissance, pas d'adresse postale obligatoire), aucun traceur,
-droits rappelés avec le contact et le PFPDT.
+En place : textes juridiques générés à partir des données réelles
+(`shared/legal/`), preuve de lecture versionnée, stockage local listé avec
+bouton d'effacement, minimisation (aucune date de naissance, adresse postale
+facultative), aucun traceur, conservation limitée, export et effacement,
+sauvegardes chiffrées. Détail : `EXPLOITATION.md` et `SERVICES-TIERS.md`.
 
-**À valider juridiquement ou à compléter (non inventé ici) :**
-1. **Hébergeur du site** : GitHub, Inc. (États-Unis). GitHub reçoit l'adresse IP
-   des visiteurs (journaux techniques). Transfert vers les États-Unis : vérifier le
-   cadre applicable (Swiss-U.S. Data Privacy Framework et certification de
-   l'entreprise) et compléter `company.host` et la section 8 de la politique.
-2. **Hébergeur de l'API et de la base** : nom, pays, région des données. Choisir
-   si possible une région en Suisse ou dans l'UE.
-3. **Durées de conservation** : les valeurs entre crochets ([24 mois], [10 ans])
-   sont des propositions. Définir aussi la durée des pièces jointes, puis mettre en
-   place l'effacement réel (aujourd'hui manuel).
-4. **Service d'itinéraire OSRM** : exploitant et pays à vérifier (déjà signalé dans
-   la politique). Seules des coordonnées lui sont envoyées.
-5. **Registre des activités de traitement** : exigé au-delà de 250 employés ou pour
-   un traitement à risque élevé ; à évaluer.
-6. **Annonce des violations** au PFPDT : prévoir une procédure simple.
-7. **Sous-traitants** : contrat avec l'hébergeur de l'API (conditions de traitement
-   des données).
+**À fournir ou à valider (rien n'est inventé ici)** : hébergeur de l'API,
+stockage des sauvegardes, fournisseurs d'e-mail, décision sur GitHub Pages,
+durées de conservation manquantes, contrats de sous-traitance, registre des
+activités de traitement, procédure d'annonce des violations. Références B et C
+de `INFORMATIONS-MANQUANTES.md`.
 
 ---
 
 ## 8. Dépendances et chaîne d'approvisionnement
 
-- 7 dépendances d'exécution, 3 de développement, toutes figées dans
-  `package-lock.json`. `npm audit` : 0 vulnérabilité au 14.09.2026.
+- 8 dépendances d'exécution, 5 de développement (dont Playwright et axe pour
+  les tests), toutes figées dans `package-lock.json`. `npm audit` :
+  0 vulnérabilité au 27.09.2026.
 - Aucune ressource chargée depuis un CDN.
 - GitHub Actions : installation par `npm ci --ignore-scripts` (aucun script
   d'installation exécuté), puis `npm audit --audit-level=high` qui bloque la
@@ -300,15 +312,14 @@ variable utilisateur insérée dans une commande shell.
 
 ## 10. Variables de l'API (hébergeur séparé)
 
-| Variable | Rôle |
-|---|---|
-| `NODE_ENV=production` | Mots de passe de démonstration refusés, pas de données fictives |
-| `ADMIN_PASSWORD` | Mot de passe administrateur, long et unique |
-| `ADMIN_EMAIL` | Facultatif |
-| `ALLOWED_ORIGINS` | Origine exacte du site, par exemple `https://www.vitiaero.ch` |
-| `TRUST_PROXY` | `1` derrière le proxy de l'hébergeur (défaut en production), `false` sans proxy |
-| `DEMO_DATA=1` | Seulement pour une démonstration : crée le client et les codes promo fictifs |
-| `CLIENT_PASSWORD` | Mot de passe du client fictif, si `DEMO_DATA=1` |
+Liste complète et rôle de chaque variable : `EXPLOITATION.md`, section 3. Points
+de sécurité :
+
+- `ADMIN_PASSWORD` : 12 caractères au moins ; sinon un mot de passe aléatoire est
+  généré et écrit une fois dans les journaux (le changer ensuite).
+- `BACKUP_KEY` : dans un coffre de mots de passe, jamais avec les sauvegardes.
+- `SMTP_PASS` : secret de l'hébergeur uniquement.
+- `ALLOW_PRELAUNCH_SUBMISSIONS` : jamais sur le site public.
 
 Aucun de ces secrets ne doit apparaître dans le dépôt ni dans GitHub Pages.
 
@@ -326,13 +337,15 @@ Aucun de ces secrets ne doit apparaître dans le dépôt ni dans GitHub Pages.
 - [ ] `npm audit` et alertes Dependabot, puis chaque mois.
 - [ ] Mot de passe administrateur changé si les journaux de l'hébergeur ont affiché
       un mot de passe généré.
-- [ ] Sauvegardes de la base testées (restauration).
+- [ ] Sauvegardes de la base testées (restauration, `EXPLOITATION.md` §6).
+- [ ] `https://adresse-du-site/.well-known/security.txt` répond.
+- [ ] Workflow « Surveillance » vert.
 
 ---
 
 ## Identifiants de démonstration (en local uniquement)
 - Admin : `admin@vitiaero.ch` / `admin1234`
 - Client : `client@vitiaero.ch` / `client1234`
-- Codes promo : `VIGNE10`, `LAVAUX15`
+- Codes promo : `VIGNE10`, `ANCIEN` (inactif)
 
-En ligne, `admin1234` est refusé et ces données n'existent pas (sauf `DEMO_DATA=1`).
+En production, `admin1234` est refusé et ces données n'existent jamais.

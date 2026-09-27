@@ -23,40 +23,47 @@ dans GitHub Desktop, **Revert changes in commit**).
 
 | Je veux changer... | Fichier |
 |---|---|
-| Un texte du site (titres, paragraphes, boutons, FAQ) | `src/i18n/fr.js` |
-| Le même texte en allemand ou en anglais | `src/i18n/de.js`, `src/i18n/en.js` |
-| Les coordonnées de l'entreprise | `src/content.js`, bloc `company` |
-| Le bandeau « lancement prochain » | `src/content.js`, `preLaunch` |
+| Un texte du site (titres, paragraphes, boutons, FAQ) | `src/i18n/fr.js`, puis `de.js` et `en.js` (mêmes clés) |
+| Les coordonnées de l'entreprise, les prestataires, les durées de conservation, les conditions commerciales, l'assurance, les autorisations | `shared/business.js` |
+| Les mentions légales, la confidentialité, les cookies, les CGV, les conditions d'utilisation, les crédits | `shared/legal/*.js` (texte), puis `npm run legal:version` |
 | Les tarifs, les frais de déplacement, la base de départ | `shared/pricing.js` |
-| Les notes sous l'estimation (TVA, produits non compris) | `src/i18n/fr.js`, `estimation.notes` |
-| Les mentions légales, la confidentialité, les CGV | `src/pages/legal/` |
-| Une image | `public/images/` (garder le même nom de fichier) |
-| Une vidéo | `public/videos/` (moins de 100 Mo par fichier) |
+| Une image ou une vidéo | `public/`, **et** sa déclaration dans `shared/media.js` |
 | Les couleurs et la mise en page | `src/styles.css` |
-| L'indexation par les moteurs de recherche | `public/robots.txt` |
+| Un service externe autorisé (carte, recherche) | `shared/security.js` |
+
+Le bandeau de pré-lancement, `robots.txt`, le plan du site et l'ouverture des
+formulaires ne se modifient pas à la main : ils suivent la porte de lancement
+(`npm run launch:status`).
 
 ### Exemples courants
 
-**Corriger une phrase.** Chercher la phrase dans `src/i18n/fr.js` (Ctrl+F),
-la modifier entre les guillemets, enregistrer. Penser à `de.js` et `en.js` si
-la phrase existe aussi dans ces langues. Si une traduction manque, le site
-affiche le texte français à la place, sans rien casser.
+**Corriger une phrase.** La chercher dans `src/i18n/fr.js` (Ctrl+F), la
+modifier entre les guillemets, puis faire de même dans `de.js` et `en.js`. Un
+test vérifie que les trois fichiers ont exactement les mêmes clés.
 
-**Ajouter le téléphone.** Dans `src/content.js`, remplacer `'[TELEPHONE]'`
-par le numéro, par exemple `'021 123 45 67'`. Le numéro apparaît alors tout
-seul dans la page Contact, le pied de page et le bouton « Appeler » sur mobile.
-Tant qu'une valeur commence par `[`, elle reste masquée.
+**Renseigner une information de l'entreprise.** Dans `shared/business.js`,
+remplacer `null` par la valeur réelle (par exemple l'adresse postale). `null`
+veut dire « pas encore fourni » et bloque le lancement ; `false` veut dire
+« sans objet » (par exemple : pas de numéro TVA). Ne jamais écrire de valeur
+d'exemple. Si le texte d'un document juridique change, lancer
+`npm run legal:version`, relire, puis publier.
 
-**Changer un tarif.** Dans `shared/pricing.js`, la liste `PRICE_PER_HA` donne
-le prix par hectare selon le nombre de passages (1er, 2e, 3e...). Le
-calculateur du site et le serveur utilisent tous deux ce fichier : un seul
-changement suffit.
+**Ajouter un justificatif** (autorisation, contrôle, permis). Dans
+`shared/business.js`, liste `credentials` : type, référence, autorité, date de
+délivrance, échéance (ou `false`), date de vérification. Le site ne l'affiche
+que complet et non échu. Ne jamais déposer le document lui-même dans le dépôt.
 
-**Remplacer une image.** Déposer la nouvelle image dans `public/images/` avec
-**exactement le même nom** que l'ancienne. Idéalement en JPG ou WebP, moins de
-500 Ko, dans les mêmes proportions.
+**Ajouter le téléphone.** `identity.phone` dans `shared/business.js` : le
+numéro apparaît dans la page Contact, le pied de page et le bouton « Appeler »
+sur mobile.
 
----
+**Changer un tarif.** `PRICE_PER_HA` dans `shared/pricing.js` : le calcul du
+site et celui du serveur utilisent tous deux ce fichier.
+
+**Remplacer une image.** Déposer le fichier dans `public/images/`, le déclarer
+dans `shared/media.js` (auteur, droit d'usage, licence, preuve), puis
+l'utiliser dans `src/content.js`. Sans déclaration, la compilation refuse de
+publier. Formats conseillés : WebP pour les photos, moins de 300 Ko.
 
 ## Règles à respecter
 
@@ -72,18 +79,21 @@ changement suffit.
 - **Aucun mot de passe ni clé secrète dans le code.** Ils se mettent dans les
   variables d'environnement de l'hébergeur (voir `DEPLOIEMENT.md`). Tout ce qui
   est dans `src/`, `public/` et `index.html` est public.
-- **Images et vidéos** : dans le code, toujours `asset('/images/nom.jpg')`
-  (fichier `src/config.js`), jamais `"/images/nom.jpg"` en dur, sinon l'image
-  ne s'affiche pas sur GitHub Pages.
-- **Nouveau service externe** (vidéo YouTube, statistiques, police Google...) :
-  il sera bloqué par la politique de sécurité tant qu'il n'est pas ajouté dans
-  `shared/security.js`. L'ajouter aussi dans la politique de confidentialité.
+- **Images et vidéos** : dans le code, toujours `asset('/images/nom.webp')`
+  (fichier `src/config.js`), jamais `"/images/nom.webp"` en dur, sinon l'image
+  ne s'affiche pas sur GitHub Pages. Chaque fichier de `public/` doit être
+  déclaré dans `shared/media.js`.
+- **Nouveau service externe** (vidéo, statistiques, police...) : il sera bloqué
+  par la politique de sécurité tant qu'il n'est pas ajouté dans
+  `shared/security.js`, et doit être déclaré dans `shared/business.js`
+  (`services`) pour figurer dans la politique de confidentialité
+  (`docs/SERVICES-TIERS.md`).
 - Ne jamais annoncer une autorisation, un client, un chiffre ou un avis qui
-  n'existe pas encore.
+  n'existe pas encore. Ne jamais présenter une estimation comme une commande.
+- Avant d'envoyer : `npm test` puis `npm run build`.
 
 ## Avec Claude Code
 
 Ouvrir ce dossier dans Claude Code et décrire le changement en français
-(« Ajoute le numéro 021 123 45 67 », « Change le tarif à 620 CHF pour le
-deuxième passage »). Le fichier `docs/REPRISE.md` lui donne tout le contexte du
+(« Renseigne l'adresse postale », « Change le tarif du deuxième passage »). Le fichier `docs/REPRISE.md` lui donne tout le contexte du
 projet. Relire ce qui a changé dans GitHub Desktop avant de faire le commit.

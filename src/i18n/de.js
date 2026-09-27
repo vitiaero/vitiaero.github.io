@@ -169,7 +169,7 @@ export default {
       title: 'Eine Lösung für schwierige Parzellen.',
       lead: 'Im Schweizer Rebbau liegen viele Parzellen in steilen Hängen oder auf Terrassen. Sie sind mühsam zu behandeln und für Maschinen oft unzugänglich.',
       text: 'Die Drohne überfliegt die Reben und bringt die Behandlung aus der Luft aus. Sie erreicht steile Hänge, ohne dass ein Fahrzeug durch die Rebzeilen fährt. Der Boden wird nicht verdichtet.',
-      cta: 'Meine Parzelle schätzen',
+      cta: 'Meine Parzelle unverbindlich schätzen',
       alt: 'Rebterrassen von Epesses aus der Luft, über dem Genfersee',
     },
     advantages: {
@@ -186,7 +186,7 @@ export default {
     how: {
       eyebrow: 'So funktioniert es',
       title: 'Ihre Schätzung in vier Schritten.',
-      cta: 'Meine Schätzung starten',
+      cta: 'Unverbindliche Schätzung starten',
       steps: [
         { no: 'Schritt 1', title: 'Parzellen einzeichnen', text: 'Zeichnen Sie Ihre Parzellen Punkt für Punkt auf der Karte ein oder importieren Sie eine Datei. Die Fläche wird automatisch berechnet.' },
         { no: 'Schritt 2', title: 'Bedarf beschreiben', text: 'Geben Sie die Anzahl Durchgänge, die Art der Behandlung und den passenden Zeitraum an.' },
@@ -436,7 +436,7 @@ export default {
     eyebrow: 'Persönliche Offerte',
     title: 'Ihre Parzelle verdient eine passende Lösung',
     lead: 'Senden Sie uns die wichtigsten Angaben zu Ihrer Parzelle. Wir prüfen die Einsatzbedingungen und schlagen Ihnen eine schriftliche Offerte vor, kostenlos und unverbindlich.',
-    button: 'Kostenlose Offerte anfragen',
+    button: 'Kostenlose, unverbindliche Offerte',
     formTitle: 'Ihre Parzelle',
     name: 'Name *',
     company: 'Betrieb oder Weingut (freiwillig)',
@@ -458,14 +458,14 @@ export default {
     fileTooBig: 'Diese Datei ist grösser als 4 MB.',
     fileType: 'Format nicht zulässig. Nur Bilder und PDF.',
     fileCount: 'Höchstens 3 Dateien.',
-    send: 'Offertanfrage senden',
+    send: 'Offertanfrage senden (unverbindlich)',
     sending: 'Wird gesendet...',
     okTitle: 'Anfrage gesendet.',
     okText: 'Danke. Sie erhalten eine Bestätigung per E-Mail. Wir prüfen Ihre Parzelle und schlagen Ihnen danach eine schriftliche Offerte vor, unverbindlich.',
     again: 'Weitere Anfrage senden',
     mapTitle: 'Lieber Ihre Parzelle einzeichnen?',
     mapText: 'Die Online-Schätzung berechnet in wenigen Minuten einen Richtpreis anhand der Karte.',
-    mapCta: 'Auf der Karte schätzen',
+    mapCta: 'Unverbindlich auf der Karte schätzen',
   },
 
   about: {
@@ -524,7 +524,7 @@ export default {
       difficult: { label: 'Sehr schwierige Parzelle', hint: 'Starke Neigung, schwieriger Zugang: +10 bis 25 %, nach Prüfung bestätigt' },
       dispersed: { label: 'Stark verstreute Parzellen', hint: 'Weit voneinander entfernt: +10 bis 30 %, nach Prüfung bestätigt' },
     },
-    quoteCta: 'Persönliche Offerte anfragen',
+    quoteCta: 'Persönliche Offerte anfragen (unverbindlich)',
     ratesToggle: 'Tariftabelle anzeigen',
     ratesNote: 'Richtpreise. Der endgültige Preis wird in der Offerte bestätigt, nach Prüfung der Parzelle und der Einsatzbedingungen. Pflanzenschutzmittel nicht inbegriffen, sofern die Offerte nichts anderes angibt.',
     rates: {
@@ -709,7 +709,7 @@ export default {
     },
     requests: {
       title: 'Meine Anfragen für eine Schätzung',
-      new: 'Neue Anfrage',
+      new: 'Neue unverbindliche Schätzung',
       empty: 'Sie haben noch keine Anfrage. Starten Sie Ihre erste Schätzung.',
       number: 'Nr.',
       estimate: 'Schätzung pro Jahr',

@@ -162,6 +162,20 @@ Informations à fournir :
 `BACKUP_KEY`, identifiants SMTP, `ALLOWED_ORIGINS`, et côté GitHub la variable
 `VITE_API_URL`. La liste complète est dans `docs/EXPLOITATION.md`.
 
+## Mise à jour après la migration (27.9.2026)
+
+Les tableaux ci-dessus décrivent l'état **avant** les modifications. Depuis :
+
+| Réf. | Nouvel état |
+|---|---|
+| B7 | Le serveur public OSRM n'est plus utilisé (refusé au démarrage). Distance à vol d'oiseau, signalée comme approximative ; OSRM auto-hébergé possible (`EXPLOITATION.md` §5). Reste à déclarer le choix dans `services.routing` |
+| B8 | Surveillance horaire par GitHub Actions en place (`.github/workflows/surveillance.yml`), sans service externe |
+| C7 | Règle appliquée : les preuves de lecture sont supprimées avec la demande à laquelle elles se rattachent. Reste à valider |
+| D17 | Commande en ligne refusée par la porte de lancement tant que le parcours contractuel n'existe pas |
+| F | Visuels DJI et fichiers d'origine non confirmée retirés. Fichiers publiés : `videos/vignoble-*.mp4`, `images/vignoble-*.webp` et `og-vitiaero.jpg` (source F1), `images/lavaux-1600.webp` (CC BY-SA 4.0), `images/logo-vitiaero*.webp` (F2), `fonts/inter-latin-3.19.woff2` (OFL). Registre : `shared/media.js` |
+
+État détaillé et à jour à tout moment : `npm run launch:status`.
+
 ## Ce que fait le site tant que des informations bloquantes manquent
 
 - Un bandeau indique en clair que le service est en pré-lancement.

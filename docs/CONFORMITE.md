@@ -1,112 +1,127 @@
 # Conformité légale du site VitiAero
 
-Vérification du 24 septembre 2026. Chaque règle a été lue dans le texte officiel,
-dans la version en vigueur indiquée en fin de document. Ce rapport n'est pas un
-avis juridique : il ne garantit pas une conformité totale. Une relecture par un
-juriste reste conseillée avant le lancement commercial.
+Vérification des textes officiels le 24 septembre 2026, mise en œuvre dans le
+code le 27 septembre 2026. Ce document n'est pas un avis juridique et ne
+garantit pas une conformité totale : chaque point marqué « juriste » ou
+« autorité » doit être validé avant le lancement (`CHECKLIST-LANCEMENT.md`).
 
-## En bref
+## En bref (27.9.2026)
 
 | Élément | État | Détail |
 |---|---|---|
-| Politique de confidentialité (nLPD) | Conforme sur le fond, adresse manquante | Réécrite dans les trois langues, section 2.2 |
-| Identité de l'éditeur | **Incomplet** | Nom inscrit ; adresse postale manquante |
-| Formulaires | Conforme | Aucun envoi aujourd'hui, information prévue pour l'activation |
-| Cookies | Conforme | Stockage réel listé, refus expliqué (art. 45c LTC) |
-| Google Analytics et autres services | Conforme | Aucun traceur ; chaque transfert à l'étranger est nommé |
-| Mentions légales | **Incomplet** | Même adresse manquante |
-| Prix et prestations | Corrigé | TVA, promesses nuancées, caractéristiques vérifiées |
-| Conditions générales | À compléter avant tout contrat | Paiement, annulation, assurance |
-| HTTPS | Certificat valide | Le site est hors ligne, voir 1.1 |
-| Images et droits | **Risque ouvert** | Visuels DJI sans accord écrit |
+| Lancement | **Pré-lancement** | 36 informations bloquantes (`npm run launch:status`) |
+| Identité de l'éditeur (art. 3 al. 1 let. s LCD, art. 19 LPD) | **À fournir** | Seules les données fournies sont affichées ; rien n'est inventé |
+| Politique de confidentialité | Complète pour ce qui existe, à relire | Générée depuis `shared/business.js` ; prestataires de l'API à déclarer |
+| Formulaires | Fermés en pré-lancement | Navigateur **et** serveur ; preuve de lecture enregistrée à l'ouverture |
+| Cookies et stockage local (art. 45c LTC) | Information et refus expliqués | Cinq clés techniques, listées sur la page Cookies, aucun traceur |
+| Transferts à l'étranger | Documentés | `SERVICES-TIERS.md` |
+| Prix et TVA | Mention provisoire | Le régime de TVA s'affichera une fois A5 fourni |
+| Conditions générales | Clauses publiées seulement quand fournies | Paiement, annulation, assurance, réclamations |
+| « Pas une commande » | Partout | Boutons, formulaires, récapitulatifs, confirmation, e-mails |
+| Autorisations et assurance | Aucune affichée | Affichées seulement complètes, vérifiées et non échues |
+| Médias | Droits établis ou en attente de déclaration | Visuels DJI retirés ; F1 et F2 bloquent le lancement |
+| Carte | Crédits visibles | swisstopo, OpenStreetMap, plan cadastral |
+| Indexation | Bloquée en pré-lancement | `robots.txt`, `noindex`, `X-Robots-Tag`, pas de plan du site |
+| Hébergement GitHub Pages | Décision à prendre (B3) | Règles d'usage commercial de GitHub Pages |
 
-## 1. Ce qui bloque encore
+## 1. Mise en œuvre des dix règles
 
-### 1.1 Le site est hors ligne
+1. **Aucune donnée fictive, aucun texte à compléter, aucune mention de projet
+   d'étude.** Les coordonnées viennent de `shared/business.js`, où `null`
+   signifie « pas encore fourni ». Un test (`test/content.test.js`) échoue si un
+   crochet, « projet d'étude » ou « données fictives » apparaît dans le code
+   publié. Les données de démonstration sont refusées par le serveur en
+   production.
+2. **Pré-lancement tant qu'un élément bloquant manque.** La porte de lancement
+   (`shared/launch.js`) contrôle 43 points (références A à G). Tant qu'un point
+   échoue : bandeau explicite, formulaires fermés (le serveur répond 503 en
+   production), indexation bloquée.
+3. **Médias.** Tous les visuels DJI et les fichiers d'origine non confirmée sont
+   retirés. Restent : la vidéo et les images d'Epesses filmées par le
+   propriétaire (déclaration écrite F1 attendue), la photo du Lavaux sous
+   licence CC BY-SA 4.0 avec crédit visible, des schémas vectoriels créés pour
+   le site, la police Inter (SIL OFL 1.1) et le logo (droits F2 à établir). Tout
+   fichier publié doit figurer dans `shared/media.js`, sinon la compilation
+   échoue. La page `/credits` liste auteurs, licences, fonds de carte et
+   logiciels (`licences-tiers.txt`, généré à la compilation).
+4. **Textes juridiques.** Mentions légales, confidentialité, cookies, CGV,
+   conditions d'utilisation et crédits sont écrits une fois, en français, en
+   allemand et en anglais, dans la même structure (`shared/legal/`). Un test
+   vérifie que les trois langues ont exactement les mêmes sections. Chaque
+   document a une version datée et une empreinte : un texte modifié sans
+   nouvelle version bloque la compilation.
+5. **L'estimation n'est pas une commande.** Écrit sur chaque bouton d'envoi et
+   appel à l'action, dans les formulaires, les récapitulatifs, la page de
+   confirmation, le PDF et chaque accusé de réception. La commande en ligne
+   n'est pas activée ; la porte de lancement refuse de l'activer tant que le
+   parcours contractuel n'existe pas (`PLAN-MIGRATION.md`).
+6. **Preuve, conservation, effacement, export, sauvegardes.** Pour chaque
+   demande : document, version, date et finalité enregistrés. Purge quotidienne
+   selon les durées fournies, export et suppression par le titulaire du compte,
+   recherche, export et effacement par l'équipe, sauvegardes chiffrées vérifiées
+   (`EXPLOITATION.md`).
+7. **Carte et services tiers.** Crédits swisstopo, OpenStreetMap et plan
+   cadastral toujours visibles sur la carte. Chaque service tiers et chaque
+   transfert à l'étranger est décrit dans `SERVICES-TIERS.md` et dans la
+   politique de confidentialité.
+8. **Calcul des distances.** Le serveur public OSRM n'est plus utilisé (le
+   serveur refuse de démarrer s'il est configuré). Distance à vol d'oiseau
+   signalée comme approximative, ou OSRM auto-hébergé (`EXPLOITATION.md` §5).
+9. **Justificatifs.** Autorisations, contrôles, permis et assurance ne sont
+   affichés que s'ils sont saisis avec référence, autorité, dates et
+   vérification, et tant qu'ils ne sont pas échus.
+10. **Qualité.** Accessibilité (clavier sur la carte, contrastes, focus,
+    annonces), performance (langues chargées à la demande, médias réencodés),
+    référencement (en-têtes par page, indexation après lancement seulement),
+    sécurité (CSP, en-têtes, security.txt) et surveillance horaire.
 
-Le 24 septembre 2026, `vitiaero.ch` et `vitiaero.github.io` répondent
-« Site not found ». Le dépôt `vitiaero/vitiaero.github.io` n'est plus visible
-publiquement : seul le dépôt de profil `vitiaero/vitiaero` l'est encore. Il a
-probablement été passé en privé. Avec un compte GitHub gratuit, un dépôt privé
-ne peut pas être publié par GitHub Pages.
+## 2. Ce qui bloque encore
 
-Deux solutions : repasser le dépôt en public (Settings > General > Danger Zone >
-Change visibility), ou choisir un autre hébergement (voir 3.3).
+La liste détaillée est dans `INFORMATIONS-MANQUANTES.md` ; la vérification à
+signer dans `CHECKLIST-LANCEMENT.md`. Points qui demandent une validation
+externe :
 
-### 1.2 Adresse postale de l'éditeur
+- **Juriste** : relecture de tous les textes publiés, des formulaires et des
+  e-mails ; limitation de responsabilité (art. 100 CO) ; règles applicables si
+  la clientèle comprend des particuliers (OIP, art. 8 LCD, art. 32 et 35 CPC) ;
+  hébergement sur GitHub Pages pour une activité commerciale ; registre des
+  activités de traitement.
+- **OFAC, Agroscope, canton, organisme agréé** : autorisation de pulvérisation
+  par drone, exigences cantonales (SafetySpray, radiotéléphonie), homologation
+  du modèle, contrôle du pulvérisateur, compétences et enregistrement.
+- **AFC et fiduciaire** : assujettissement à la TVA et taux applicable ;
+  conservation des dossiers liés à un contrat.
+- **swisstopo** : enregistrement éventuel pour le plan cadastral.
 
-Exigée par l'art. 3 al. 1 let. s LCD (« identité et adresse de contact, y
-compris pour le courrier électronique ») et par l'art. 19 al. 2 let. a nLPD
-(« identité et coordonnées du responsable du traitement »). À renseigner dans
-`src/content.js` : `address`, `npa`, `city`. Le téléphone et le numéro IDE sont
-facultatifs : s'ils restent vides, ils ne s'affichent pas.
+## 3. Ce que le site n'affirme pas
 
-### 1.3 Visuels DJI sans accord écrit
+- Aucune autorisation, homologation, assurance ni formation n'est présentée
+  comme obtenue.
+- Aucun client, avis, nombre d'hectares ou d'années d'expérience.
+- Le drone est « prévu », jamais « utilisé » ; ses caractéristiques viennent
+  des publications du fabricant, citées comme telles, et les schémas sont
+  signalés comme des illustrations.
+- Le délai de réponse (48 h) et le rayon d'intervention (100 km) sont des
+  choix du propriétaire, présentés comme habituels ou maximaux, à confirmer
+  (D15).
 
-Les conditions du site DJI interdisent de reproduire leur contenu « à des fins
-commerciales » sans « consentement écrit préalable ». Sont concernés : la vidéo
-d'accueil, tous les visuels de la page Équipement, et trois fichiers dont
-l'origine n'est pas confirmée (`hero-poster.jpg`, `drone-cutout.png`,
-`t50-rows.jpg`). Décision du propriétaire : les garder et demander l'accord.
-Tant qu'il n'est pas obtenu, le risque (loi sur le droit d'auteur) reste ouvert.
-Un modèle de demande figure en annexe.
+## 4. Corrections du 24 septembre 2026, toujours valables
 
-## 2. Ce qui a été corrigé
-
-### 2.1 Identité et mentions légales
-
-- Éditeur et responsable : Adrien Delhay, sous le nom VitiAero.
-- Hébergeur ajouté : GitHub, Inc., adresse de sa déclaration de confidentialité.
-- Champs facultatifs vides masqués au lieu d'afficher des crochets.
-- « La marque VitiAero » remplacé par « les textes et la mise en page », pour ne
-  pas laisser entendre une marque enregistrée (le registre des marques n'a pas
-  été consulté).
-- Mention des marques DJI et Agras, et absence de lien avec DJI.
-- Avertissements « document modèle, projet d'étude » retirés des pages légales,
-  qui décrivent désormais la situation réelle.
-
-### 2.2 Protection des données (nLPD)
-
-- Art. 19 al. 2 : responsable, finalités et destinataires indiqués.
-- Art. 19 al. 4 : chaque pays de destination est nommé, avec sa garantie :
-  - **États-Unis**, GitHub : certifié au cadre Suisse-États-Unis (statut
-    « Active » sur la liste officielle, vérifié le 24.9.2026), ce qui vaut
-    niveau adéquat selon l'annexe 1 OPDo ;
-  - **Royaume-Uni et Pays-Bas**, OpenStreetMap : pays adéquats selon l'annexe 1
-    OPDo ; seulement si le visiteur choisit le fond « Plan ». OpenStreetMap sert
-    ses tuiles par un réseau mondial de cache sans publier les pays : c'est
-    écrit tel quel, avec le moyen de l'éviter.
-- Ajout de ce que GitHub enregistre : l'adresse IP de chaque visiteur, « pour des
-  raisons de sécurité » (documentation GitHub Pages).
-- Nouvelle section « La situation aujourd'hui » : les formulaires n'envoient
-  rien tant que le serveur n'est pas en ligne.
-- Droits reformulés selon la nLPD (art. 25, 28, 32) au lieu d'une liste inspirée
-  du droit européen (« limitation »).
-- Conservation : 10 ans pour la comptabilité (art. 958f CO) ; 24 mois au plus
-  pour les demandes sans suite, **choix du propriétaire, modifiable**.
-- Sanction prévue par la loi : jusqu'à 250 000 francs d'amende en cas
-  d'omission intentionnelle du devoir d'informer (art. 60 nLPD).
-
-### 2.3 Cookies et stockage local (art. 45c LTC)
-
-La loi exige d'informer du stockage, de sa finalité et de la **possibilité de le
-refuser**. Ajouts : phrase de refus dans le bandeau, section « Refuser ce
-stockage » sur la page cookies, lien du bandeau vers cette page. Les quatre clés
-listées correspondent exactement au code, et la durée de 7 jours à celle des
-sessions du serveur. Aucun traceur, aucune police ni aucun script externe :
-vérifié dans le code.
-
-### 2.4 Prix
+### 4.1 Prix
 
 - L'OIP s'applique à toute publicité pour des consommateurs (art. 2 al. 1
   let. d) et exige alors le « prix à payer effectivement » (art. 13). Un
   particulier propriétaire d'une vigne est un consommateur (art. 2 al. 2).
-  « Hors TVA » devient « TVA éventuelle comprise ».
+  « Hors TVA » était donc à proscrire. Depuis le 27.9.2026, l'estimation
+  indique « Montants en francs suisses. Le régime de TVA sera indiqué avant
+  l'ouverture du service » ; une fois A5 fourni, elle affiche automatiquement
+  « TVA de X % comprise » ou « L'entreprise n'est pas assujettie à la TVA ».
 - Le taux de 8,1 % annoncé était faux pour cette activité : l'AFC range
   « sulfater des arbres fruitiers, des vignes ou des légumes » au taux réduit
-  (art. 25 al. 2 let. d LTVA, 2,6 % en 2026).
+  (art. 25 al. 2 let. d LTVA, 2,6 % en 2026). Aucun taux n'est plus affiché
+  tant que la fiduciaire ou l'AFC ne l'a pas confirmé (A5).
 
-### 2.5 Publicité exacte (art. 3 al. 1 let. b LCD)
+### 4.2 Publicité exacte (art. 3 al. 1 let. b LCD)
 
 | Avant | Après | Raison |
 |---|---|---|
@@ -130,33 +145,7 @@ rotors coaxiaux ; bras repliables ; transmission jusqu'à 2 km ; suivi du relief
 recharge en 9 à 12 min au générateur ; 9 000 W de charge ; 30 L d'essence ;
 relevé de zone jusqu'à 20° de pente ; relevé de limite sur une bande de 20 m.
 
-### 2.6 Crédits des cartes
-
-La carte masquait tous ses crédits (`attributionControl: false`). Or :
-
-- swisstopo : « ©swisstopo » doit figurer « sur toutes les représentations
-  graphiques » (conditions OGD, 1.3.2021) ;
-- OpenStreetMap : « © OpenStreetMap contributors » visible sur la carte, sans
-  cacher l'attribution (politique d'usage des tuiles) ;
-- plan cadastral : « © Mensuration Officielle Suisse / FL » dans la langue du
-  lecteur, « interdit de supprimer, de dissimuler ou de recouvrir » (licence
-  CadastralWebMap, 9.5.2012).
-
-Les trois crédits s'affichent désormais en bas à droite de la carte, et sont
-repris dans les mentions légales.
-
-### 2.7 Droits d'auteur
-
-- Photo du Lavaux (CC BY-SA 4.0) : le crédit donne maintenant le nom de l'auteur
-  (Joachim Kohler), les liens vers la source et la licence, et signale la
-  modification (l'original fait 5 400 × 3 600 pixels, la version du site
-  3 200 × 2 354 : recadrée et redimensionnée), comme la licence l'exige.
-- Retirés du site, car affichés nulle part mais téléchargeables :
-  `agras-t30.jpg`, `hero-drone.jpg`, `t50-flight.jpg`, `t50-eclate.jpg`,
-  `t50-eclate.webp`, `vignes-pente.jpg`, et les trois fichiers de la carte
-  caméra. Ils restent dans l'historique Git.
-
-### 2.8 Réglementation des drones
+### 4.3 Réglementation des drones
 
 Liste de la page Le service précisée d'après la page SPRAY de l'OFAC (mise à jour
 du 16.4.2026) : autorisation préalable de l'OFAC, à demander au moins deux mois à
@@ -164,61 +153,14 @@ l'avance ; modèle homologué par Agroscope ; contrôle de chaque drone par un
 organisme agréé avant la mise en service puis tous les trois ans ; au moins une
 personne titulaire du permis OPer-A (RS 814.812.34).
 
-### 2.9 Conditions générales
+### 4.4 Conditions générales
 
 - For : réserve ajoutée pour les consommateurs, qui ne peuvent pas y renoncer
   d'avance (art. 32 et 35 CPC).
-- TVA : même correction qu'en 2.4.
+- TVA : même correction qu'en 4.1.
 - Réglementation : exigences vérifiées au lieu de la mention « à vérifier ».
 
-## 3. Ce qui reste à faire
-
-### 3.1 Par vous, avant de republier
-
-1. Rendre le site accessible à nouveau (1.1).
-2. Renseigner l'adresse postale (1.2).
-3. Demander l'accord écrit de DJI ou de votre revendeur (1.3, annexe).
-
-### 3.2 Avant le lancement commercial
-
-- **Homologation du T50** : aucune liste Agroscope n'est publiée en ligne. Faire
-  confirmer par Agroscope que le DJI Agras T50 est homologué avant de le
-  présenter comme l'appareil utilisé.
-- **Canton de Vaud** : depuis le 15 avril 2026, l'OFAC impose en plus, dans les
-  cantons du Valais, de Vaud et de Genève, l'outil cartographique en ligne
-  SafetySpray et la radiotéléphonie. Les distances de sécurité ont aussi été
-  revues début 2026.
-- **Conditions générales** : modalités de paiement, conditions d'annulation,
-  assurance responsabilité civile.
-- **Plan cadastral** : la page actuelle de cadastre.ch dit l'accès gratuit, sans
-  parler d'enregistrement ; la licence de 2012, toujours publiée, parle d'un
-  usage gratuit « une fois l'enregistrement effectué ». À faire confirmer par
-  swisstopo (Direction fédérale des mensurations cadastrales).
-- **Registre du commerce, IDE, TVA** : à vérifier selon votre structure et votre
-  chiffre d'affaires, auprès du registre du commerce vaudois et de l'AFC.
-- **Bandeau de lancement** : passer `preLaunch` à `false` seulement quand les
-  autorisations sont obtenues.
-
-### 3.3 Avant d'activer les formulaires en ligne
-
-- **Hébergement** : les conditions de GitHub interdisent d'utiliser Pages pour
-  faire tourner une activité commerciale en ligne ou un site « principalement »
-  destiné à faciliter des transactions commerciales, et déconseillent d'y faire
-  passer des mots de passe. Un site vitrine sans paiement est une zone grise ;
-  pour un service commercial avec comptes clients, un hébergeur prévu pour cet
-  usage est plus sûr. Un hébergeur suisse simplifierait aussi la section
-  « Communication à l'étranger ».
-- **Calcul des distances** : le serveur de démonstration OSRM est réservé à un
-  usage « raisonnable, non commercial » (FOSSGIS e.V., Allemagne). À remplacer.
-- **Politique de confidentialité** : compléter la section 4 avec les prestataires
-  retenus.
-
-### 3.4 Remarque
-
-Vos commits Git affichent votre adresse Gmail. GitHub propose une adresse
-masquée : Settings > Emails > Keep my email addresses private.
-
-## 4. Sources consultées
+## 5. Sources consultées le 24 septembre 2026
 
 Textes de loi (Fedlex, recueil officiel) :
 
@@ -254,7 +196,7 @@ Prestataires et titulaires de droits :
 - OSRM, serveur de démonstration : https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server
 - Wikimedia Commons, photo du Lavaux : https://commons.wikimedia.org/wiki/File:Lavaux_vignobles_en_terrasses_au_bord_du_L%C3%A9man_(2015).jpg
 
-## Annexe : demande d'autorisation à DJI
+## Annexe : demande d'autorisation à DJI (facultatif, F3)
 
 À envoyer à votre revendeur DJI Agriculture en Suisse, ou à DJI. Gardez la
 réponse écrite.
@@ -264,7 +206,7 @@ réponse écrite.
 > Bonjour,
 >
 > Je prépare le lancement de VitiAero, un service de traitement des vignes par
-> drone dans le canton de Vaud, avec le DJI Agras T50. Je souhaite utiliser sur
+> drone dans le canton de Vaud, avec le DJI Agras T50. Si des visuels du fabricant devaient revenir sur le site : je souhaite utiliser sur
 > mon site vitiaero.ch des photos et vidéos du T50 publiées par DJI sur
 > ag.dji.com : une vidéo de présentation, des vues du drone, du système de
 > pulvérisation, du générateur et des écrans de cartographie.

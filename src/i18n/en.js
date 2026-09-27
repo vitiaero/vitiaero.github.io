@@ -170,7 +170,7 @@ export default {
       title: 'A solution for difficult plots.',
       lead: 'In Swiss vineyards, many plots are on steep slopes or terraces. They are hard work to treat and often out of reach for machines.',
       text: 'The drone flies over the vines and applies the treatment from the air. It reaches steep slopes without any vehicle driving between the rows. The soil is not compacted.',
-      cta: 'Estimate my plot',
+      cta: 'Estimate my plot, no obligation',
       alt: 'Terraced vineyards of Epesses seen from the air, above Lake Geneva',
     },
     advantages: {
@@ -187,7 +187,7 @@ export default {
     how: {
       eyebrow: 'How it works',
       title: 'Your estimate in four steps.',
-      cta: 'Start my estimate',
+      cta: 'Start my estimate, no obligation',
       steps: [
         { no: 'Step 1', title: 'Draw your plots', text: 'Draw your plots on the map, point by point, or import a file. The area is calculated automatically.' },
         { no: 'Step 2', title: 'Describe your needs', text: 'Tell us the number of passes, the type of treatment and the period that suits you.' },
@@ -440,7 +440,7 @@ export default {
     eyebrow: 'Personal quote',
     title: 'Your plot deserves a suitable solution',
     lead: 'Send us the main information about your plot. We assess the working conditions and offer you a written quote, free and with no obligation.',
-    button: 'Request a free quote',
+    button: 'Free quote, no obligation',
     formTitle: 'Your plot',
     name: 'Name *',
     company: 'Business or estate (optional)',
@@ -462,14 +462,14 @@ export default {
     fileTooBig: 'This file is larger than 4 MB.',
     fileType: 'Format not accepted. Images and PDF only.',
     fileCount: '3 files maximum.',
-    send: 'Send my quote request',
+    send: 'Send my quote request (no obligation)',
     sending: 'Sending...',
     okTitle: 'Request sent.',
     okText: 'Thank you. A confirmation email will be sent to you. We will study your plot, then offer you a written quote, with no obligation.',
     again: 'Send another request',
     mapTitle: 'Prefer to draw your plot?',
     mapText: 'The online estimate works out an indicative price from the map, in a few minutes.',
-    mapCta: 'Estimate on the map',
+    mapCta: 'Estimate on the map, no obligation',
   },
 
   about: {
@@ -529,7 +529,7 @@ export default {
       difficult: { label: 'Very difficult plot', hint: 'Steep slope, difficult access: +10 to 25%, confirmed after review' },
       dispersed: { label: 'Widely scattered plots', hint: 'Far from each other: +10 to 30%, confirmed after review' },
     },
-    quoteCta: 'Request a personal quote',
+    quoteCta: 'Request a personal quote (no obligation)',
     ratesToggle: 'See the price list',
     ratesNote: 'Indicative rates. The final price is confirmed in the quote, after review of the plot and the working conditions. Plant protection products not included, unless the quote states otherwise.',
     rates: {
@@ -714,7 +714,7 @@ export default {
     },
     requests: {
       title: 'My estimate requests',
-      new: 'New request',
+      new: 'New estimate, no obligation',
       empty: 'You have no requests yet. Start your first estimate.',
       number: 'No.',
       estimate: 'Estimate per year',

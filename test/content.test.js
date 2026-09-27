@@ -77,7 +77,11 @@ test('chaque appel a l\'action et chaque formulaire rappellent que ce n\'est pas
   assert.match(en.common.requestEstimate, /no obligation/);
   for (const d of [fr, de, en]) {
     for (const k of ['title', 'estimate', 'request', 'short']) assert.ok(d.noOrder[k]);
-    assert.match(d.estimation.send, /\(.+\)/); // bouton d'envoi : mention entre parentheses
+    assert.match(d.estimation.send, /\(.+\)/); // boutons d'envoi : mention entre parentheses
+    assert.match(d.quote.send, /\(.+\)/);
+    for (const cta of [d.home.why.cta, d.home.how.cta, d.quote.button, d.quote.mapCta, d.estimation.quoteCta, d.account.requests.new]) {
+      assert.match(cta, /sans engagement|unverbindlich|no obligation/i, cta);
+    }
   }
   assert.match(fr.noOrder.estimate, /ni une offre ferme ni une commande/);
   assert.match(de.noOrder.estimate, /weder ein verbindliches Angebot noch eine Bestellung/);

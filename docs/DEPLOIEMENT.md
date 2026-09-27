@@ -1,76 +1,67 @@
 # Mettre VitiAero en ligne
 
-Deux façons de publier le site. Le détail de la sécurité est dans `SECURITY.md`.
+Deux façons de publier le site. Les réglages du serveur, les e-mails, les
+sauvegardes et la surveillance sont détaillés dans `EXPLOITATION.md` ; la
+sécurité dans `SECURITY.md`.
 
 | | A. GitHub Pages + API séparée | B. Un seul service Node |
 |---|---|---|
-| Site vitrine | GitHub Pages (gratuit, rapide, toujours éveillé) | Hébergeur Node |
+| Site | GitHub Pages | Hébergeur Node |
 | Formulaires, comptes, administration | API sur un hébergeur Node | Même service |
 | En-têtes de sécurité complets | Non (limites de GitHub Pages) | Oui |
-| Configuration | Deux services, une variable de chaque côté | Un seul service |
+| `robots.txt` et indexation | Figés à la compilation (recompilée chaque lundi) | Suivent l'état de lancement en direct |
+| Usage commercial | À décider (B3) : les règles de GitHub Pages excluent un usage principalement commercial | Selon l'hébergeur |
 
-GitHub Pages ne fait tourner **aucun serveur**. Sans l'API, la vitrine, la carte
-et le calcul du prix fonctionnent, mais l'envoi d'une demande, la connexion et
-l'administration affichent une erreur.
+Dans les deux cas, **rien n'est à modifier à la main le jour du lancement** :
+le bandeau, les formulaires, `robots.txt`, le plan du site, les balises
+`noindex` et les données structurées suivent la porte de lancement
+(`shared/launch.js`). Il suffit de fournir les informations manquantes, de
+compiler et de publier.
 
 ---
 
 ## A. GitHub Pages + API séparée
 
-### 1. Envoyer le projet sur GitHub
+### 1. Le dépôt
 
-Le dossier est déjà un dépôt Git (branche `main`). Avec GitHub Desktop :
+GitHub Pages gratuit exige un dépôt **public** : tout le code est lisible. Il
+ne contient aucun secret, et ne doit jamais contenir de copie de permis,
+d'attestation, de police d'assurance ou de contrat.
 
-1. **File > Add local repository**, choisir le dossier du projet.
-2. Écrire un résumé (par exemple « Première version du site »), **Commit to main**.
-3. **Publish repository**. GitHub Pages gratuit exige un dépôt **public** :
-   décocher **Keep this code private**. Tout le code devient lisible par tous, ce
-   qui est prévu : il ne contient aucun secret.
+### 2. L'API
 
-Le `.gitignore` exclut `node_modules`, `dist`, `_hors-projet`, la base, les pièces
-jointes et les fichiers `.env`. Environ 310 Mo à envoyer, aucun fichier au-dessus
-de la limite de 100 Mo.
-
-### 2. Mettre l'API en ligne
-
-Chez un hébergeur Node (Render, Koyeb, Fly.io...), créer un service web relié au
-même dépôt :
+Chez un hébergeur Node, un service web relié au dépôt :
 
 - installation : `npm ci`
 - démarrage : `npm start`
-- variables :
+- un **disque persistant** monté sur `DATA_DIR` (sinon la base repart à zéro à
+  chaque redéploiement)
+- variables : tableau complet dans `EXPLOITATION.md`, section 3. Au minimum
+  `NODE_ENV=production`, `DATA_DIR`, `ADMIN_PASSWORD`, `ALLOWED_ORIGINS`
+  (adresse du site, par exemple `https://vitiaero.ch`), puis SMTP et
+  sauvegardes avant l'ouverture des formulaires.
 
-| Variable | Valeur |
-|---|---|
-| `NODE_ENV` | `production` |
-| `ADMIN_PASSWORD` | mot de passe long et unique |
-| `ALLOWED_ORIGINS` | adresse du site, sans barre finale : `https://NOM.github.io` ou `https://www.vitiaero.ch` |
-| `ADMIN_EMAIL` | facultatif |
-| `DEMO_DATA` | `1` seulement pour une démonstration (client et codes promo fictifs) |
-| `CLIENT_PASSWORD` | seulement avec `DEMO_DATA=1` |
+Déclarer l'hébergeur dans `shared/business.js` (`services.apiHosting`), avec
+son pays : il apparaît alors dans la politique de confidentialité.
 
-Noter l'adresse de l'API fournie par l'hébergeur (par exemple
-`https://vitiaero-api.onrender.com`).
-
-### 3. Activer GitHub Pages
+### 3. GitHub Pages
 
 1. Dépôt > **Settings > Pages** > Source : **GitHub Actions**.
-2. **Settings > Secrets and variables > Actions > onglet Variables** >
-   **New repository variable** : nom `VITE_API_URL`, valeur l'adresse de l'API.
-   C'est une variable, pas un secret : elle finit dans le JavaScript public.
-3. **Actions** > « Publier sur GitHub Pages » > **Run workflow** (ou envoyer un
-   commit sur `main`).
+2. **Settings > Secrets and variables > Actions > Variables** : `VITE_API_URL`
+   = adresse de l'API. C'est une variable publique, pas un secret.
+3. Chaque envoi sur `main` lance le workflow « Publier sur GitHub Pages » :
+   audit des dépendances, tests, compilation, publication. Un test en échec
+   bloque la publication. Le workflow tourne aussi chaque lundi, pour renouveler
+   `security.txt` et appliquer les échéances des justificatifs.
 
-Le site est publié à `https://NOM.github.io/NOM-DU-DEPOT/`. Le chemin de base est
-détecté automatiquement.
+Sans `VITE_API_URL`, le site est publié seul : les formulaires restent fermés
+et renvoient vers l'adresse e-mail.
 
 ### 4. Le domaine vitiaero.ch
 
-Le fichier `public/CNAME` contient déjà `vitiaero.ch` : il part avec le site à
-chaque publication, le domaine ne se perd donc jamais.
+`public/CNAME` contient `vitiaero.ch` et part avec chaque publication.
 
-1. Chez le registraire du domaine, créer **huit enregistrements** qui pointent
-   vers GitHub :
+1. Chez le registraire, les enregistrements vers GitHub :
 
    | Type | Nom | Valeur |
    |---|---|---|
@@ -83,84 +74,43 @@ chaque publication, le domaine ne se perd donc jamais.
    | AAAA | @ | 2606:50c0:8002::153 |
    | AAAA | @ | 2606:50c0:8003::153 |
 
-2. Recommandé : un enregistrement **CNAME** pour `www` vers `NOM.github.io`.
-   GitHub fait alors suivre `www.vitiaero.ch` vers `vitiaero.ch`.
-3. Dépôt > Settings > Pages > Custom domain : saisir `vitiaero.ch`.
-4. Attendre que le certificat soit prêt, de quelques minutes à quelques heures,
-   puis cocher **Enforce HTTPS**.
-5. Dans les réglages du compte GitHub, **vérifier le domaine** (Settings >
-   Pages > Add a domain) : personne d'autre ne pourra alors l'utiliser.
-
-### 5. Sans serveur : le message affiché à l'envoi
-
-Tant qu'aucune API n'est en ligne, le workflow compile le site en **mode
-statique** : les formulaires, la connexion et l'espace client restent visibles,
-mais un envoi affiche le message « L'envoi en ligne sera actif au lancement du
-service. En attendant, écrivez-nous à contact@vitiaero.ch », au lieu d'une
-erreur technique.
-
-Le jour où l'API est en ligne, il suffit de renseigner la variable
-`VITE_API_URL` (Settings > Secrets and variables > Actions > Variables) et de
-relancer le workflow : le mode statique se désactive tout seul et tout
-fonctionne. Côté API, mettre `https://vitiaero.ch` dans `ALLOWED_ORIGINS`.
-
-### 5. Réglages de sécurité GitHub
-
-La liste à cocher est dans `SECURITY.md`, section 9 : double authentification,
-alertes Dependabot, secret scanning, push protection, protection de `main`,
-permissions des Actions en lecture seule.
+2. Un enregistrement **CNAME** pour `www` vers `NOM.github.io`.
+3. Settings > Pages > Custom domain : `vitiaero.ch`, puis **Enforce HTTPS**
+   une fois le certificat prêt.
+4. Vérifier le domaine dans les réglages du compte GitHub (Settings > Pages >
+   Add a domain).
 
 ---
 
 ## B. Un seul service Node
 
-Express sert la vitrine compilée et l'API sur la même adresse : pas de CORS.
+Express sert le site compilé et l'API à la même adresse : pas de CORS, tous
+les en-têtes de sécurité, et `robots.txt` / `sitemap.xml` calculés à chaque
+requête selon l'état de lancement.
 
-1. Envoyer le projet sur GitHub (étape A.1 ; le dépôt peut rester privé).
-2. Service web chez l'hébergeur :
+1. Service web chez l'hébergeur :
    - installation et compilation : `npm ci && npm run build`
    - démarrage : `npm start`
-3. Variables : celles du tableau A.2, **sans** `ALLOWED_ORIGINS`.
-
-Le serveur envoie alors tous les en-têtes de sécurité, CSP complète comprise.
+2. Variables : celles de `EXPLOITATION.md`, **sans** `ALLOWED_ORIGINS`.
+3. Faire pointer le domaine vers l'hébergeur selon ses instructions, et
+   retirer `public/CNAME` si GitHub Pages n'est plus utilisé.
 
 ---
 
-## Les limites du gratuit, à connaître
+## Vérifier avant de publier
 
-- **Mise en veille de l'API.** Après un moment sans visite, le service s'arrête.
-  La visite suivante attend quelques dizaines de secondes.
-- **Disque effacé.** Chez la plupart des hébergeurs gratuits, `server/data/`
-  repart à zéro à chaque redéploiement : la base est recréée (compte
-  administrateur seul) et les pièces jointes sont perdues. Acceptable pour une
-  démonstration. Pour de vraies demandes, il faut une base externe (Turso, Neon ou
-  équivalent) : seul `server/db.js` est à adapter.
-- **GitHub Pages** : 1 Go par site et environ 100 Go de trafic par mois.
-
-## Avant d'ouvrir au public
-
-- [ ] Compléter l'adresse postale dans `src/content.js` (`[ADRESSE]`, `[NPA]`,
-      `[VILLE]`), obligatoire selon la LCD et la nLPD.
-- [ ] Traiter les points ouverts de `docs/CONFORMITE.md` (accord écrit de DJI,
-      homologation du T50, conditions générales), puis faire relire par un juriste.
-- [ ] Remplacer le service d'itinéraire OSRM public, serveur de démonstration non
-      prévu pour la production (`ROUTE_URL` dans `server/index.js`).
-- [ ] Décider de la durée de conservation des pièces jointes (nLPD).
-- [ ] Mettre en place l'envoi de courriels : aujourd'hui les demandes se lisent
-      uniquement dans l'administration.
+```bash
+npm test               # tests automatiques
+npm run build          # compilation (refuse un média non déclaré ou un texte non versionné)
+npm run test:e2e       # tests dans le navigateur
+npm run launch:status  # ce qui manque encore avant le lancement
+npm run serve          # comme en production, sur http://localhost:3001
+```
 
 ## Le jour du lancement
 
-1. `src/content.js` : passer `preLaunch` à `false`.
-2. `public/robots.txt` : activer les règles d'indexation commentées.
-3. Remplacer `https://www.vitiaero.ch` par l'adresse réelle dans
-   `public/sitemap.xml`, `index.html` et `BASE_URL` dans `src/App.jsx`.
-
-## Vérifier en local
-
-```bash
-npm run serve
-```
-
-Compile puis démarre le serveur sur `http://localhost:3001`, comme en production
-(scénario B).
+1. `npm run launch:status` n'affiche plus aucune information bloquante.
+2. La checklist `CHECKLIST-LANCEMENT.md` est signée et sa date inscrite dans
+   `shared/business.js` (`launchChecklistSignedOn`).
+3. `npm run legal:version`, relecture des textes, commit, envoi sur `main`.
+4. Après publication : `SITE_URL=https://vitiaero.ch API_URL=... npm run check:production`.
