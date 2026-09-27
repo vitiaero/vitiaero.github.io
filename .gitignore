@@ -1,6 +1,7 @@
-# Dependances et compilation (recreees par npm install et npm run build)
+# Dependances et compilation (recreees par npm install, npm run build et npm run demo)
 node_modules
 dist
+dist-hors-ligne
 
 # Sources, archives et outils : hors du site publie (voir _hors-projet/LISEZ-MOI.md)
 _hors-projet/

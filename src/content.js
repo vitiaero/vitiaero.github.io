@@ -29,17 +29,21 @@ export const preLaunch = true;
 // retient la premiere que l'ecran et l'appareil peuvent lire de facon fluide.
 // type : codec exact, pour que le navigateur sache s'il sait le decoder.
 // bitrate : debit moyen reel du fichier (bits par seconde).
+// Version hors ligne (npm run demo) : les fichiers 4K ne sont pas copies, on
+// s'en tient donc a la 1080p.
+const OFFLINE = import.meta.env.VITE_OFFLINE === '1';
+const withoutUhd = (list) => (OFFLINE ? list.filter((v) => v.width <= 1920) : list);
 export const videos = {
-  hero: [
+  hero: withoutUhd([
     { src: asset('/videos/hero-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.12M.08"', width: 3840, height: 2160, framerate: 25, bitrate: 5900000 },
     { src: asset('/videos/hero-2160.mp4'), type: 'video/mp4; codecs="avc1.640033"', width: 3840, height: 2160, framerate: 25, bitrate: 17500000 },
     { src: asset('/videos/hero-1080.mp4'), type: 'video/mp4; codecs="avc1.640032"', width: 1920, height: 1080, framerate: 25, bitrate: 8100000 },
-  ],
-  vignoble: [
+  ]),
+  vignoble: withoutUhd([
     { src: asset('/videos/vignoble-fpv-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.13M.08"', width: 3840, height: 2160, framerate: 60, bitrate: 22900000 },
     { src: asset('/videos/vignoble-fpv-2160.mp4'), type: 'video/mp4; codecs="avc1.640034"', width: 3840, height: 2160, framerate: 60, bitrate: 23300000 },
     { src: asset('/videos/vignoble-fpv-1080.mp4'), type: 'video/mp4; codecs="avc1.640032"', width: 1920, height: 1080, framerate: 60, bitrate: 16400000 },
-  ],
+  ]),
 };
 
 // Visuels de la page Equipement (DJI, et le plan du drone qui se deplie fourni

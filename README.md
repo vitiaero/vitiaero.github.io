@@ -16,6 +16,7 @@ Autres commandes :
 
 | Commande | Rôle |
 |---|---|
+| `npm run demo` | Crée la version hors ligne : `_hors-projet/site-hors-ligne/index.html`, à ouvrir d'un double-clic, sans serveur |
 | `npm run build` | Compile le site dans `dist/` |
 | `npm run serve` | Compile puis démarre comme en production |
 | `npm start` | Démarre le serveur seul (utilisé par l'hébergeur) |
