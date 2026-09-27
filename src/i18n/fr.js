@@ -304,8 +304,6 @@ export default {
     lead: 'Pour connaître un prix, utilisez l\'estimation en ligne. Pour tout le reste, ce formulaire suffit.',
     phoneTitle: 'Téléphone',
     emailTitle: 'E-mail',
-    addressTitle: 'Adresse',
-    pending: 'Bientôt disponible',
     areaTitle: 'Zone desservie',
     areaText: (base) => `Zone principale : canton de Vaud et Suisse romande. Déplacements jusqu\'à environ 100 km depuis notre base de ${base}. Au-delà, sur devis.`,
     estimateTitle: 'Vous voulez un prix ?',

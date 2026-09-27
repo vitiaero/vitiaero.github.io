@@ -64,9 +64,10 @@ Demandés par le propriétaire après la première version, pour un site plus
   composant `Kicker`) sur tout le site ; titres de section alignés à gauche ;
   textes des cartes à 15-16 px ; en français, espace insécable automatique
   avant `?` `!` `:` `;` (un « ? » ne tombe plus seul en début de ligne).
-- **Contact** : le téléphone et l'adresse indiquent « Bientôt disponible » tant
-  qu'ils ne sont pas renseignés dans `src/content.js` (au lieu de
-  « [TÉLÉPHONE] »).
+- **Coordonnées** (entreprise fictive) : nom VitiAero, adresse à Chardonne,
+  e-mail et hébergeur GitHub. L'adresse ne figure que dans les pages légales ;
+  pas de téléphone, d'IDE ni de nom de responsable publiés. La page Contact
+  montre l'e-mail et la zone desservie.
 - **Barre du bas sur téléphone** : elle mène à l'estimation, comme le bouton de
   l'en-tête.
 - **Aperçu** : `npm run apercu` lance le site seul (sans l'API) sur

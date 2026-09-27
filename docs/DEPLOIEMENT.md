@@ -139,8 +139,8 @@ Le serveur envoie alors tous les en-têtes de sécurité, CSP complète comprise
 
 ## Avant d'ouvrir au public
 
-- [ ] Remplir les coordonnées dans `src/content.js` (`[RAISON_SOCIALE]`,
-      `[ADRESSE]`, `[TELEPHONE]`, `[IDE]`, `[RESPONSABLE]`, `[HEBERGEUR]`).
+- [x] Coordonnées dans `src/content.js` (entreprise fictive : nom, adresse,
+      e-mail, hébergeur ; téléphone, IDE et responsable laissés vides).
 - [ ] Faire relire les pages légales : ce sont des modèles (voir `SECURITY.md`, section 7).
 - [ ] Remplacer le service d'itinéraire OSRM public, serveur de démonstration non
       prévu pour la production (`ROUTE_URL` dans `server/index.js`).

@@ -301,8 +301,6 @@ export default {
     lead: 'For a price, use the online estimate. For everything else, this form is enough.',
     phoneTitle: 'Phone',
     emailTitle: 'Email',
-    addressTitle: 'Address',
-    pending: 'Available soon',
     areaTitle: 'Service area',
     areaText: (base) => `Main area: canton of Vaud and French-speaking Switzerland. Travel up to about 100 km from our base in ${base}. Beyond that, by quote.`,
     estimateTitle: 'Looking for a price?',

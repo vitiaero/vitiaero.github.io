@@ -70,6 +70,9 @@ clair. Le téléphone, lui, est déjà masqué tant qu'il n'est pas renseigné.
 **Correction** : appliquer au bloc adresse la règle qui existe déjà pour le
 téléphone, dans `src/pages/Contact.jsx`. Dix minutes.
 
+**État (27.09.2026)** : fait. La page Contact n'affiche plus d'adresse ;
+elle ne figure que dans les pages légales.
+
 ## 5. Le bouton Précédent du navigateur dans l'estimation
 
 **Constat** : les quatre étapes ne figurent pas dans l'adresse. Un visiteur qui

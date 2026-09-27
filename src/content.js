@@ -2,19 +2,20 @@
 import { asset } from './config.js';
 
 // Coordonnees de l'entreprise, source unique pour les pages legales et le pied
-// de page. Les valeurs entre crochets sont a completer par le proprietaire avant
-// la mise en ligne ; ne rien inventer. Le canton est connu (Vaud).
+// de page. Entreprise fictive (projet d'etude) : on ne publie que le
+// necessaire. Une valeur vide n'est affichee nulle part ; le code du site est
+// public, n'y inscrire que ce qui peut etre publie.
 export const company = {
-  name: '[RAISON_SOCIALE]',
-  address: '[ADRESSE]',
-  npa: '[NPA]',
-  city: '[VILLE]',
+  name: 'VitiAero',
+  address: 'Rue Jacques Chardonne 2',
+  npa: '1803',
+  city: 'Chardonne',
   canton: 'Vaud',
-  email: 'contact@vitiaero.ch', // adresse retenue pour le projet ; a confirmer
-  phone: '[TELEPHONE]',
-  ide: '[IDE / UID, ex. CHE-123.456.789]',
-  responsable: '[RESPONSABLE]',
-  host: '[HEBERGEUR : nom et adresse]',
+  email: 'contact@vitiaero.ch',
+  phone: '',
+  ide: '',
+  responsable: '',
+  host: 'GitHub, Inc. (GitHub Pages), San Francisco, USA',
 };
 
 // Phase de lancement : tant que l'activite n'a pas demarre, un bandeau discret

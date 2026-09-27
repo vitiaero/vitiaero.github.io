@@ -9,9 +9,9 @@ import { useI18n } from '../i18n/index.jsx';
 
 // Page Contact : coordonnees de l'entreprise et formulaire court, pour les
 // visiteurs qui ne veulent pas tracer de parcelle.
-// Les coordonnees viennent de `company` (src/content.js). Tant qu'une valeur
-// est entre crochets, la carte indique "Bientot disponible" : rien n'est
-// invente, et aucun lien clicable n'est cree vers une adresse qui n'existe pas.
+// Les coordonnees viennent de `company` (src/content.js). L'adresse postale
+// ne figure que dans les pages legales ; le telephone n'apparait que s'il est
+// renseigne. Rien n'est invente.
 const filled = (v) => !!v && !String(v).trim().startsWith('[');
 
 // Champs obligatoires du formulaire, verifies a la sortie du champ et a l'envoi.
@@ -82,20 +82,15 @@ export default function Contact() {
           </div>
 
           <div className="contact-cards">
-            <InfoCard icon="phone" title={c.phoneTitle}>
-              {filled(company.phone)
-                ? <a href={telHref(company.phone)}>{company.phone}</a>
-                : <span className="muted">{c.pending}</span>}
-            </InfoCard>
+            {filled(company.phone) && (
+              <InfoCard icon="phone" title={c.phoneTitle}>
+                <a href={telHref(company.phone)}>{company.phone}</a>
+              </InfoCard>
+            )}
             <InfoCard icon="mail" title={c.emailTitle}>
               {filled(company.email)
                 ? <a href={`mailto:${company.email}`}>{company.email}</a>
                 : <span className="muted">{company.email}</span>}
-            </InfoCard>
-            <InfoCard icon="pin" title={c.addressTitle}>
-              {filled(company.address)
-                ? <span>{company.address}<br />{company.npa} {company.city}</span>
-                : <span className="muted">{c.pending}</span>}
             </InfoCard>
             <InfoCard icon="map" title={c.areaTitle}>
               {c.areaText(BASE.label)}

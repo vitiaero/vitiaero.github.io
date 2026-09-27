@@ -45,11 +45,11 @@ affiche le texte français à la place, sans rien casser. Avant `?`, `!`, `:`
 et `;`, taper une espace normale : le site la rend insécable tout seul, pour
 qu'un « ? » ne se retrouve jamais seul en début de ligne.
 
-**Ajouter le téléphone.** Dans `src/content.js`, remplacer `'[TELEPHONE]'`
-par le numéro, par exemple `'021 123 45 67'`. Le numéro apparaît alors tout
-seul dans la page Contact, le pied de page et le bouton « Appeler » sur mobile.
-Tant qu'une valeur commence par `[`, elle n'est jamais affichée : la page
-Contact indique « Bientôt disponible » à la place (de même pour l'adresse).
+**Ajouter le téléphone.** Dans `src/content.js`, écrire le numéro entre les
+guillemets de `phone: ''`, par exemple `'021 123 45 67'`. Il apparaît alors
+tout seul dans la page Contact, le pied de page, le bouton « Appeler » sur
+mobile et les mentions légales. Une valeur vide n'est affichée nulle part.
+Le code du site est public sur GitHub : n'y écrire que ce qui peut être publié.
 
 **Changer un tarif.** Dans `shared/pricing.js`, la liste `PRICE_PER_HA` donne
 le prix par hectare selon le nombre de passages (1er, 2e, 3e...). Le

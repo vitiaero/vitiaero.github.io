@@ -301,8 +301,6 @@ export default {
     lead: 'Für einen Preis nutzen Sie die Online-Schätzung. Für alles andere genügt dieses Formular.',
     phoneTitle: 'Telefon',
     emailTitle: 'E-Mail',
-    addressTitle: 'Adresse',
-    pending: 'Bald verfügbar',
     areaTitle: 'Einsatzgebiet',
     areaText: (base) => `Hauptgebiet: Kanton Waadt und Westschweiz. Anfahrten bis rund 100 km ab unserem Stützpunkt in ${base}. Darüber hinaus auf Offerte.`,
     estimateTitle: 'Sie möchten einen Preis?',

@@ -37,7 +37,7 @@ function Confidentialite() {
       <h2 className="h3">1. Responsable du traitement</h2>
       <p>
         {company.name}, {ADDRESS_LINE}.<br />
-        Responsable : {company.responsable}. Contact : {company.email}
+        {company.responsable ? `Responsable : ${company.responsable}. ` : ''}Contact : {company.email}
         {company.phone ? `, ${company.phone}` : ''}.
       </p>
 
@@ -147,10 +147,10 @@ function Mentions() {
       <p>
         {company.name}<br />
         {ADDRESS_LINE}<br />
-        E-mail : {company.email}<br />
-        Téléphone : {company.phone}<br />
-        Numéro d'identification des entreprises (IDE/UID) : {company.ide}<br />
-        Responsable du contenu : {company.responsable}
+        E-mail : {company.email}
+        {company.phone && <><br />Téléphone : {company.phone}</>}
+        {company.ide && <><br />Numéro d'identification des entreprises (IDE/UID) : {company.ide}</>}
+        {company.responsable && <><br />Responsable du contenu : {company.responsable}</>}
       </p>
 
       <h2 className="h3">Hébergement</h2>
