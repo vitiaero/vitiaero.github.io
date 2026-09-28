@@ -102,16 +102,10 @@ export default {
     hero: {
       alt: 'Drohne DJI Agras T50 beim Sprühen über einem Feld',
       eyebrow: 'Pflanzenschutz im Rebbau per Drohne - Westschweiz',
-      title: 'Behandeln Sie Ihre Reben in Steillagen, ohne Maschinen am Boden.',
-      lead: 'Fordern Sie online eine Schätzung für die Behandlung Ihrer Parzellen per Drohne an. Kostenlos und unverbindlich. Sie erhalten danach eine detaillierte Offerte.',
+      title: 'Ihre Reben in Steillagen, per Drohne behandelt.',
+      lead: 'Online-Schätzung, kostenlos und unverbindlich.',
       how: 'So funktioniert es',
     },
-    stats: [
-      { num: '40 L', label: 'Sprühtank' },
-      { num: '100 km', label: 'Einsatzradius' },
-      { num: '48 h', label: 'Antwort auf Ihre Anfrage' },
-      { num: '0', label: 'Fahrten mit Maschinen am Boden' },
-    ],
     why: {
       eyebrow: 'Warum eine Drohne',
       title: 'Endlich eine Lösung für schwierige Parzellen.',
@@ -121,15 +115,10 @@ export default {
       alt: 'Schweizer Reben auf Terrassen im Lavaux',
     },
     advantages: {
-      intro: 'Eine Ergänzung zu den herkömmlichen Methoden im Rebbau. Ihr Nutzen hängt von der Parzelle, der Behandlung und dem Wetter ab.',
-      eyebrow: 'Die Vorteile',
-      title: 'Warum eine Drohne einsetzen?',
       items: [
-        { icon: 'slope', title: 'Zugang zu schwierigen Parzellen', text: 'Eine Lösung, die sich besonders für steile, schmale, zerstückelte oder mit herkömmlichen Maschinen schwer zugängliche Parzellen eignet.' },
-        { icon: 'leaf', title: 'Weniger Einschränkungen durch das Gelände', text: 'Mit der Drohne lässt sich arbeiten, ohne ein schweres Fahrzeug direkt durch die Parzelle zu fahren.' },
-        { icon: 'target', title: 'An das Gelände angepasster Einsatz', text: 'Die Geländefolge erlaubt es, die Flughöhe dem Relief anzupassen, um eine gleichmässige Ausbringung zu halten, sofern die Sicherheitsbedingungen es zulassen.' },
-        { icon: 'droplet', title: 'Gezielter Einsatz', text: 'Flug- und Sprühparameter können auf die Parzelle und die Einsatzbedingungen abgestimmt werden.' },
-        { icon: 'route', title: 'Eine ergänzende Lösung', text: 'Die Behandlung per Drohne ist eine Ergänzung zu den herkömmlichen Methoden im Rebbau. Ihr Nutzen hängt unter anderem von der Parzelle, der Behandlung und den Wetterbedingungen ab.' },
+        { title: 'Zugang zu schwierigen Parzellen', text: 'Eine Lösung, die sich besonders für steile, schmale, zerstückelte oder mit herkömmlichen Maschinen schwer zugängliche Parzellen eignet.' },
+        { title: 'Weniger Einschränkungen durch das Gelände', text: 'Mit der Drohne lässt sich arbeiten, ohne ein schweres Fahrzeug direkt durch die Parzelle zu fahren.' },
+        { title: 'An das Gelände angepasster Einsatz', text: 'Die Geländefolge erlaubt es, die Flughöhe dem Relief anzupassen, um eine gleichmässige Ausbringung zu halten, sofern die Sicherheitsbedingungen es zulassen.' },
       ],
     },
     how: {
@@ -160,15 +149,9 @@ export default {
     },
     cine: {
       film: { label: 'Flug über Epesses (Lavaux)', alt: 'Drohnenflug über den Terrassen von Epesses, unten der Genfersee' },
-      eyebrow: 'In Bildern',
+      eyebrow: 'In der Westschweiz verwurzelt',
       title: 'Die Weinberge von oben.',
       lead: 'Von den Terrassen des Lavaux bis ans Ufer des Genfersees, gefilmt mit der Drohne. Die anspruchsvollen Landschaften, für die dieser Dienst gedacht ist.',
-    },
-    lavaux: {
-      alt: 'Rebterrassen des Lavaux über dem Genfersee',
-      eyebrow: 'In der Westschweiz verwurzelt',
-      title: 'Im Dienst der Weinberge des Lavaux und darüber hinaus.',
-      text: 'Wir kennen die steilen Terrassen, die zum Genfersee hinunterführen. Unser Dienst passt sich diesen anspruchsvollen Parzellen an, die typisch für die Region sind.',
     },
     faq: {
       categoriesLabel: 'Fragenkategorien',

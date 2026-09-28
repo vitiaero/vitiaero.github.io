@@ -103,16 +103,10 @@ export default {
     hero: {
       alt: 'Drone DJI Agras T50 pulvérisant au-dessus d\'un champ',
       eyebrow: 'Épandage viticole par drone - Suisse romande',
-      title: 'Traitez vos vignes en pente, sans machine au sol.',
-      lead: 'Demandez une estimation en ligne pour l\'épandage de vos parcelles par drone. Gratuit, sans engagement. Vous recevez ensuite un devis détaillé.',
+      title: 'Vos vignes en pente, traitées par drone.',
+      lead: 'Estimation en ligne, gratuite et sans engagement.',
       how: 'Comment ça marche',
     },
-    stats: [
-      { num: '40 L', label: 'Réservoir de pulvérisation' },
-      { num: '100 km', label: 'Rayon d\'intervention' },
-      { num: '48 h', label: 'Réponse à votre demande' },
-      { num: '0', label: 'Passage de machine au sol' },
-    ],
     why: {
       eyebrow: 'Pourquoi le drone',
       title: 'Enfin une solution pour les parcelles difficiles.',
@@ -122,15 +116,10 @@ export default {
       alt: 'Vignes suisses en terrasses du Lavaux',
     },
     advantages: {
-      intro: 'Une solution complémentaire aux méthodes viticoles traditionnelles. Son intérêt dépend de la parcelle, du traitement et de la météo.',
-      eyebrow: 'Les avantages',
-      title: 'Pourquoi utiliser un drone ?',
       items: [
-        { icon: 'slope', title: 'Accès aux parcelles difficiles', text: 'Une solution particulièrement adaptée aux parcelles pentues, étroites, fragmentées ou difficiles d\'accès avec des machines conventionnelles.' },
-        { icon: 'leaf', title: 'Moins de contraintes liées au terrain', text: 'Le drone permet d\'intervenir sans faire circuler un véhicule lourd directement dans la parcelle.' },
-        { icon: 'target', title: 'Intervention adaptée au relief', text: 'Le système de suivi du terrain permet d\'adapter la hauteur de vol au relief afin de maintenir une application régulière lorsque les conditions de sécurité le permettent.' },
-        { icon: 'droplet', title: 'Intervention ciblée', text: 'Les paramètres de vol et de pulvérisation peuvent être ajustés en fonction de la parcelle et des conditions d\'intervention.' },
-        { icon: 'route', title: 'Une solution complémentaire', text: 'Le traitement par drone constitue une solution complémentaire aux méthodes viticoles traditionnelles. Son intérêt dépend notamment de la configuration de la parcelle, du traitement et des conditions météorologiques.' },
+        { title: 'Accès aux parcelles difficiles', text: 'Une solution particulièrement adaptée aux parcelles pentues, étroites, fragmentées ou difficiles d\'accès avec des machines conventionnelles.' },
+        { title: 'Moins de contraintes liées au terrain', text: 'Le drone permet d\'intervenir sans faire circuler un véhicule lourd directement dans la parcelle.' },
+        { title: 'Intervention adaptée au relief', text: 'Le système de suivi du terrain permet d\'adapter la hauteur de vol au relief afin de maintenir une application régulière lorsque les conditions de sécurité le permettent.' },
       ],
     },
     how: {
@@ -161,15 +150,9 @@ export default {
     },
     cine: {
       film: { label: 'Vol au-dessus d\'Epesses (Lavaux)', alt: 'Vol en drone au-dessus des terrasses d\'Epesses, le lac Léman en contrebas' },
-      eyebrow: 'En images',
+      eyebrow: 'Ancré en Suisse romande',
       title: 'Le vignoble vu du ciel.',
       lead: 'Des terrasses du Lavaux au bord du lac Léman, filmées par drone. Les paysages exigeants pour lesquels ce service est pensé.',
-    },
-    lavaux: {
-      alt: 'Terrasses viticoles du Lavaux au-dessus du lac Léman',
-      eyebrow: 'Ancré en Suisse romande',
-      title: 'Au service du vignoble du Lavaux et d\'ailleurs.',
-      text: 'Nous connaissons les terrasses en pente qui descendent vers le lac Léman. Notre service s\'adapte à ces parcelles exigeantes, typiques de la région.',
     },
     faq: {
       categoriesLabel: 'Catégories de questions',

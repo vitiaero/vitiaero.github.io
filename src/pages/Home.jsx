@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
-import CountUp from '../components/CountUp.jsx';
 import BgVideo from '../components/BgVideo.jsx';
 import FaqSchema from '../components/FaqSchema.jsx';
 import Kicker from '../components/Kicker.jsx';
@@ -11,12 +10,13 @@ import ScrollWords from '../components/ScrollWords.jsx';
 import BtnArrow from '../components/BtnArrow.jsx';
 import { useParallax } from '../components/useParallax.js';
 import { asset } from '../config.js';
-import { images, videos, film } from '../content.js';
+import { videos, film } from '../content.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // Page d'accueil, d'apres la maquette « Refonte site Lavaux et T50 », epuree le
-// 27 septembre : un message par bloc, textes lisibles, uniquement des images du
-// DJI Agras T50 et du Lavaux. Les textes viennent de src/i18n (verifies).
+// 27 septembre puis allegee le 28 (7 sections) : un message par bloc, textes
+// courts, uniquement des images du DJI Agras T50 et du Lavaux. Les textes
+// viennent de src/i18n (verifies).
 const img = (p) => asset(`/images/${p}`);
 const pad = (i) => String(i + 1).padStart(2, '0');
 
@@ -44,19 +44,8 @@ function Hero() {
   );
 }
 
-function Stats() {
-  const { t } = useI18n();
-  return (
-    <dl className="hm-stats">
-      {t.home.stats.map((s, i) => (
-        <Reveal className="hm-stat" key={s.label} delay={i * 90}>
-          <dt>{s.label}</dt>
-          <dd><CountUp value={s.num} /></dd>
-        </Reveal>
-      ))}
-    </dl>
-  );
-}
+// Trois photos du DJI Agras T50 : au-dessus des rangs, en vol, le radar avant.
+const WHY_IMAGES = ['t50-rows.jpg', 't50-flight.jpg', 'equip/t50-radar.jpg'];
 
 function WhyDrone() {
   const { t } = useI18n();
@@ -76,47 +65,14 @@ function WhyDrone() {
           </Reveal>
         </div>
       </div>
-    </section>
-  );
-}
-
-// Trois photos du DJI Agras T50 : au-dessus des rangs, en vol, le radar avant.
-const ADV_IMAGES = ['t50-rows.jpg', 't50-flight.jpg', 'equip/t50-radar.jpg'];
-
-function Advantages() {
-  const { t } = useI18n();
-  const a = t.home.advantages;
-  const [focus, other] = [a.items[3], a.items[4]];
-  return (
-    <section className="hm-adv" aria-labelledby="hm-adv-title">
-      <div className="hm-head">
-        <Reveal as="h2" className="hm-h2" id="hm-adv-title">{a.title}</Reveal>
-        <Reveal as="p" className="hm-head-note" delay={100}>{a.intro}</Reveal>
-      </div>
       <div className="hm-adv-grid">
-        {a.items.slice(0, 3).map((item, i) => (
+        {t.home.advantages.items.map((item, i) => (
           <Reveal as="article" className="hm-adv-card" key={item.title} delay={i * 110}>
-            <div className="hm-media"><img src={img(ADV_IMAGES[i])} alt="" loading="lazy" /></div>
+            <div className="hm-media"><img src={img(WHY_IMAGES[i])} alt="" loading="lazy" /></div>
             <h3>{item.title}</h3>
             <p>{item.text}</p>
           </Reveal>
         ))}
-      </div>
-      <div className="hm-feature-grid">
-        <Reveal as="article" className="hm-feature is-lime">
-          <div className="hm-feature-top">
-            <h3>{focus.title}</h3>
-            <span className="round" aria-hidden="true"><Icon name="target" size={18} /></span>
-          </div>
-          <p>{focus.text}</p>
-        </Reveal>
-        <Reveal as="article" className="hm-feature" delay={110}>
-          <div className="hm-feature-top">
-            <h3>{other.title}</h3>
-            <span className="round" aria-hidden="true"><Icon name="plus" size={18} stroke={2.2} /></span>
-          </div>
-          <p>{other.text}</p>
-        </Reveal>
       </div>
     </section>
   );
@@ -180,35 +136,6 @@ function DroneSection() {
         </dl>
         <Link to="/equipement" className="btn btn-primary btn-arrow">{d.cta}<BtnArrow /></Link>
       </Reveal>
-    </section>
-  );
-}
-
-function LavauxBanner() {
-  const { t } = useI18n();
-  const l = t.home.lavaux;
-  const photo = useRef(null);
-  useParallax(photo, 0.08);
-  return (
-    <section className="hm-lavaux" aria-labelledby="hm-lavaux-title">
-      <div className="hm-lavaux-media">
-        <img ref={photo} src={images.lavaux} alt={l.alt} loading="lazy" />
-      </div>
-      <div className="hm-lavaux-body">
-        <Kicker tone="light">{l.eyebrow}</Kicker>
-        <div className="hm-lavaux-row">
-          <Reveal className="hm-lavaux-text">
-            <h2 className="hm-h2 xl" id="hm-lavaux-title">{l.title}</h2>
-            <p>{l.text}</p>
-          </Reveal>
-          <Reveal delay={180}>
-            <Link to="/estimation" className="hm-circle">
-              <span>{t.common.requestEstimate}</span>
-              <Icon name="arrow" size={16} stroke={2} />
-            </Link>
-          </Reveal>
-        </div>
-      </div>
     </section>
   );
 }
@@ -322,12 +249,9 @@ export default function Home() {
       <FaqSchema />
       <div className="container home-flow">
         <Hero />
-        <Stats />
         <WhyDrone />
-        <Advantages />
         <Steps />
         <DroneSection />
-        <LavauxBanner />
         <Film />
         <Faq />
         <FinalCta />

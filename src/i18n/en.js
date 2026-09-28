@@ -102,16 +102,10 @@ export default {
     hero: {
       alt: 'DJI Agras T50 drone spraying over a field',
       eyebrow: 'Vineyard spraying by drone - French-speaking Switzerland',
-      title: 'Treat your vines on steep slopes, with no machines on the ground.',
-      lead: 'Request an online estimate for spraying your plots by drone. Free, with no obligation. You then receive a detailed quote.',
+      title: 'Your vines on steep slopes, treated by drone.',
+      lead: 'Online estimate, free and with no commitment.',
       how: 'How it works',
     },
-    stats: [
-      { num: '40 L', label: 'Spray tank' },
-      { num: '100 km', label: 'Service radius' },
-      { num: '48 h', label: 'Reply to your request' },
-      { num: '0', label: 'Machines driving on the ground' },
-    ],
     why: {
       eyebrow: 'Why a drone',
       title: 'At last, a solution for difficult plots.',
@@ -121,15 +115,10 @@ export default {
       alt: 'Swiss terraced vineyards in Lavaux',
     },
     advantages: {
-      intro: 'A complement to traditional vineyard methods. Its value depends on the plot, the treatment and the weather.',
-      eyebrow: 'The benefits',
-      title: 'Why use a drone?',
       items: [
-        { icon: 'slope', title: 'Access to difficult plots', text: 'A solution particularly suited to plots that are steep, narrow, fragmented or hard to reach with conventional machines.' },
-        { icon: 'leaf', title: 'Fewer constraints from the terrain', text: 'The drone makes it possible to work without driving a heavy vehicle through the plot itself.' },
-        { icon: 'target', title: 'Work suited to the terrain', text: 'Terrain following makes it possible to adapt the flight height to the relief in order to keep an even application, where safety conditions allow.' },
-        { icon: 'droplet', title: 'Targeted work', text: 'Flight and spraying settings can be adjusted according to the plot and the working conditions.' },
-        { icon: 'route', title: 'A complementary solution', text: 'Treatment by drone is a solution that complements traditional vineyard methods. Its value depends notably on the layout of the plot, the treatment and the weather conditions.' },
+        { title: 'Access to difficult plots', text: 'A solution particularly suited to plots that are steep, narrow, fragmented or hard to reach with conventional machines.' },
+        { title: 'Fewer constraints from the terrain', text: 'The drone makes it possible to work without driving a heavy vehicle through the plot itself.' },
+        { title: 'Work suited to the terrain', text: 'Terrain following makes it possible to adapt the flight height to the relief in order to keep an even application, where safety conditions allow.' },
       ],
     },
     how: {
@@ -160,15 +149,9 @@ export default {
     },
     cine: {
       film: { label: 'Flight over Epesses (Lavaux)', alt: 'Drone flight over the Epesses terraces, with Lake Geneva below' },
-      eyebrow: 'In pictures',
+      eyebrow: 'Rooted in French-speaking Switzerland',
       title: 'The vineyards from above.',
       lead: 'From the terraces of Lavaux to the shores of Lake Geneva, filmed by drone. The demanding landscapes this service is designed for.',
-    },
-    lavaux: {
-      alt: 'Lavaux vineyard terraces above Lake Geneva',
-      eyebrow: 'Rooted in French-speaking Switzerland',
-      title: 'Serving the vineyards of Lavaux and beyond.',
-      text: 'We know the steep terraces that run down to Lake Geneva. Our service is suited to these demanding plots, typical of the region.',
     },
     faq: {
       categoriesLabel: 'Question categories',

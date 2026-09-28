@@ -14,10 +14,9 @@ drone DJI Agras T50). Branche Git : `refonte-lavaux-t50`.
   (numéros des étapes, nombre de questions, fiches techniques).
 - Cartes arrondies (22 à 28 px), boutons en pastille avec flèche ronde, menu en
   pastille sombre.
-- Accueil : carte vidéo d'en-tête, chiffres clés, « Pourquoi le drone »,
-  avantages en photos et cartes, les 4 étapes de la demande, carte du T50 (grand
-  « T50 » en fond), bandeau Lavaux, film du vignoble, FAQ par catégories, appel
-  final.
+- Accueil, 7 sections : carte vidéo d'en-tête, « Pourquoi le drone » (phrase
+  animée et 3 photos du T50), les 4 étapes de la demande, carte du T50 (grand
+  « T50 » en fond), film du vignoble (Lavaux), FAQ par catégories, appel final.
 - Équipement : en-tête vidéo, sous-menu collé, grille « Le drone »,
   pulvérisation (vidéos des pièces au survol), préparation, GPS & cartographie
   (bascule entre les deux itinéraires), appel final.
@@ -78,6 +77,12 @@ Demandés par le propriétaire après la première version, pour un site plus
   Les dessins sont dans `src/components/Icons.jsx`.
 - **Tracé des parcelles** (page Estimation) : vert citron cerné d'encre, aux
   couleurs du site, au lieu de l'orange de l'ancienne charte.
+- **Accueil allégé** (28 septembre) : de 10 à 7 sections pour un rendu plus
+  premium. Titre « Vos vignes en pente, traitées par drone. » et sous-titre
+  « Estimation en ligne, gratuite et sans engagement. ». Retirés : la bande de
+  chiffres clés (redite de la section T50), le second titre « Pourquoi utiliser
+  un drone ? » et ses deux cartes de texte, le bandeau Lavaux (le film porte
+  désormais l'intitulé « Ancré en Suisse romande »).
 - **Aperçu** : `npm run apercu` lance le site seul (sans l'API) sur
   `http://localhost:5180`, sans ouvrir de navigateur. C'est l'entrée
   « VitiAero - nouvelle version (Lavaux T50) » du panneau d'aperçu de
