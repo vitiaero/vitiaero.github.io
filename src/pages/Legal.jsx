@@ -5,8 +5,8 @@ import de from './legal/de.jsx';
 import en from './legal/en.jsx';
 
 // Pages légales, un fichier par langue dans ./legal. Textes MODÈLES adaptés au
-// droit suisse : les champs entre crochets [ ] sont à compléter et l'ensemble
-// est à faire relire par une personne compétente avant une mise en ligne réelle.
+// droit suisse, pour une entreprise fictive (projet d'étude) : à faire relire
+// par une personne compétente avant une utilisation réelle.
 const DOCS = { fr, de, en };
 
 export default function Legal({ doc }) {

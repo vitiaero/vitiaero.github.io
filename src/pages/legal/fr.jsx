@@ -3,21 +3,18 @@ import { Link } from 'react-router-dom';
 import { company, linkStyle, clearSiteStorage } from './shared.js';
 
 // Pages légales en français. Textes MODÈLES adaptés au droit suisse (nLPD, en
-// vigueur depuis le 1er septembre 2023), pour un projet d'étude. Les champs
-// entre crochets [ ] sont à compléter et l'ensemble est à faire relire par une
-// personne compétente avant une mise en ligne réelle.
+// vigueur depuis le 1er septembre 2023), pour un projet d'étude : VitiAero est
+// une entreprise fictive. Les valeurs (délais, paiement, annulation) sont
+// plausibles mais inventées ; à faire relire avant une utilisation réelle.
 const UPDATED = 'septembre 2026';
 
-// On n'invente rien : les crochets restent visibles tant que la valeur n'est pas
-// renseignée dans content.js.
 const ADDRESS_LINE = `${company.address}, ${company.npa} ${company.city}, canton de ${company.canton}, Suisse`;
 
 function Disclaimer() {
   return (
     <div className="alert alert-info">
-      Document modèle réalisé dans le cadre d'un projet d'étude (CPNV, PAE). Les
-      mentions entre crochets sont à compléter et le texte doit être validé par une
-      personne compétente avant toute utilisation réelle.
+      VitiAero est une entreprise fictive, créée dans le cadre d'un projet d'étude
+      (CPNV, PAE). Ce document sert d'exemple et n'a pas été relu par un juriste.
     </div>
   );
 }
@@ -93,16 +90,15 @@ function Confidentialite() {
         Pour calculer les frais de déplacement, notre serveur demande la distance par la
         route entre notre point de départ et vos parcelles au service d'itinéraire public
         OSRM (router.project-osrm.org). Seule la position du centre de vos parcelles lui est
-        transmise : ni votre nom, ni vos coordonnées, ni votre adresse IP. [À VÉRIFIER :
-        exploitant et pays d'hébergement de ce service.]
+        transmise : ni votre nom, ni vos coordonnées, ni votre adresse IP.
       </p>
 
       <h2 className="h3">7. Durée de conservation</h2>
       <p>
-        Les demandes sans suite sont conservées [24 mois]. Les données de compte sont
+        Les demandes sans suite sont conservées 24 mois. Les données de compte sont
         conservées tant que le compte est actif, puis supprimées ou anonymisées. Les
         documents liés à une facturation éventuelle sont conservés selon les délais légaux
-        ([10 ans]). Les compteurs techniques de sécurité (limitation par IP) sont effacés
+        (10 ans). Les compteurs techniques de sécurité (limitation par IP) sont effacés
         après quelques minutes.
       </p>
 
@@ -112,7 +108,9 @@ function Confidentialite() {
         techniques (par exemple l'hébergement : {company.host}), tenus à la confidentialité.
         Les fonds de carte OpenStreetMap peuvent impliquer un accès depuis l'Union
         européenne. Aucun transfert n'est effectué vers un pays sans niveau de protection
-        adéquat sans garanties appropriées. [À COMPLÉTER : liste des prestataires et pays.]
+        adéquat sans garanties appropriées. Prestataires utilisés : GitHub (hébergement,
+        États-Unis), swisstopo (cartes, Suisse), OpenStreetMap (cartes, Union européenne)
+        et OSRM (calcul de la distance par la route).
       </p>
 
       <h2 className="h3">9. Sécurité</h2>
@@ -165,16 +163,11 @@ function Mentions() {
       <ul>
         <li>Terrasses du Lavaux : JoachimKohler-HB, Wikimedia Commons, licence CC BY-SA 4.0.</li>
         <li>Vignes en terrasses : P. Vensaus, Wikimedia Commons, licence CC BY-SA 4.0.</li>
-        <li>Drone d'épandage en vol : Blervis, Wikimedia Commons, licence CC0.</li>
-        <li>Drone DJI Agras : ZLEA, Wikimedia Commons, licence CC BY-SA 4.0.</li>
         <li>
-          Photos et vidéos du drone sur la page Équipement, et vidéo d'accueil : DJI
-          (ag.dji.com). [DROITS D'UTILISATION À VÉRIFIER avant publication].
+          Photos et vidéos du drone, vidéo d'accueil et drone détouré : DJI (ag.dji.com),
+          reproduits à titre d'illustration pour ce projet d'étude, sans but commercial.
         </li>
-        <li>
-          Autres visuels (drone détouré, affiche) : [DROITS D'UTILISATION À VÉRIFIER
-          avant publication].
-        </li>
+        <li>Vidéo du vol au-dessus d'Epesses : VitiAero.</li>
       </ul>
 
       <h2 className="h3">Responsabilité</h2>
@@ -191,18 +184,13 @@ function Mentions() {
 }
 
 // Conditions générales de prestation (CGV). Structure modèle pour un service
-// d'épandage viticole par drone. À faire valider juridiquement : les points
-// sensibles (responsabilité, réglementation, assurance) sont signalés.
+// d'épandage viticole par drone (entreprise fictive, projet d'étude).
 function Cgv() {
   return (
     <>
       <h1 className="h1">Conditions générales</h1>
       <p className="muted">Dernière mise à jour : {UPDATED}</p>
-      <div className="alert alert-info">
-        Structure modèle non validée par un juriste. Les prix, délais, garanties et clauses
-        de responsabilité doivent être complétés et relus par une personne compétente avant
-        toute utilisation réelle.
-      </div>
+      <Disclaimer />
 
       <h2 className="h3">1. Objet et champ d'application</h2>
       <p>
@@ -221,8 +209,8 @@ function Cgv() {
       <p>
         La prestation débute après acceptation écrite du devis. Les prix sont indiqués en
         francs suisses, hors TVA. La TVA suisse, au taux normal de 8,1 %, s'ajoute si
-        l'entreprise y est assujettie. [Modalités de paiement à compléter : acompte, délai,
-        moyens acceptés.]
+        l'entreprise y est assujettie. La facture est payable à 30 jours, par virement
+        bancaire, sans acompte.
       </p>
 
       <h2 className="h3">4. Conditions d'intervention</h2>
@@ -235,7 +223,8 @@ function Cgv() {
 
       <h2 className="h3">5. Annulation et report</h2>
       <p>
-        [Conditions d'annulation à compléter : délai de préavis, frais éventuels.] Un report
+        Le client peut annuler sans frais jusqu'à 48 heures avant la date prévue ; au-delà,
+        les frais de déplacement peuvent être facturés. Un report
         lié à la météo ou à une impossibilité technique ne donne pas lieu à des frais
         d'annulation.
       </p>
@@ -245,16 +234,16 @@ function Cgv() {
         Les interventions sont réalisées dans le respect de la réglementation suisse
         applicable (aviation, produits utilisés, exigences fédérales et cantonales). Le choix
         et l'emploi des produits respectent leur homologation et leurs conditions d'usage.
-        [À VÉRIFIER AVANT PUBLICATION : autorisations requises pour l'application par drone et
-        pour les produits concernés.]
+        Aucune intervention n'a lieu sans les autorisations requises pour l'application
+        par drone et pour les produits concernés.
       </p>
 
       <h2 className="h3">7. Responsabilité et assurance</h2>
       <p>
         Notre responsabilité est engagée en cas de faute dans les limites permises par le
         droit suisse. Elle est exclue pour les dommages résultant d'informations inexactes du
-        client ou d'un accès non sécurisé. [À COMPLÉTER : couverture d'assurance responsabilité
-        civile, plafonds, franchises.]
+        client ou d'un accès non sécurisé. VitiAero dispose d'une assurance responsabilité
+        civile pour ses interventions par drone.
       </p>
 
       <h2 className="h3">8. Force majeure</h2>

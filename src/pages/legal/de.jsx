@@ -11,12 +11,10 @@ const ADDRESS_LINE = `${company.address}, ${company.npa} ${company.city}, Kanton
 function Disclaimer() {
   return (
     <div className="alert alert-info">
-      Mustervorlage, erstellt im Rahmen eines Studienprojekts (CPNV, PAE). Die Angaben in
-      eckigen Klammern sind zu ergänzen, und der Text muss vor jeder echten Verwendung von
-      einer Fachperson geprüft werden.
+      VitiAero ist ein fiktives Unternehmen, erstellt im Rahmen eines Studienprojekts
+      (CPNV, PAE). Dieses Dokument dient als Beispiel und wurde nicht juristisch geprüft.
       <br />
       Diese Übersetzung dient der Information. Im Zweifel gilt die französische Fassung.
-      [VON EINER FACHPERSON ZU BESTÄTIGEN]
     </div>
   );
 }
@@ -92,16 +90,15 @@ function Confidentialite() {
         Um die Anfahrtskosten zu berechnen, fragt unser Server den öffentlichen Routendienst
         OSRM (router.project-osrm.org) nach der Strassendistanz zwischen unserem Ausgangspunkt
         und Ihren Parzellen. Übermittelt wird nur die Position der Mitte Ihrer Parzellen:
-        weder Ihr Name noch Ihre Kontaktdaten noch Ihre IP-Adresse. [ZU PRÜFEN: Betreiber und
-        Hosting-Land dieses Dienstes.]
+        weder Ihr Name noch Ihre Kontaktdaten noch Ihre IP-Adresse.
       </p>
 
       <h2 className="h3">7. Aufbewahrungsdauer</h2>
       <p>
-        Anfragen ohne Folge werden [24 Monate] aufbewahrt. Kontodaten werden aufbewahrt,
+        Anfragen ohne Folge werden 24 Monate aufbewahrt. Kontodaten werden aufbewahrt,
         solange das Konto aktiv ist, und danach gelöscht oder anonymisiert. Unterlagen zu
         einer allfälligen Rechnungsstellung werden gemäss den gesetzlichen Fristen aufbewahrt
-        ([10 Jahre]). Die technischen Sicherheitszähler (Begrenzung pro IP-Adresse) werden
+        (10 Jahre). Die technischen Sicherheitszähler (Begrenzung pro IP-Adresse) werden
         nach wenigen Minuten gelöscht.
       </p>
 
@@ -111,8 +108,9 @@ function Confidentialite() {
         werden (zum Beispiel für das Hosting: {company.host}), die zur Vertraulichkeit
         verpflichtet sind. Die Kartenhintergründe von OpenStreetMap können einen Zugriff aus
         der Europäischen Union mit sich bringen. Ohne geeignete Garantien findet keine
-        Übermittlung in ein Land ohne angemessenes Schutzniveau statt. [ZU ERGÄNZEN: Liste
-        der Dienstleister und Länder.]
+        Übermittlung in ein Land ohne angemessenes Schutzniveau statt. Eingesetzte
+        Dienstleister: GitHub (Hosting, USA), swisstopo (Karten, Schweiz), OpenStreetMap
+        (Karten, Europäische Union) und OSRM (Berechnung der Strassendistanz).
       </p>
 
       <h2 className="h3">9. Sicherheit</h2>
@@ -165,16 +163,12 @@ function Mentions() {
       <ul>
         <li>Terrassen des Lavaux: JoachimKohler-HB, Wikimedia Commons, Lizenz CC BY-SA 4.0.</li>
         <li>Reben auf Terrassen: P. Vensaus, Wikimedia Commons, Lizenz CC BY-SA 4.0.</li>
-        <li>Sprühdrohne im Flug: Blervis, Wikimedia Commons, Lizenz CC0.</li>
-        <li>Drohne DJI Agras: ZLEA, Wikimedia Commons, Lizenz CC BY-SA 4.0.</li>
         <li>
-          Bilder und Videos der Drohne auf der Seite Ausrüstung sowie Video der Startseite:
-          DJI (ag.dji.com). [NUTZUNGSRECHTE VOR DER VERÖFFENTLICHUNG ZU PRÜFEN].
+          Bilder und Videos der Drohne, Video der Startseite und freigestellte Drohne: DJI
+          (ag.dji.com), zur Veranschaulichung dieses Studienprojekts ohne kommerziellen Zweck
+          wiedergegeben.
         </li>
-        <li>
-          Weitere Bilder (freigestellte Drohne, Titelbild): [NUTZUNGSRECHTE VOR DER
-          VERÖFFENTLICHUNG ZU PRÜFEN].
-        </li>
+        <li>Video des Flugs über Epesses: VitiAero.</li>
       </ul>
 
       <h2 className="h3">Haftung</h2>
@@ -195,14 +189,7 @@ function Cgv() {
     <>
       <h1 className="h1">Allgemeine Geschäftsbedingungen</h1>
       <p className="muted">Letzte Aktualisierung: {UPDATED}</p>
-      <div className="alert alert-info">
-        Mustervorlage, nicht von einer juristischen Fachperson geprüft. Preise, Fristen,
-        Garantien und Haftungsklauseln sind vor jeder echten Verwendung zu ergänzen und von
-        einer Fachperson zu prüfen.
-        <br />
-        Diese Übersetzung dient der Information. Im Zweifel gilt die französische Fassung.
-        [VON EINER FACHPERSON ZU BESTÄTIGEN]
-      </div>
+      <Disclaimer />
 
       <h2 className="h3">1. Gegenstand und Geltungsbereich</h2>
       <p>
@@ -222,7 +209,7 @@ function Cgv() {
         Die Leistung beginnt nach der schriftlichen Annahme der Offerte. Die Preise verstehen
         sich in Schweizer Franken, ohne MWST. Die Schweizer MWST zum Normalsatz von 8,1 %
         kommt dazu, sofern das Unternehmen steuerpflichtig ist.
-        [Zahlungsbedingungen zu ergänzen: Anzahlung, Frist, akzeptierte Zahlungsmittel.]
+        Die Rechnung ist innert 30 Tagen per Banküberweisung zahlbar, ohne Anzahlung.
       </p>
 
       <h2 className="h3">4. Bedingungen für den Einsatz</h2>
@@ -235,7 +222,8 @@ function Cgv() {
 
       <h2 className="h3">5. Annullierung und Verschiebung</h2>
       <p>
-        [Annullierungsbedingungen zu ergänzen: Frist, allfällige Kosten.] Eine Verschiebung
+        Die Kundschaft kann bis 48 Stunden vor dem vorgesehenen Termin kostenlos
+        annullieren; danach können die Anfahrtskosten verrechnet werden. Eine Verschiebung
         wegen des Wetters oder aus technischen Gründen führt nicht zu Annullierungskosten.
       </p>
 
@@ -244,16 +232,16 @@ function Cgv() {
         Die Einsätze erfolgen unter Einhaltung der geltenden Schweizer Vorschriften
         (Luftfahrt, eingesetzte Mittel, Anforderungen von Bund und Kantonen). Wahl und
         Einsatz der Mittel entsprechen ihrer Zulassung und ihren Anwendungsbedingungen.
-        [VOR DER VERÖFFENTLICHUNG ZU PRÜFEN: nötige Bewilligungen für die Ausbringung per
-        Drohne und für die betroffenen Mittel.]
+        Ohne die nötigen Bewilligungen für die Ausbringung per Drohne und für die
+        betroffenen Mittel findet kein Einsatz statt.
       </p>
 
       <h2 className="h3">7. Haftung und Versicherung</h2>
       <p>
         Wir haften bei Verschulden im Rahmen des Schweizer Rechts. Die Haftung ist
         ausgeschlossen für Schäden, die aus falschen Angaben der Kundschaft oder aus einem
-        unsicheren Zugang entstehen. [ZU ERGÄNZEN: Deckung der Haftpflichtversicherung,
-        Höchstbeträge, Selbstbehalte.]
+        unsicheren Zugang entstehen. VitiAero verfügt über eine Haftpflichtversicherung für
+        ihre Einsätze mit der Drohne.
       </p>
 
       <h2 className="h3">8. Höhere Gewalt</h2>

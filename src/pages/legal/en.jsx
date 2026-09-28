@@ -10,12 +10,11 @@ const ADDRESS_LINE = `${company.address}, ${company.npa} ${company.city}, canton
 function Disclaimer() {
   return (
     <div className="alert alert-info">
-      Template document created as part of a student project (CPNV, PAE). The details in
-      square brackets must be completed, and the text must be checked by a qualified person
-      before any real use.
+      VitiAero is a fictitious company, created as part of a student project (CPNV, PAE).
+      This document is an example and has not been reviewed by a lawyer.
       <br />
       This translation is provided for information. In case of doubt, the French version
-      applies. [TO BE CONFIRMED BY A QUALIFIED PERSON]
+      applies.
     </div>
   );
 }
@@ -88,15 +87,14 @@ function Confidentialite() {
         To calculate travel costs, our server asks the public routing service OSRM
         (router.project-osrm.org) for the road distance between our starting point and your
         plots. Only the position of the centre of your plots is sent: not your name, not your
-        contact details and not your IP address. [TO BE CHECKED: operator and hosting country
-        of this service.]
+        contact details and not your IP address.
       </p>
 
       <h2 className="h3">7. Retention period</h2>
       <p>
-        Requests with no follow-up are kept for [24 months]. Account data is kept while the
+        Requests with no follow-up are kept for 24 months. Account data is kept while the
         account is active, then deleted or anonymised. Documents related to any invoicing are
-        kept for the legal periods ([10 years]). Technical security counters (limits per IP
+        kept for the legal periods (10 years). Technical security counters (limits per IP
         address) are deleted after a few minutes.
       </p>
 
@@ -106,7 +104,8 @@ function Confidentialite() {
         example, hosting: {company.host}), who are bound by confidentiality. OpenStreetMap
         base maps may involve access from the European Union. No data is transferred to a
         country without an adequate level of protection unless appropriate safeguards are in
-        place. [TO BE COMPLETED: list of providers and countries.]
+        place. Providers used: GitHub (hosting, USA), swisstopo (maps, Switzerland),
+        OpenStreetMap (maps, European Union) and OSRM (road distance calculation).
       </p>
 
       <h2 className="h3">9. Security</h2>
@@ -159,16 +158,11 @@ function Mentions() {
       <ul>
         <li>Lavaux terraces: JoachimKohler-HB, Wikimedia Commons, licence CC BY-SA 4.0.</li>
         <li>Terraced vineyards: P. Vensaus, Wikimedia Commons, licence CC BY-SA 4.0.</li>
-        <li>Spraying drone in flight: Blervis, Wikimedia Commons, licence CC0.</li>
-        <li>DJI Agras drone: ZLEA, Wikimedia Commons, licence CC BY-SA 4.0.</li>
         <li>
-          Drone photos and videos on the Equipment page, and the home page video: DJI
-          (ag.dji.com). [USAGE RIGHTS TO BE CHECKED before publication].
+          Drone photos and videos, home page video and cut-out drone: DJI (ag.dji.com),
+          reproduced for illustration in this student project, with no commercial purpose.
         </li>
-        <li>
-          Other visuals (cut-out drone, cover image): [USAGE RIGHTS TO BE CHECKED before
-          publication].
-        </li>
+        <li>Video of the flight over Epesses: VitiAero.</li>
       </ul>
 
       <h2 className="h3">Liability</h2>
@@ -189,14 +183,7 @@ function Cgv() {
     <>
       <h1 className="h1">General terms and conditions</h1>
       <p className="muted">Last updated: {UPDATED}</p>
-      <div className="alert alert-info">
-        Template structure not checked by a lawyer. Prices, deadlines, warranties and
-        liability clauses must be completed and reviewed by a qualified person before any
-        real use.
-        <br />
-        This translation is provided for information. In case of doubt, the French version
-        applies. [TO BE CONFIRMED BY A QUALIFIED PERSON]
-      </div>
+      <Disclaimer />
 
       <h2 className="h3">1. Purpose and scope</h2>
       <p>
@@ -215,8 +202,8 @@ function Cgv() {
       <p>
         The service starts once the quote has been accepted in writing. Prices are in Swiss
         francs, excluding VAT. Swiss VAT, at the standard rate of 8.1%, is added if the
-        company is liable for it. [Payment terms to be completed: deposit, deadline,
-        accepted payment methods.]
+        company is liable for it. Invoices are payable within 30 days by bank transfer, with
+        no deposit.
       </p>
 
       <h2 className="h3">4. Conditions for the work</h2>
@@ -229,7 +216,8 @@ function Cgv() {
 
       <h2 className="h3">5. Cancellation and postponement</h2>
       <p>
-        [Cancellation terms to be completed: notice period, any fees.] A postponement due to
+        The customer may cancel free of charge up to 48 hours before the planned date; after
+        that, travel costs may be charged. A postponement due to
         the weather or to a technical impossibility does not lead to cancellation fees.
       </p>
 
@@ -237,15 +225,15 @@ function Cgv() {
       <p>
         The work is carried out in line with the applicable Swiss regulations (aviation,
         products used, federal and cantonal requirements). The choice and use of products
-        follow their approval and their conditions of use. [TO BE CHECKED BEFORE PUBLICATION:
-        permits required for drone application and for the products concerned.]
+        follow their approval and their conditions of use. No work takes place without the
+        permits required for drone application and for the products concerned.
       </p>
 
       <h2 className="h3">7. Liability and insurance</h2>
       <p>
         We are liable in case of fault within the limits allowed by Swiss law. Liability is
         excluded for damage caused by inaccurate information from the customer or by unsafe
-        access. [TO BE COMPLETED: third-party liability insurance cover, limits, excess.]
+        access. VitiAero has third-party liability insurance for its drone operations.
       </p>
 
       <h2 className="h3">8. Force majeure</h2>
