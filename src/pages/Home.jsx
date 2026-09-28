@@ -7,6 +7,7 @@ import BgVideo from '../components/BgVideo.jsx';
 import FaqSchema from '../components/FaqSchema.jsx';
 import Kicker from '../components/Kicker.jsx';
 import WordRise from '../components/WordRise.jsx';
+import ScrollWords from '../components/ScrollWords.jsx';
 import BtnArrow from '../components/BtnArrow.jsx';
 import { useParallax } from '../components/useParallax.js';
 import { asset } from '../config.js';
@@ -64,10 +65,10 @@ function WhyDrone() {
     <section className="hm-why" aria-labelledby="hm-why-title">
       <Reveal className="hm-why-side"><Kicker>{w.eyebrow}</Kicker></Reveal>
       <div className="hm-why-main">
-        <Reveal className="hm-statement">
+        <div className="hm-statement">
           <h2 id="hm-why-title">{w.title}</h2>{' '}
-          <p>{w.lead}</p>
-        </Reveal>
+          <ScrollWords text={w.lead} />
+        </div>
         <div className="hm-why-cols">
           <Reveal as="p" delay={100}>{w.text}</Reveal>
           <Reveal delay={180}>

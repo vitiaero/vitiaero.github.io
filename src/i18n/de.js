@@ -333,23 +333,23 @@ export default {
     stepsTitle: 'Ein Einsatz in vier Schritten.',
     steps: [
       {
-        icon: 'map',
+        icon: 'parcel',
         title: 'Analyse Ihrer Parzelle',
         text: 'Vor jedem Einsatz wird die Parzelle analysiert, um Gelände, Zugänglichkeit, mögliche Hindernisse und besondere Gegebenheiten des Standorts zu erfassen.',
       },
       {
-        icon: 'route',
+        icon: 'plan',
         title: 'Vorbereitung des Einsatzes',
         text: 'Flugplan, Sprühparameter und Einsatzbedingungen werden auf die Parzelle und die vorgesehene Behandlung abgestimmt.',
         note: 'Die Parameter richten sich nach dem eingesetzten Mittel, den Wetterbedingungen und den geltenden regulatorischen Anforderungen.',
       },
       {
-        icon: 'drone',
+        icon: 'spray',
         title: 'Behandlung per Drohne',
         text: 'Die DJI Agras T50 fliegt die Parzelle auf einer vorbereiteten, dem Gelände angepassten Route ab, mit einer auf die Reben eingestellten Ausbringung.',
       },
       {
-        icon: 'check',
+        icon: 'report',
         title: 'Einsatzbericht',
         text: 'Nach dem Einsatz werden die wichtigen Angaben in einem Bericht zusammengefasst, damit die durchgeführte Behandlung klar dokumentiert ist.',
       },
@@ -361,10 +361,10 @@ export default {
       lead: 'Vor jedem Einsatz prüft VitiAero die Gegebenheiten der Parzelle, um festzustellen, ob die Behandlung per Drohne sicher und regelkonform durchgeführt werden kann.',
       cards: [
         { icon: 'slope', title: 'Gelände', text: 'Neigung, Terrassen, Höhenunterschiede und natürliche Hindernisse.' },
-        { icon: 'shield', title: 'Hindernisse', text: 'Stromleitungen, Bäume, Gebäude, Masten, Kabel und weitere Hindernisse in der Nähe.' },
-        { icon: 'droplet', title: 'Wetter', text: 'Wind, Regen, Sicht und weitere Bedingungen, die Sicherheit und Qualität des Einsatzes beeinflussen können.' },
+        { icon: 'obstacle', title: 'Hindernisse', text: 'Stromleitungen, Bäume, Gebäude, Masten, Kabel und weitere Hindernisse in der Nähe.' },
+        { icon: 'weather', title: 'Wetter', text: 'Wind, Regen, Sicht und weitere Bedingungen, die Sicherheit und Qualität des Einsatzes beeinflussen können.' },
         { icon: 'pin', title: 'Zugang', text: 'Möglichkeit, den Standort mit dem nötigen Material zu erreichen und einen geeigneten Arbeitsbereich einzurichten.' },
-        { icon: 'award', title: 'Regelwerk', text: 'Einsätze werden nur durchgeführt, wenn die regulatorischen und betrieblichen Voraussetzungen erfüllt sind.' },
+        { icon: 'rules', title: 'Regelwerk', text: 'Einsätze werden nur durchgeführt, wenn die regulatorischen und betrieblichen Voraussetzungen erfüllt sind.' },
       ],
       callout: 'Ein Einsatz kann verschoben oder abgelehnt werden, wenn die Sicherheits-, Wetter- oder regulatorischen Voraussetzungen nicht erfüllt sind.',
     },
@@ -390,10 +390,10 @@ export default {
       eyebrow: 'Unsere Verpflichtungen',
       title: 'Wozu wir uns verpflichten.',
       items: [
-        { icon: 'target', title: 'Prüfen, bevor wir zusagen', text: 'Jede Parzelle wird vor jeder Zusage geprüft. Ein Einsatz kann abgelehnt werden.' },
+        { icon: 'parcel', title: 'Prüfen, bevor wir zusagen', text: 'Jede Parzelle wird vor jeder Zusage geprüft. Ein Einsatz kann abgelehnt werden.' },
         { icon: 'tag', title: 'Sagen, was inbegriffen ist', text: 'Die Offerte nennt die Leistung, was nicht inbegriffen ist und die angenommenen Bedingungen.' },
-        { icon: 'shield', title: 'Den rechtlichen Rahmen einhalten', text: 'Kein Einsatz ohne die erforderlichen Bewilligungen und Qualifikationen.' },
-        { icon: 'chat', title: 'Schriftlich festhalten', text: 'Die Angaben zu jedem Einsatz werden in einem Bericht für den Kunden zusammengefasst.' },
+        { icon: 'rules', title: 'Den rechtlichen Rahmen einhalten', text: 'Kein Einsatz ohne die erforderlichen Bewilligungen und Qualifikationen.' },
+        { icon: 'report', title: 'Schriftlich festhalten', text: 'Die Angaben zu jedem Einsatz werden in einem Bericht für den Kunden zusammengefasst.' },
       ],
     },
     report: {
@@ -471,9 +471,9 @@ export default {
       { icon: 'pin', title: 'Regionale Verankerung', text: 'Ein Projekt für das Lavaux, die Riviera und den Waadtländer Rebbau, mit ihren Terrassen und steilen Hängen.' },
       { icon: 'shield', title: 'Sicherheit zuerst', text: 'Jede Parzelle wird vor dem Einsatz geprüft. Ein Einsatz kann verschoben oder abgelehnt werden.' },
       { icon: 'target', title: 'Präzision', text: 'Im Voraus vorbereitete Route und Einstellungen, abgestimmt auf Parzelle und vorgesehene Behandlung.' },
-      { icon: 'award', title: 'Regeln einhalten', text: 'Die Schweizer Anforderungen an Drohnen und Pflanzenschutzmittel gehören zur Vorbereitung jedes Einsatzes.' },
+      { icon: 'rules', title: 'Regeln einhalten', text: 'Die Schweizer Anforderungen an Drohnen und Pflanzenschutzmittel gehören zur Vorbereitung jedes Einsatzes.' },
       { icon: 'drone', title: 'Sinnvolle Innovation', text: 'Technik im Dienst eines konkreten Problems: Parzellen behandeln, die für Maschinen schwierig sind.' },
-      { icon: 'route', title: 'Ergänzung', text: 'Die Drohne ergänzt die herkömmlichen Methoden. Je nach Parzelle und Behandlung bleiben andere Methoden nötig.' },
+      { icon: 'complement', title: 'Ergänzung', text: 'Die Drohne ergänzt die herkömmlichen Methoden. Je nach Parzelle und Behandlung bleiben andere Methoden nötig.' },
     ],
   },
   estimation: {

@@ -1,5 +1,24 @@
 import { useEffect, useRef } from 'react';
 
+// Blocs armes pas encore apparus. Un defilement tres rapide peut en faire
+// passer un au-dessus de l'ecran entre deux mesures de l'observateur : on
+// l'affiche alors directement, pour qu'il soit deja la si l'on remonte.
+const pending = new Set();
+let listening = false;
+function sweep() {
+  pending.forEach((el) => {
+    if (el.getBoundingClientRect().bottom < 0) { el.classList.add('reveal-in'); unwatch(el); }
+  });
+}
+function watch(el) {
+  pending.add(el);
+  if (!listening) { window.addEventListener('scroll', sweep, { passive: true }); listening = true; }
+}
+function unwatch(el) {
+  pending.delete(el);
+  if (listening && !pending.size) { window.removeEventListener('scroll', sweep); listening = false; }
+}
+
 // Animation d'apparition au defilement, SUBTILE et non bloquante.
 // Le contenu est visible par defaut ; on ne l'"arme" (masque puis anime)
 // que si le JS fonctionne ET que l'observateur est disponible.
@@ -23,7 +42,7 @@ export default function Reveal({ children, as: Tag = 'div', delay = 0, className
     // defaillant), le contenu s'affiche quand meme apres 1,6 s. Des qu'il a
     // repondu une fois, l'apparition suit le defilement.
     let answered = false;
-    const safety = setTimeout(() => { if (!answered) el.classList.add('reveal-in'); }, 1600);
+    const safety = setTimeout(() => { if (!answered) { el.classList.add('reveal-in'); unwatch(el); } }, 1600);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -32,14 +51,16 @@ export default function Reveal({ children, as: Tag = 'div', delay = 0, className
           if (entry.isIntersecting) {
             entry.target.classList.add('reveal-in');
             observer.unobserve(entry.target);
+            unwatch(entry.target);
           }
         });
       },
       { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
     observer.observe(el);
+    watch(el);
 
-    return () => { clearTimeout(safety); observer.disconnect(); };
+    return () => { clearTimeout(safety); observer.disconnect(); unwatch(el); };
   }, [delay]);
 
   return (

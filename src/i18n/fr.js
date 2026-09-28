@@ -336,23 +336,23 @@ export default {
     stepsTitle: 'Une intervention en quatre étapes.',
     steps: [
       {
-        icon: 'map',
+        icon: 'parcel',
         title: 'Analyse de votre parcelle',
         text: 'Avant chaque intervention, la parcelle est analysée afin d\'identifier son relief, son accessibilité, les obstacles éventuels et les conditions particulières du site.',
       },
       {
-        icon: 'route',
+        icon: 'plan',
         title: 'Préparation de l\'intervention',
         text: 'Le plan de vol, les paramètres de pulvérisation et les conditions d\'intervention sont préparés en fonction de la parcelle et du traitement prévu.',
         note: 'Les paramètres sont adaptés au produit utilisé, aux conditions météorologiques et aux exigences réglementaires applicables.',
       },
       {
-        icon: 'drone',
+        icon: 'spray',
         title: 'Traitement par drone',
         text: 'Le DJI Agras T50 intervient sur la parcelle en suivant un parcours préparé et adapté au terrain, avec une application réglée selon les caractéristiques de la vigne.',
       },
       {
-        icon: 'check',
+        icon: 'report',
         title: 'Rapport d\'intervention',
         text: 'Après l\'intervention, les informations importantes sont regroupées dans un rapport afin de conserver une trace claire du traitement réalisé.',
       },
@@ -364,10 +364,10 @@ export default {
       lead: 'Avant chaque intervention, VitiAero évalue les caractéristiques de la parcelle afin de déterminer si le traitement par drone peut être réalisé dans des conditions sûres et conformes.',
       cards: [
         { icon: 'slope', title: 'Relief', text: 'Pente, terrasses, dénivelé et obstacles naturels.' },
-        { icon: 'shield', title: 'Obstacles', text: 'Lignes électriques, arbres, bâtiments, mâts, câbles et autres obstacles présents à proximité.' },
-        { icon: 'droplet', title: 'Météo', text: 'Vent, pluie, visibilité et autres conditions pouvant influencer la sécurité et la qualité de l\'intervention.' },
+        { icon: 'obstacle', title: 'Obstacles', text: 'Lignes électriques, arbres, bâtiments, mâts, câbles et autres obstacles présents à proximité.' },
+        { icon: 'weather', title: 'Météo', text: 'Vent, pluie, visibilité et autres conditions pouvant influencer la sécurité et la qualité de l\'intervention.' },
         { icon: 'pin', title: 'Accès', text: 'Possibilité d\'accéder au site avec le matériel nécessaire et de mettre en place une zone d\'exploitation adaptée.' },
-        { icon: 'award', title: 'Réglementation', text: 'Les interventions sont réalisées uniquement lorsque les conditions réglementaires et opérationnelles sont réunies.' },
+        { icon: 'rules', title: 'Réglementation', text: 'Les interventions sont réalisées uniquement lorsque les conditions réglementaires et opérationnelles sont réunies.' },
       ],
       callout: 'Une intervention peut être reportée ou refusée si les conditions de sécurité, météorologiques ou réglementaires ne sont pas réunies.',
     },
@@ -393,10 +393,10 @@ export default {
       eyebrow: 'Nos engagements',
       title: 'Ce que nous nous engageons à faire.',
       items: [
-        { icon: 'target', title: 'Évaluer avant d\'accepter', text: 'Chaque parcelle est étudiée avant toute confirmation. Une intervention peut être refusée.' },
+        { icon: 'parcel', title: 'Évaluer avant d\'accepter', text: 'Chaque parcelle est étudiée avant toute confirmation. Une intervention peut être refusée.' },
         { icon: 'tag', title: 'Annoncer ce qui est compris', text: 'Le devis précise la prestation, ce qui n\'est pas compris et les conditions retenues.' },
-        { icon: 'shield', title: 'Respecter le cadre légal', text: 'Aucune intervention sans les autorisations et les qualifications requises.' },
-        { icon: 'chat', title: 'Laisser une trace écrite', text: 'Les informations de chaque intervention sont regroupées dans un rapport remis au client.' },
+        { icon: 'rules', title: 'Respecter le cadre légal', text: 'Aucune intervention sans les autorisations et les qualifications requises.' },
+        { icon: 'report', title: 'Laisser une trace écrite', text: 'Les informations de chaque intervention sont regroupées dans un rapport remis au client.' },
       ],
     },
     report: {
@@ -474,9 +474,9 @@ export default {
       { icon: 'pin', title: 'Ancrage régional', text: 'Un projet pensé pour le Lavaux, la Riviera et le vignoble vaudois, avec leurs terrasses et leurs fortes pentes.' },
       { icon: 'shield', title: 'Sécurité avant tout', text: 'Chaque parcelle est évaluée avant intervention. Une intervention peut être reportée ou refusée.' },
       { icon: 'target', title: 'Précision', text: 'Itinéraire préparé à l\'avance et réglages adaptés à la parcelle et au traitement prévu.' },
-      { icon: 'award', title: 'Respect des règles', text: 'Les exigences suisses applicables aux drones et aux produits phytosanitaires font partie de la préparation de chaque intervention.' },
+      { icon: 'rules', title: 'Respect des règles', text: 'Les exigences suisses applicables aux drones et aux produits phytosanitaires font partie de la préparation de chaque intervention.' },
       { icon: 'drone', title: 'Innovation utile', text: 'Une technologie mise au service d\'un problème concret : traiter des parcelles où les machines passent mal.' },
-      { icon: 'route', title: 'Complémentarité', text: 'Le drone complète les méthodes traditionnelles. Selon la parcelle et le traitement, d\'autres méthodes restent nécessaires.' },
+      { icon: 'complement', title: 'Complémentarité', text: 'Le drone complète les méthodes traditionnelles. Selon la parcelle et le traitement, d\'autres méthodes restent nécessaires.' },
     ],
   },
   estimation: {

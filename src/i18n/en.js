@@ -333,23 +333,23 @@ export default {
     stepsTitle: 'A job in four steps.',
     steps: [
       {
-        icon: 'map',
+        icon: 'parcel',
         title: 'Survey of your plot',
         text: 'Before every job, the plot is surveyed to identify its terrain, its accessibility, any obstacles and the particular conditions of the site.',
       },
       {
-        icon: 'route',
+        icon: 'plan',
         title: 'Preparing the job',
         text: 'The flight plan, the spraying settings and the working conditions are prepared according to the plot and the planned treatment.',
         note: 'The settings are adapted to the product used, to the weather conditions and to the applicable regulatory requirements.',
       },
       {
-        icon: 'drone',
+        icon: 'spray',
         title: 'Treatment by drone',
         text: 'The DJI Agras T50 works the plot along a prepared route suited to the terrain, with an application set according to the characteristics of the vines.',
       },
       {
-        icon: 'check',
+        icon: 'report',
         title: 'Job report',
         text: 'After the job, the key information is gathered in a report so that a clear record of the treatment is kept.',
       },
@@ -361,10 +361,10 @@ export default {
       lead: 'Before every job, VitiAero assesses the characteristics of the plot to determine whether treatment by drone can be carried out safely and in compliance with the rules.',
       cards: [
         { icon: 'slope', title: 'Terrain', text: 'Slope, terraces, height difference and natural obstacles.' },
-        { icon: 'shield', title: 'Obstacles', text: 'Power lines, trees, buildings, masts, cables and other obstacles nearby.' },
-        { icon: 'droplet', title: 'Weather', text: 'Wind, rain, visibility and other conditions that can affect the safety and the quality of the job.' },
+        { icon: 'obstacle', title: 'Obstacles', text: 'Power lines, trees, buildings, masts, cables and other obstacles nearby.' },
+        { icon: 'weather', title: 'Weather', text: 'Wind, rain, visibility and other conditions that can affect the safety and the quality of the job.' },
         { icon: 'pin', title: 'Access', text: 'Whether the site can be reached with the necessary equipment and a suitable working area can be set up.' },
-        { icon: 'award', title: 'Regulations', text: 'Jobs are carried out only when the regulatory and operational conditions are met.' },
+        { icon: 'rules', title: 'Regulations', text: 'Jobs are carried out only when the regulatory and operational conditions are met.' },
       ],
       callout: 'A job may be postponed or refused if the safety, weather or regulatory conditions are not met.',
     },
@@ -390,10 +390,10 @@ export default {
       eyebrow: 'Our commitments',
       title: 'What we commit to.',
       items: [
-        { icon: 'target', title: 'Assess before accepting', text: 'Every plot is studied before any confirmation. A job may be refused.' },
+        { icon: 'parcel', title: 'Assess before accepting', text: 'Every plot is studied before any confirmation. A job may be refused.' },
         { icon: 'tag', title: 'State what is included', text: 'The quote sets out the service, what is not included and the conditions assumed.' },
-        { icon: 'shield', title: 'Respect the legal framework', text: 'No job without the required authorisations and qualifications.' },
-        { icon: 'chat', title: 'Leave a written record', text: 'The information from each job is gathered in a report given to the customer.' },
+        { icon: 'rules', title: 'Respect the legal framework', text: 'No job without the required authorisations and qualifications.' },
+        { icon: 'report', title: 'Leave a written record', text: 'The information from each job is gathered in a report given to the customer.' },
       ],
     },
     report: {
@@ -471,9 +471,9 @@ export default {
       { icon: 'pin', title: 'Regional roots', text: 'A project designed for Lavaux, the Riviera and the Vaud vineyards, with their terraces and steep slopes.' },
       { icon: 'shield', title: 'Safety first', text: 'Every plot is assessed before any job. A job can be postponed or refused.' },
       { icon: 'target', title: 'Precision', text: 'A route prepared in advance and settings suited to the plot and the planned treatment.' },
-      { icon: 'award', title: 'Respect for the rules', text: 'The Swiss requirements for drones and plant protection products are part of preparing every job.' },
+      { icon: 'rules', title: 'Respect for the rules', text: 'The Swiss requirements for drones and plant protection products are part of preparing every job.' },
       { icon: 'drone', title: 'Useful innovation', text: 'Technology applied to a concrete problem: treating plots where machines struggle.' },
-      { icon: 'route', title: 'Complementarity', text: 'The drone complements traditional methods. Depending on the plot and the treatment, other methods remain necessary.' },
+      { icon: 'complement', title: 'Complementarity', text: 'The drone complements traditional methods. Depending on the plot and the treatment, other methods remain necessary.' },
     ],
   },
   estimation: {

@@ -70,6 +70,14 @@ Demandés par le propriétaire après la première version, pour un site plus
   montre l'e-mail et la zone desservie.
 - **Barre du bas sur téléphone** : elle mène à l'estimation, comme le bouton de
   l'en-tête.
+- **Icônes** : une seule famille (grille 24, trait arrondi, aplat vert
+  translucide), dans des pastilles de 48 px. Elle raconte le service : parcelle
+  analysée, plan de vol, traitement par drone, rapport. Chaque icône correspond
+  à son sujet : drone vu de dessus, relief en montagnes, obstacles en
+  avertissement, météo en nuage et vent, réglementation en liste cochée.
+  Les dessins sont dans `src/components/Icons.jsx`.
+- **Tracé des parcelles** (page Estimation) : vert citron cerné d'encre, aux
+  couleurs du site, au lieu de l'orange de l'ancienne charte.
 - **Aperçu** : `npm run apercu` lance le site seul (sans l'API) sur
   `http://localhost:5180`, sans ouvrir de navigateur. C'est l'entrée
   « VitiAero - nouvelle version (Lavaux T50) » du panneau d'aperçu de
@@ -89,8 +97,10 @@ Toutes se coupent si l'appareil demande moins de mouvement
 - Menu : une pastille claire glisse jusqu'à la page ouverte (même chose dans le
   sous-menu de la page Équipement, qui suit la section lue).
 - Défilement : blocs qui apparaissent, photos qui se dévoilent en rideau,
-  numéros des étapes qui passent au vert citron, parallaxe légère (grand
-  « T50 », drone, photo du Lavaux, appel final).
+  phrase « Pourquoi le drone » qui passe au noir mot à mot, numéros des étapes
+  qui passent au vert citron, parallaxe légère (grand « T50 », drone, photo du
+  Lavaux, appel final). Un bloc dépassé lors d'un défilement très rapide
+  s'affiche directement.
 - Survol : flèche des boutons qui glisse, zoom doux des photos, pastilles qui
   tournent, vidéos des pièces du drone qui se lancent.
 - Itinéraires GPS (page Équipement) : fondu entre les deux images.
