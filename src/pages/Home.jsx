@@ -53,7 +53,6 @@ function WhyDrone() {
   const w = t.home.why;
   return (
     <section className="hm-why" aria-labelledby="hm-why-title">
-      <Reveal className="hm-why-side"><Kicker>{w.eyebrow}</Kicker></Reveal>
       <div className="hm-why-main">
         <div className="hm-statement">
           <h2 id="hm-why-title">{w.title}</h2>{' '}
@@ -87,7 +86,6 @@ function Steps() {
   return (
     <section className="hm-steps" id="comment" aria-labelledby="hm-steps-title">
       <Reveal className="hm-steps-head">
-        <Kicker>{h.eyebrow}</Kicker>
         <h2 className="hm-h2" id="hm-steps-title">{h.title}</h2>
         <Link to="/estimation" className="btn btn-dark btn-arrow">{h.cta}<BtnArrow /></Link>
       </Reveal>
@@ -126,7 +124,6 @@ function DroneSection() {
       </Reveal>
       <Reveal className="hm-drone-info" delay={120}>
         <div>
-          <Kicker tone="lime">{d.eyebrow}</Kicker>
           <h2 className="hm-h2" id="hm-drone-title">{d.title}</h2>
           <p className="hm-drone-lead">{d.lead}</p>
         </div>
@@ -149,7 +146,6 @@ function Film() {
     <section className="hm-films" aria-labelledby="hm-films-title">
       <div className="hm-head">
         <Reveal>
-          <Kicker>{c.eyebrow}</Kicker>
           <h2 className="hm-h2" id="hm-films-title">{c.title}</h2>
         </Reveal>
         <Reveal as="p" className="hm-head-note" delay={100}>{c.lead}</Reveal>
@@ -174,7 +170,6 @@ function Faq() {
     <section className="hm-faq" id="faq" aria-labelledby="hm-faq-title">
       <div className="hm-faq-side">
         <Reveal>
-          <Kicker>{f.eyebrow}</Kicker>
           <h2 className="hm-h2" id="hm-faq-title">{f.title}</h2>
         </Reveal>
         <Reveal className="hm-faq-cats" role="group" aria-label={f.categoriesLabel} delay={100}>
@@ -235,7 +230,6 @@ function FinalCta() {
         <img ref={photo} src={img('hero-poster.jpg')} alt="" loading="lazy" />
       </div>
       <Reveal className="hm-cta-body">
-        <Kicker tone="light">{c.eyebrow}</Kicker>
         <h2 className="hm-h2 xl" id="hm-cta-title">{c.title}</h2>
         <p>{c.lead}</p>
         <Link to="/estimation" className="btn btn-primary btn-arrow">{t.common.requestEstimate}<BtnArrow /></Link>

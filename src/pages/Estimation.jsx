@@ -383,7 +383,6 @@ export default function Estimation() {
       <section className="section">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">{e.eyebrow}</span>
             <h1 className="h1">{e.title}</h1>
             <p className="lead mt-2">{e.lead}</p>
           </div>

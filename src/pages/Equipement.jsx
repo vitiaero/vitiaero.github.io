@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import BgVideo from '../components/BgVideo.jsx';
 import HoverVideo from '../components/HoverVideo.jsx';
-import Kicker from '../components/Kicker.jsx';
 import Icon from '../components/Icons.jsx';
 import CountUp from '../components/CountUp.jsx';
 import WordRise from '../components/WordRise.jsx';
@@ -86,7 +85,6 @@ function Hero({ e }) {
       </div>
       <div className="eqx-hero-body">
         <div className="eqx-hero-top">
-          <Kicker tone="light">{e.eyebrow}</Kicker>
           <p className="eqx-credit">{e.creditShort}</p>
         </div>
         <div className="eqx-hero-bottom">
@@ -111,11 +109,10 @@ function Hero({ e }) {
   );
 }
 
-function SectionHead({ kicker, title, text, tone, id }) {
+function SectionHead({ title, text, id }) {
   return (
     <div className="eqx-head">
       <Reveal>
-        <Kicker tone={tone}>{kicker}</Kicker>
         <h2 className="hm-h2 lg" id={id}>{title}</h2>
       </Reveal>
       <Reveal as="p" className="eqx-head-text" delay={100}>{text}</Reveal>
@@ -132,12 +129,11 @@ function Drone({ e }) {
   useParallax(drone, -0.05);
   return (
     <section id="drone" className="eqx-section" aria-labelledby="eqx-drone-title">
-      <SectionHead kicker={d.eyebrow} title={d.title} text={d.text} id="eqx-drone-title" />
+      <SectionHead title={d.title} text={d.text} id="eqx-drone-title" />
       <div className="eqx-bento">
         <Reveal as="article" className="eqx-card eqx-visual">
           <span className="giant" ref={giant} aria-hidden="true">T55</span>
           <img ref={drone} className="eqx-visual-img" src={asset('/images/drone-cutout.png')} alt={e.title} loading="lazy" />
-          <ul className="eqx-visual-chips">{d.chips.map((c) => <li key={c}>{c}</li>)}</ul>
           <p className="hm-stat-card">
             <span className="big">50<span className="unit">L</span></span>
             <span className="lbl">{d.tankLabel}</span>
@@ -173,7 +169,6 @@ function Drone({ e }) {
         <Reveal as="article" className="eqx-card is-dark eqx-fold" delay={200}>
           <div className="eqx-card-top">
             <h3>{fold.title}</h3>
-            <span className="mono-chip">{d.transport}</span>
           </div>
           <p className="big-text">{fold.text}</p>
         </Reveal>
@@ -186,13 +181,10 @@ function Spray({ e }) {
   const s = e.spray;
   return (
     <section id="pulverisation" className="eqx-spray" aria-labelledby="eqx-spray-title">
-      <SectionHead tone="lime" kicker={s.eyebrow} title={s.title} text={s.text} id="eqx-spray-title" />
+      <SectionHead title={s.title} text={s.text} id="eqx-spray-title" />
       <Reveal className="eqx-spray-stage">
         <img src={still('spray')} alt={s.alt} loading="lazy" />
         <BgVideo className="eqx-spray-video" variants={equipVideos.spray} poster={still('spray')} toggle />
-        <ul className="eqx-spray-chips">
-          {s.chips.map((c, i) => <li key={c} className={i === 1 ? 'is-lime' : ''}>{c}</li>)}
-        </ul>
       </Reveal>
       <div className="eqx-parts">
         {s.parts.map((p, i) => (
@@ -220,7 +212,6 @@ function Prep({ e }) {
       </Reveal>
       <Reveal className="eqx-prep-card" delay={120}>
         <div>
-          <Kicker>{p.eyebrow}</Kicker>
           <h2 className="hm-h2 lg" id="eqx-prep-title">{p.title}</h2>
           <p className="eqx-prep-text">{p.text}</p>
         </div>
@@ -242,7 +233,7 @@ function Gps({ e }) {
   const [auto, memory, camera] = m.cards;
   return (
     <section id="cartographie" className="eqx-section" aria-labelledby="eqx-gps-title">
-      <SectionHead kicker={m.eyebrow} title={m.title} text={m.text} id="eqx-gps-title" />
+      <SectionHead title={m.title} text={m.text} id="eqx-gps-title" />
       <div className="eqx-gps">
         <Reveal as="article" className="eqx-card eqx-gps-main">
           <div className="eqx-gps-img">
@@ -267,7 +258,6 @@ function Gps({ e }) {
               <img src={still('radiocommande')} alt={camera.alt} loading="lazy" />
             </div>
             <div className="eqx-camera-body">
-              <span className="mono-chip">{camera.v}</span>
               <div>
                 <h3>{camera.title}</h3>
                 <p>{camera.text}</p>
@@ -297,7 +287,6 @@ export default function Equipement() {
         <section className="eqx-cta-wrap" aria-labelledby="eqx-cta-title">
           <Reveal className="eqx-cta">
             <div>
-              <Kicker>{e.ctaEyebrow}</Kicker>
               <h2 className="hm-h2 xl" id="eqx-cta-title">{e.ctaTitle}</h2>
               <p>{e.ctaLead}</p>
             </div>

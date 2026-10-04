@@ -100,7 +100,6 @@ export default function Devis() {
       <section className="section">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">{q.eyebrow}</span>
             <h1 className="h1">{q.title}</h1>
             <p className="lead mt-2">{q.lead}</p>
           </div>

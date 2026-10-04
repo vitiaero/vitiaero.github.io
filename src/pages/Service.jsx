@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
-import Kicker from '../components/Kicker.jsx';
 import WordRise from '../components/WordRise.jsx';
 import { asset } from '../config.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -48,7 +47,6 @@ function Conditions({ c }) {
       <div className="container">
         <div className="section-head">
           <Reveal>
-            <span className="eyebrow">{c.eyebrow}</span>
             <h2 className="h2">{c.title}</h2>
             <p className="lead mt-2">{c.lead}</p>
           </Reveal>
@@ -80,7 +78,6 @@ function Rules({ r, commitments }) {
         <div className="container">
           <div className="eq-split text-first">
             <Reveal>
-              <span className="eyebrow">{r.eyebrow}</span>
               <h2 className="h2">{r.title}</h2>
               <p className="lead">{r.lead}</p>
               <div className="status-box">
@@ -107,7 +104,6 @@ function Rules({ r, commitments }) {
         <div className="container">
           <div className="section-head">
             <Reveal>
-              <span className="eyebrow">{commitments.eyebrow}</span>
               <h2 className="h2">{commitments.title}</h2>
             </Reveal>
           </div>
@@ -156,7 +152,6 @@ function Report({ r }) {
             <p className="report-sample" id="report-sample">{r.sample}</p>
           </Reveal>
           <Reveal delay={100}>
-            <span className="eyebrow">{r.eyebrow}</span>
             <h2 className="h2">{r.title}</h2>
             <p className="lead">{r.lead}</p>
           </Reveal>
@@ -178,7 +173,6 @@ export default function Service() {
         <div className="page-hero">
           <img className="page-hero-img" src={asset('/images/vignes-pente.jpg')} alt={s.heroAlt} fetchpriority="high" />
           <div className="page-hero-body">
-            <Kicker tone="light">{s.eyebrow}</Kicker>
             <h1 className="page-hero-title"><WordRise text={s.title} delay={120} /></h1>
             <p className="page-hero-lead">{s.lead}</p>
           </div>
@@ -193,7 +187,6 @@ export default function Service() {
       <section className="section bg-soft">
         <div className="container">
           <Reveal className="cta-band">
-            <span className="eyebrow">{q.eyebrow}</span>
             <h2 className="h1">{q.title}</h2>
             <p className="lead mt-2" style={{ maxWidth: '52ch', margin: '1rem auto 0' }}>{q.lead}</p>
             <Link to="/devis" className="btn btn-primary">{q.button}</Link>

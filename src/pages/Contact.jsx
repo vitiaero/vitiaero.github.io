@@ -76,7 +76,6 @@ export default function Contact() {
       <section className="section">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">{c.eyebrow}</span>
             <h1 className="h1">{c.title}</h1>
             <p className="lead mt-2">{c.lead}</p>
           </div>

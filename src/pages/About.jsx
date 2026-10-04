@@ -14,7 +14,6 @@ export default function About() {
         <div className="container">
           <div className="split">
             <Reveal>
-              <span className="eyebrow">{a.eyebrow}</span>
               <h1 className="h1">{a.title}</h1>
               <p className="lead mt-2">{a.lead}</p>
               <p className="mt-2 muted">{a.p1}</p>
