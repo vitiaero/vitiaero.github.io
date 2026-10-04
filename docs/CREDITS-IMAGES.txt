@@ -4,29 +4,34 @@ Licences Creative Commons (BY-SA) : l'attribution doit rester visible.
 Elle figure sur la page Mentions legales du site.
 
 A VERIFIER AVANT PUBLICATION (droits d'utilisation non confirmes) :
-- videos/hero-2160.av1.mp4, hero-2160.mp4, hero-1080.mp4 : extrait
-  promotionnel DJI Agras T50. L'usage commercial d'une video promotionnelle
-  du fabricant n'est pas confirme. [A VERIFIER]
+- Passage au DJI Agras T55 (4 octobre 2026) : tous les visuels du drone
+  viennent de la banque d'images DJI du T55 reunie par le proprietaire
+  (dossier « PAE drone » : rendus studio, photos et videos officielles DJI).
+  - videos/hero-t55.* et images/hero-poster.jpg : video DJI du T55 en
+    pulverisation sur un coteau (6 s).
+  - videos/equip/t55-vol.* et images/equip/t55-vol.jpg : video DJI du T55
+    en pulverisation sur des champs (8,5 s).
+  - videos/equip/spray.* et images/equip/spray.jpg : video DJI du T55
+    au-dessus d'une vegetation dense (4,7 s).
+  - images/t55-pente.jpg, t55-coteau.jpg, t55-route.jpg, t55-champ.jpg :
+    photos DJI du T55.
+  - images/equip/t55-radar.jpg (radar 360°), pompe.jpg (pompes),
+    gicleur.jpg (gicleur centrifuge), kit-gicleurs.jpg (quatre gicleurs) :
+    rendus DJI du T55.
+  - images/drone-cutout.png : rendu studio DJI du T55 (vue 3/4), detoure
+    sur fond transparent.
+  - images/equip/generateur.jpg : photo de generateur DJI fournie par le
+    proprietaire (fond blanc), recadree.
+  L'usage commercial de ces visuels n'est pas confirme. [A VERIFIER]
+- videos/equip/parcelles.* : enregistrement d'ecran de l'application DJI
+  (itineraire rang par rang sur une parcelle en pente), fourni par le
+  proprietaire. Coupe avant l'ouverture du panneau de reglages et recadre
+  sous la barre d'icones. [A VERIFIER]
 - videos/vignoble-fpv-*.mp4 et vignoble-poster.jpg : plans FPV du vignoble
   (Epesses) filmes par le proprietaire du projet.
-- Page Equipement, videos/equip/* et images/equip/* : visuels officiels DJI
-  (ag.dji.com, page DJI Agras T50), recuperes les 11 et 12 septembre 2026.
-  Deux plans viennent de fichiers fournis par le proprietaire (origine DJI) :
-  t50-deplie ("video du drone qui se deplie.webm") et parcelles
-  ("drone cartographie.webm", enregistrement d'ecran de l'application DJI
-  montrant un itineraire de vol rang par rang sur une parcelle en pente).
-  Le plan camera est extrait de la video promotionnelle DJI du T50
-  ("videoplayback (1).mp4", vers 1 min 53), recadre pour retirer les
-  sous-titres anglais.
-  Fichiers d'origine : _hors-projet/sources-videos/ (hors du site publie).
-  L'usage commercial de ces visuels n'est pas confirme. [A VERIFIER]
-- images/equip/generateur.jpg : generateur DJI D12000iEP, photo publiee par DJI
-  (ag.dji.com/newsroom/agras-t50-intelligent-battery-design), recuperee le
-  12 septembre 2026. [DROITS A VERIFIER]
-- hero-poster.jpg, drone-cutout.png, t50-rows.jpg, t50-flight.jpg,
-  vignes-pente.jpg : source et licence a confirmer. [DROITS D'UTILISATION A VERIFIER]
-- agras-t30.jpg represente un DJI Agras T30, alors que le site met en avant
-  le T50. A remplacer par une image du bon modele si necessaire.
+- vignes-pente.jpg : source et licence a confirmer. [DROITS D'UTILISATION A VERIFIER]
+- hero-drone.jpg (DJI Agras T50) et agras-t30.jpg (DJI Agras T30) ne sont
+  plus affiches sur le site.
 
 Sources documentees (Wikimedia Commons) :
 
