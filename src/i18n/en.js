@@ -6,7 +6,7 @@ export default {
     fallbackTitle: 'VitiAero - Vineyard spraying by drone',
     pages: {
       '/': {
-        title: 'VitiAero - Vineyard spraying by drone in the canton of Vaud',
+        title: 'VitiAero - Vineyard spraying by drone in French-speaking Switzerland',
         desc: 'Drone treatment for vineyards on steep slopes in French-speaking Switzerland. Request a free online estimate, with no obligation.',
       },
       '/estimation': {
@@ -18,7 +18,7 @@ export default {
         desc: 'Survey of the plot, flight preparation, treatment by drone and job report. Working conditions and the Swiss regulatory framework.',
       },
       '/devis': {
-        title: 'Request a quote - Vineyard drone spraying in the canton of Vaud | VitiAero',
+        title: 'Request a quote - Vineyard drone spraying in French-speaking Switzerland | VitiAero',
         desc: 'Describe your plot and receive a personal estimate for drone spraying in French-speaking Switzerland.',
       },
       '/equipement': {
@@ -31,7 +31,7 @@ export default {
       },
       '/a-propos': {
         title: 'About us - VitiAero',
-        desc: 'VitiAero, a drone spraying service for vineyards in French-speaking Switzerland, serving the vineyards of Vaud and Lavaux.',
+        desc: 'VitiAero, a drone spraying service for vineyards in French-speaking Switzerland, based in Chardonne.',
       },
       '/connexion': { title: 'Log in - VitiAero', desc: 'Access your VitiAero customer area.' },
       '/inscription': { title: 'Create an account - VitiAero', desc: 'Create your VitiAero account to track your requests.' },
@@ -78,7 +78,7 @@ export default {
     navigation: 'Navigation',
     yourAccount: 'Your account',
     contact: 'Contact',
-    region: 'French-speaking Switzerland, canton of Vaud',
+    region: 'French-speaking Switzerland, from Chardonne (up to 100 km)',
     project: 'Student project (CPNV, PAE)',
     privacy: 'Privacy policy',
     cookies: 'Cookie settings',
@@ -88,7 +88,7 @@ export default {
 
   launchNotice: {
     aria: 'Notice about the launch of the service',
-    text: 'VitiAero is preparing to launch in the canton of Vaud. Estimate requests are already open.',
+    text: 'VitiAero is preparing to launch in French-speaking Switzerland. Estimate requests are already open.',
   },
 
   privacyBanner: {
@@ -105,6 +105,7 @@ export default {
       title: 'Your vines on steep slopes, treated by drone.',
       lead: 'Online estimate, free and with no commitment.',
       how: 'How it works',
+      quick: 'Quick request, without the map',
     },
     why: {
       eyebrow: 'Why a drone',
@@ -118,7 +119,7 @@ export default {
       items: [
         { title: 'Access to difficult plots', text: 'A solution particularly suited to plots that are steep, narrow, fragmented or hard to reach with conventional machines.' },
         { title: 'Fewer constraints from the terrain', text: 'The drone makes it possible to work without driving a heavy vehicle through the plot itself.' },
-        { title: 'Obstacles spotted in flight', text: 'A 360° radar and cameras on top spot obstacles around the drone, even in rain or fog.' },
+        { title: 'Obstacles spotted in flight', text: 'A 360° radar and cameras on top spot obstacles around the drone, even early in the morning, when the light is low.' },
       ],
     },
     how: {
@@ -127,7 +128,7 @@ export default {
       cta: 'Start my request',
       steps: [
         { no: 'Step 1', title: 'Draw your plots', text: 'Draw your plots on the map or enter their cadastral number. The area is calculated automatically.' },
-        { no: 'Step 2', title: 'Describe your needs', text: 'Tell us the treatment you want and the period that suits you.' },
+        { no: 'Step 2', title: 'Describe your needs', text: 'Give the number of passes, your products if you know them and the preferred date.' },
         { no: 'Step 3', title: 'Send your request', text: 'You get an estimate straight away, free and with no obligation.' },
         { no: 'Step 4', title: 'Receive your quote', text: 'Our team reviews your request and sends you a detailed quote.' },
       ],
@@ -145,6 +146,7 @@ export default {
         { k: 'Spray tank', v: '50 L' },
         { k: 'Type', v: 'Agricultural spraying drone' },
         { k: 'Strength', v: 'Treats plots on steep slopes' },
+        { k: 'Treatments', v: 'Fungicides, insecticides (including against flavescence dorée) and organic products' },
       ],
     },
     cine: {
@@ -174,8 +176,11 @@ export default {
           title: 'Drone & job',
           items: [
             { q: 'Is the drone suited to vines on slopes?', a: 'Yes, some steep or hard-to-reach plots are particularly well suited to a drone. Every plot is nonetheless studied beforehand to check the terrain, the obstacles, the access and the safety conditions.' },
-            { q: 'Where do you work?', a: 'VitiAero works primarily in the canton of Vaud, notably in the Lavaux and Riviera areas. Requests from other parts of French-speaking Switzerland can also be studied depending on the distance and the working conditions.', link: { to: '/contact', label: 'See our service area' } },
+            { q: 'Where do you work?', a: 'In French-speaking Switzerland, from our base in Chardonne, up to about 100 km. Beyond that, requests are studied on a quote basis.', link: { to: '/contact', label: 'See our service area' } },
             { q: 'What spray volume is used?', a: 'The spray volume depends notably on the treatment, the product used, the stage of the vines and the characteristics of the plot. The settings are adapted to each job and to the applicable rules.' },
+            { q: 'Who decides to stop because of the wind?', a: 'The remote pilot, on site. They measure the wind before and during the flight and stop the treatment as soon as the safety limit or the drift risk is reached (DJI gives 6 m/s at most for the T55). The pass is then postponed, at no extra cost.' },
+            { q: 'Who pays if a pass goes wrong?', a: 'If a pass could not be done properly because of us (breakdown, wrong setting, missed area), we redo it free of charge. If the weather prevents the treatment, the pass is postponed and not charged.' },
+            { q: 'How do you handle the days when everyone calls after the rain?', a: 'Plots are treated in the order of confirmed requests, grouping neighbouring plots to save time. Contracts for several passes are planned in advance, which leaves room for one-off requests.' },
             { q: 'What happens if the weather does not allow the job?', a: 'The safety and the quality of the job come first. In case of wind, rain or other conditions incompatible with a safe and compliant job, the treatment can be postponed.' },
           ],
         },
@@ -183,7 +188,7 @@ export default {
           icon: 'shield',
           title: 'Safety & regulations',
           items: [
-            { q: 'Are authorisations needed for treatment by drone?', a: 'Yes. Spraying liquid products by drone is subject to specific requirements in Switzerland. Depending on the job, authorisations and inspections are needed. Feasibility is checked before every job, and the rules attached to the products used must be respected.', link: { to: '/le-service#reglementation', label: 'Safety & regulations' } },
+            { q: 'Are authorisations needed for treatment by drone?', a: 'Yes. The flight requires an operating authorisation from the Federal Office of Civil Aviation (FOCA), and the spraying system is checked by Agroscope every three years. We take care of it: you have nothing to apply for. The products used must be authorised in Switzerland and used according to their conditions of use.', link: { to: '/le-service#reglementation', label: 'Safety & regulations' } },
             { q: 'Are plant protection products included in the price?', a: 'Unless the quote states otherwise, plant protection products are not included in the price of the service. Their use remains subject to the authorised products and their conditions of use in Switzerland.' },
             { q: 'Does the drone replace a traditional treatment?', a: 'Not necessarily. Treatment by drone is a complementary solution that can be particularly useful on hard-to-reach plots. Depending on the situation, other methods may still be needed.' },
           ],
@@ -198,6 +203,8 @@ export default {
       eyebrow: 'No obligation',
       title: 'Ready to estimate the treatment of your vines?',
       lead: 'Draw your plots, describe your needs and get an estimate in a few minutes.',
+      test: 'Book a test plot',
+      demo: 'Attend a demonstration',
     },
   },
 
@@ -226,10 +233,10 @@ export default {
       transport: 'Transport',
       eyebrow: 'The drone',
       title: 'A large drone, easy to deploy.',
-      text: 'Four folding arms and large 62-inch propellers. 45 kg in standard configuration, tank included.',
+      text: 'Four folding arms and large 62-inch propellers. 45 kg empty, battery included, in standard configuration.',
       alt: '360° radar on top of the DJI Agras T55',
       points: [
-        { title: 'Radar and cameras', text: 'A 360° radar and three cameras on top spot obstacles, even in rain or fog.' },
+        { title: 'Radar and cameras', text: 'A 360° radar and three cameras on top spot obstacles, even early in the morning, when the light is low.' },
         { title: 'Built-in lighting', text: 'High beam, low beam and downward lighting to see the landing area clearly.' },
         { title: 'Flight radius', text: 'Up to 2 km of configurable flight radius.' },
         { title: 'Self-locking arms', text: 'Once unfolded, the arms lock by themselves. Handles make it easier to carry.' },
@@ -283,7 +290,11 @@ export default {
     phoneTitle: 'Phone',
     emailTitle: 'Email',
     areaTitle: 'Service area',
-    areaText: (base) => `Main area: canton of Vaud and French-speaking Switzerland. Travel up to about 100 km from our base in ${base}. Beyond that, by quote.`,
+    subjects: {
+      test: 'Hello, I would like to book a test plot to try drone spraying.',
+      demo: 'Hello, I would like to attend a demonstration of drone spraying.',
+    },
+    areaText: (base) => `French-speaking Switzerland, from our base in ${base}: up to about 100 km. Beyond that, by quote.`,
     estimateTitle: 'Looking for a price?',
     estimateText: 'The online estimate gives you an amount in a few minutes, with no obligation.',
     formTitle: 'Your message',
@@ -389,6 +400,8 @@ export default {
         { k: 'Date', v: '12.05.2026' },
         { k: 'Area', v: '1.24 ha' },
         { k: 'Passes', v: '1' },
+        { k: 'Product', v: 'Copper fungicide, fictitious W no.' },
+        { k: 'Dose', v: '0.8 kg/ha, i.e. 1 kg in total' },
         { k: 'Spray volume', v: '112 L' },
         { k: 'Duration', v: '35 min' },
         { k: 'Conditions', v: 'Wind 6 km/h, 18 °C, clear sky' },
@@ -445,11 +458,13 @@ export default {
     p1: 'Many vineyards in the region are on slopes or terraces. The drone reaches them easily and applies the treatment from the air. You request an estimate online, and you then receive a detailed quote.',
     p2: 'This website was produced as part of a study project (CPNV, PAE) in Switzerland.',
     statusTitle: 'VitiAero project, launching soon',
-    statusText: 'VitiAero is preparing its launch in the canton of Vaud, along with the steps required for commercial operation. No number of customers, hectares treated or years of experience is claimed until the business is running.',
+    statusText: 'VitiAero is preparing its launch in French-speaking Switzerland, along with the steps required for commercial operation. No number of customers, hectares treated or years of experience is claimed until the business has started.',
+    whoTitle: 'Who are we?',
+    whoText: 'VitiAero grew out of a study project at the CPNV. We are two final-year automation apprentices, one of whom flies FPV drones. The winegrowers and the drone operator we interviewed helped us build this service.',
     alt: 'Terraced vineyards of Lavaux',
     valuesTitle: 'What guides the project',
     values: [
-      { icon: 'pin', title: 'Regional roots', text: 'A project designed for Lavaux, the Riviera and the Vaud vineyards, with their terraces and steep slopes.' },
+      { icon: 'pin', title: 'Regional roots', text: 'A project designed for the vineyards of French-speaking Switzerland, with their terraces and steep slopes, from Chardonne.' },
       { icon: 'shield', title: 'Safety first', text: 'Every plot is assessed before any job. A job can be postponed or refused.' },
       { icon: 'target', title: 'Precision', text: 'A route prepared in advance and settings suited to the plot and the planned treatment.' },
       { icon: 'rules', title: 'Respect for the rules', text: 'The Swiss requirements for drones and plant protection products are part of preparing every job.' },
@@ -494,6 +509,10 @@ export default {
       loading: 'Loading the product list…',
       error: 'The product list could not be loaded. You can name the product in your message.',
       source: (v) => `Source: FSVO, Swiss plant protection product register, version of ${v}.`,
+      bioOnly: 'Organic only',
+      bioTag: 'organic',
+      bioNote: 'The organic mark is indicative, based on the active substance: the FiBL input list is binding.',
+      moreNumbers: (n) => `+ ${n} other no.`,
       groups: {
         mildiou: 'Downy mildew',
         oidium: 'Powdery mildew',
@@ -514,6 +533,29 @@ export default {
     marginLabel: 'Accepted margin',
     periodNone: 'To be agreed together',
     dispersedAuto: 'Your plots are scattered (five or more, or more than 1 km apart): a surcharge of 10 to 30 % applies, confirmed after review.',
+    details: {
+      obstaclesLabel: 'Obstacles on or near the plot',
+      obstacles: ['Walls', 'Stairs', 'Power line', 'Road'],
+      obstaclesOtherPh: 'Other obstacle (tree, cable, house…)',
+      takeoffLabel: 'Where can we take off and refill?',
+      takeoffPh: 'Square, track, cellar… ideally with a water point',
+      resistantLabel: 'Resistant grape variety',
+      resistantHint: '(for example PIWI): fewer treatments to plan',
+      supplyLabel: 'Products',
+      supply: ['I supply my products', 'VitiAero supplies the products'],
+      filesLabel: 'Photos of the plot (optional)',
+      filesHint: 'Access, obstacles, take-off point… 3 files at most, 4 MB each.',
+      filesAdd: 'Add photos',
+      filesRemove: 'Remove',
+      fileTooBig: 'This file is larger than 4 MB.',
+      fileType: 'Format not accepted. Images and PDF only.',
+      fileCount: '3 files at most.',
+      neighborsLabel: 'Add a neighbour to the request',
+      neighborsHint: 'Do your neighbours also have vines to treat? A grouped request cuts travel: -10 % on the treatment, confirmed in the quote.',
+      neighborName: 'Neighbour name',
+      neighborContact: 'Phone or e-mail',
+      neighborAdd: 'Add a neighbour',
+    },
     quoteCta: 'Request a personal quote',
     ratesToggle: 'See the price list',
     ratesNote: 'Indicative rates. The final price is confirmed after study of the plot and the working conditions. Plant protection products not included, unless the quote states otherwise. The working conditions are assessed before the service is confirmed.',
@@ -533,6 +575,7 @@ export default {
       otherTitle: 'Other situations',
       other: [
         ['Small job', 'Minimum 300 CHF per pass'],
+        ['Grouped request with a neighbour', '-10 % on the treatment'],
         ['Scattered plots (five or more, or more than 1 km apart)', '+10 to 30 %'],
         ['Long waiting time', '100 CHF/h'],
         ['Outside the usual area', 'On quotation'],
@@ -564,6 +607,7 @@ export default {
     totalYear: 'Estimated total per year',
     range: (a, b) => `${a} to ${b}`,
     perHaYear: (x) => `i.e. ${x} per ha per year`,
+    minimumPerJob: (amount) => `Minimum per job: ${amount}`,
     travelPending: 'Travel costs to be confirmed in the quote.',
 
     resultTitle: 'Your estimate is ready.',
@@ -584,6 +628,7 @@ export default {
       difficult: 'Very difficult plot (+10 to 25 %)',
       dispersed: 'Scattered plots (+10 to 30 %)',
       promo: (code, pct) => `Promo code ${code} (-${pct} %)`,
+      group: (pct) => `Grouped request with a neighbour (-${pct} %)`,
       total: 'Estimated total per year',
     },
     savings: (amount, passes) => `You save ${amount} per year with your ${passes} passes.`,
@@ -605,6 +650,8 @@ export default {
       treatment: 'Products',
       period: 'Preferred date',
       promo: 'Promo code',
+      neighbors: 'Neighbours added',
+      files: 'Photos attached',
       message: 'Message',
     },
     infoUser: 'This request will be linked to your account. You can follow it in your customer area.',

@@ -43,7 +43,11 @@ function Confidentialite() {
         <li>Identität: Vor- und Nachname.</li>
         <li>Kontaktdaten: E-Mail-Adresse, Telefon, Gemeinde, Adresse oder Flurname.</li>
         <li>Parzellen: der Umriss und die Fläche, die Sie auf der Karte einzeichnen.</li>
-        <li>Ihre Anfrage: Art der Behandlung, Zeitraum, Nachricht, allfälliger Aktionscode.</li>
+        <li>Ihre Anfrage: gewünschte Produkte, Datum, Hindernisse, Startplatz, beigefügte Fotos, Nachricht.</li>
+        <li>
+          Zu einer gemeinsamen Anfrage hinzugefügte Nachbarn: Name und Kontakt, von Ihnen angegeben. Sie
+          dienen nur dazu, ihnen die gemeinsame Behandlung anzubieten; informieren Sie sie vorher.
+        </li>
         <li>Konto: E-Mail-Adresse und Passwort (nur in gehashter Form gespeichert).</li>
         <li>Nachverfolgung: durchgeführte oder geplante Einsätze auf Ihren Parzellen (Datum, Fläche, Behandlung, Bemerkungen).</li>
         <li>

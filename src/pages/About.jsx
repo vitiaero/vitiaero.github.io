@@ -18,6 +18,8 @@ export default function About() {
               <p className="lead mt-2">{a.lead}</p>
               <p className="mt-2 muted">{a.p1}</p>
               <p className="mt-2 muted">{a.p2}</p>
+              <h2 className="h3 mt-3">{a.whoTitle}</h2>
+              <p className="mt-1 muted">{a.whoText}</p>
               <div className="status-box">
                 <h2>{a.statusTitle}</h2>
                 <p>{a.statusText}</p>

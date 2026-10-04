@@ -7,7 +7,7 @@ export default {
     fallbackTitle: 'VitiAero - Épandage viticole par drone',
     pages: {
       '/': {
-        title: 'VitiAero - Épandage viticole par drone dans le canton de Vaud',
+        title: 'VitiAero - Épandage viticole par drone en Suisse romande',
         desc: 'Traitement des vignes en pente par drone en Suisse romande. Demandez une estimation en ligne, gratuite et sans engagement.',
       },
       '/estimation': {
@@ -19,7 +19,7 @@ export default {
         desc: 'Analyse de la parcelle, préparation du vol, traitement par drone et rapport d\'intervention. Conditions d\'intervention et cadre réglementaire suisse.',
       },
       '/devis': {
-        title: 'Demander un devis - Traitement vigne par drone dans le canton de Vaud | VitiAero',
+        title: 'Demander un devis - Traitement vigne par drone en Suisse romande | VitiAero',
         desc: 'Décrivez votre parcelle et recevez une estimation personnalisée pour la pulvérisation par drone en Suisse romande.',
       },
       '/equipement': {
@@ -32,7 +32,7 @@ export default {
       },
       '/a-propos': {
         title: 'À propos - VitiAero',
-        desc: 'VitiAero, service d\'épandage viticole par drone en Suisse romande, au service du vignoble vaudois et du Lavaux.',
+        desc: 'VitiAero, service d\'épandage viticole par drone en Suisse romande, depuis Chardonne.',
       },
       '/connexion': { title: 'Connexion - VitiAero', desc: 'Accédez à votre espace client VitiAero.' },
       '/inscription': { title: 'Créer un compte - VitiAero', desc: 'Créez votre compte VitiAero pour suivre vos demandes.' },
@@ -79,7 +79,7 @@ export default {
     navigation: 'Navigation',
     yourAccount: 'Votre compte',
     contact: 'Contact',
-    region: 'Suisse romande, canton de Vaud',
+    region: 'Suisse romande, depuis Chardonne (jusqu\'à 100 km)',
     project: 'Projet d\'étude (CPNV, PAE)',
     privacy: 'Politique de confidentialité',
     cookies: 'Gestion des cookies',
@@ -89,7 +89,7 @@ export default {
 
   launchNotice: {
     aria: 'Information sur le lancement du service',
-    text: 'VitiAero prépare son lancement dans le canton de Vaud. Les demandes d\'estimation sont déjà ouvertes.',
+    text: 'VitiAero prépare son lancement en Suisse romande. Les demandes d\'estimation sont déjà ouvertes.',
   },
 
   privacyBanner: {
@@ -106,6 +106,7 @@ export default {
       title: 'Vos vignes en pente, traitées par drone.',
       lead: 'Estimation en ligne, gratuite et sans engagement.',
       how: 'Comment ça marche',
+      quick: 'Demande rapide, sans carte',
     },
     why: {
       eyebrow: 'Pourquoi le drone',
@@ -119,7 +120,7 @@ export default {
       items: [
         { title: 'Accès aux parcelles difficiles', text: 'Une solution particulièrement adaptée aux parcelles pentues, étroites, fragmentées ou difficiles d\'accès avec des machines conventionnelles.' },
         { title: 'Moins de contraintes liées au terrain', text: 'Le drone permet d\'intervenir sans faire circuler un véhicule lourd directement dans la parcelle.' },
-        { title: 'Obstacles repérés en vol', text: 'Un radar à 360° et des caméras sur le dessus repèrent les obstacles autour du drone, y compris par pluie ou brouillard.' },
+        { title: 'Obstacles repérés en vol', text: 'Un radar à 360° et des caméras sur le dessus repèrent les obstacles autour du drone, même tôt le matin, quand la lumière est faible.' },
       ],
     },
     how: {
@@ -128,7 +129,7 @@ export default {
       cta: 'Commencer ma demande',
       steps: [
         { no: 'Étape 1', title: 'Tracez vos parcelles', text: 'Sur la carte, dessinez vos parcelles ou indiquez leur numéro cadastral. La surface se calcule automatiquement.' },
-        { no: 'Étape 2', title: 'Décrivez votre besoin', text: 'Indiquez le type de traitement souhaité et la période qui vous arrange.' },
+        { no: 'Étape 2', title: 'Décrivez votre besoin', text: 'Indiquez le nombre de passages, vos produits si vous les connaissez et la date souhaitée.' },
         { no: 'Étape 3', title: 'Envoyez votre demande', text: 'Vous recevez aussitôt une estimation, gratuite et sans engagement.' },
         { no: 'Étape 4', title: 'Recevez votre devis', text: 'Notre équipe étudie votre demande et vous transmet un devis détaillé.' },
       ],
@@ -146,6 +147,7 @@ export default {
         { k: 'Réservoir de pulvérisation', v: '50 L' },
         { k: 'Type', v: 'Drone agricole d\'épandage' },
         { k: 'Point fort', v: 'Traite les parcelles en forte pente' },
+        { k: 'Traitements', v: 'Fongicides, insecticides (y compris contre la flavescence dorée) et produits bio' },
       ],
     },
     cine: {
@@ -175,8 +177,11 @@ export default {
           title: 'Drone & intervention',
           items: [
             { q: 'Le drone convient-il aux vignes en pente ?', a: 'Oui, certaines parcelles en pente ou difficiles d\'accès sont particulièrement intéressantes pour une intervention par drone. Chaque parcelle est toutefois étudiée avant intervention afin de vérifier le relief, les obstacles, l\'accès et les conditions de sécurité.' },
-            { q: 'Où intervenez-vous ?', a: 'VitiAero intervient prioritairement dans le canton de Vaud, notamment dans la région de Lavaux et de la Riviera. Les demandes provenant d\'autres secteurs de Suisse romande peuvent également être étudiées selon la distance et les conditions d\'intervention.', link: { to: '/contact', label: 'Voir notre zone d\'intervention' } },
+            { q: 'Où intervenez-vous ?', a: 'En Suisse romande, depuis notre base de Chardonne, jusqu\'à environ 100 km. Au-delà, les demandes sont étudiées sur devis.', link: { to: '/contact', label: 'Voir notre zone d\'intervention' } },
             { q: 'Quel volume de bouillie est utilisé ?', a: 'Le volume de bouillie dépend notamment du traitement, du produit utilisé, du stade de la vigne et des caractéristiques de la parcelle. Les réglages sont adaptés à chaque intervention et aux prescriptions applicables.' },
+            { q: 'Qui décide d\'arrêter en cas de vent ?', a: 'Le télépilote, sur place. Il mesure le vent avant et pendant le vol et interrompt le traitement dès que la limite de sécurité ou le risque de dérive est atteint (DJI indique 6 m/s au maximum pour le T55). Le passage est alors reporté, sans frais supplémentaires.' },
+            { q: 'Qui paie si un passage est raté ?', a: 'Si un passage n\'a pas pu être fait correctement de notre fait (panne, mauvais réglage, zone oubliée), nous le refaisons sans frais. Si la météo empêche le traitement, le passage est reporté et n\'est pas facturé.' },
+            { q: 'Comment gérez-vous les jours où tout le monde appelle après la pluie ?', a: 'Les parcelles sont traitées dans l\'ordre des demandes confirmées, en regroupant les parcelles voisines pour gagner du temps. Les contrats de plusieurs passages sont planifiés à l\'avance, ce qui garde de la place pour les demandes ponctuelles.' },
             { q: 'Que se passe-t-il si la météo ne permet pas l\'intervention ?', a: 'La sécurité et la qualité de l\'intervention restent prioritaires. En cas de vent, de pluie ou d\'autres conditions incompatibles avec une intervention sûre et conforme, le traitement peut être reporté.' },
           ],
         },
@@ -184,7 +189,7 @@ export default {
           icon: 'shield',
           title: 'Sécurité & réglementation',
           items: [
-            { q: 'Faut-il des autorisations pour un traitement par drone ?', a: 'Oui. Les traitements de produits liquides par drone sont soumis à des exigences spécifiques en Suisse. Selon l\'intervention, des autorisations et des contrôles sont nécessaires. La faisabilité de chaque opération est vérifiée avant intervention et les prescriptions applicables aux produits utilisés doivent être respectées.', link: { to: '/le-service#reglementation', label: 'Sécurité & réglementation' } },
+            { q: 'Faut-il des autorisations pour un traitement par drone ?', a: 'Oui. Le vol demande une autorisation d\'exploitation de l\'Office fédéral de l\'aviation civile (OFAC), et le système de pulvérisation est contrôlé par Agroscope tous les trois ans. C\'est nous qui nous en occupons : vous n\'avez rien à demander. Les produits utilisés doivent être autorisés en Suisse et employés selon leurs conditions d\'emploi.', link: { to: '/le-service#reglementation', label: 'Sécurité & réglementation' } },
             { q: 'Les produits phytosanitaires sont-ils compris dans le prix ?', a: 'Sauf indication contraire dans le devis, les produits phytosanitaires ne sont pas compris dans le tarif de prestation. Leur utilisation reste soumise aux produits autorisés et à leurs conditions d\'emploi en Suisse.' },
             { q: 'Le drone remplace-t-il un traitement traditionnel ?', a: 'Pas nécessairement. Le traitement par drone est une solution complémentaire qui peut être particulièrement intéressante dans les parcelles difficiles d\'accès. Selon la situation, d\'autres méthodes d\'intervention peuvent rester nécessaires.' },
           ],
@@ -199,6 +204,8 @@ export default {
       eyebrow: 'Sans engagement',
       title: 'Prêt à estimer le traitement de vos vignes ?',
       lead: 'Tracez vos parcelles, décrivez votre besoin et recevez une estimation en quelques minutes.',
+      test: 'Réserver une parcelle test',
+      demo: 'Assister à une démonstration',
     },
   },
 
@@ -231,10 +238,10 @@ export default {
       transport: 'Transport',
       eyebrow: 'Le drone',
       title: 'Un grand drone, simple à mettre en œuvre.',
-      text: 'Quatre bras repliables et de grandes hélices de 62 pouces. 45 kg en configuration standard, réservoir compris.',
+      text: 'Quatre bras repliables et de grandes hélices de 62 pouces. 45 kg à vide, batterie comprise, en configuration standard.',
       alt: 'Radar à 360° sur le dessus du DJI Agras T55',
       points: [
-        { title: 'Radar et caméras', text: 'Un radar à 360° et trois caméras sur le dessus repèrent les obstacles, même par pluie ou brouillard.' },
+        { title: 'Radar et caméras', text: 'Un radar à 360° et trois caméras sur le dessus repèrent les obstacles, même tôt le matin, quand la lumière est faible.' },
         { title: 'Éclairage intégré', text: 'Feux de route, feux de croisement et éclairage vers le bas pour bien voir la zone d\'atterrissage.' },
         { title: 'Rayon de vol', text: 'Jusqu\'à 2 km de rayon de vol configurable.' },
         { title: 'Bras à verrouillage automatique', text: 'Une fois dépliés, les bras se verrouillent tout seuls. Des poignées facilitent le transport.' },
@@ -288,7 +295,11 @@ export default {
     phoneTitle: 'Téléphone',
     emailTitle: 'E-mail',
     areaTitle: 'Zone desservie',
-    areaText: (base) => `Zone principale : canton de Vaud et Suisse romande. Déplacements jusqu\'à environ 100 km depuis notre base de ${base}. Au-delà, sur devis.`,
+    subjects: {
+      test: 'Bonjour, je souhaite réserver une parcelle test pour essayer le traitement par drone.',
+      demo: 'Bonjour, je souhaite assister à une démonstration du traitement par drone.',
+    },
+    areaText: (base) => `Suisse romande, depuis notre base de ${base} : jusqu\'à environ 100 km. Au-delà, sur devis.`,
     estimateTitle: 'Vous voulez un prix ?',
     estimateText: 'L\'estimation en ligne vous donne un montant en quelques minutes, sans engagement.',
     formTitle: 'Votre message',
@@ -394,6 +405,8 @@ export default {
         { k: 'Date', v: '12.05.2026' },
         { k: 'Surface', v: '1,24 ha' },
         { k: 'Passages', v: '1' },
+        { k: 'Produit', v: 'Fongicide cuivre, n° W fictif' },
+        { k: 'Dose', v: '0,8 kg/ha, soit 1 kg au total' },
         { k: 'Volume de bouillie', v: '112 L' },
         { k: 'Durée', v: '35 min' },
         { k: 'Conditions', v: 'Vent 6 km/h, 18 °C, ciel dégagé' },
@@ -450,11 +463,13 @@ export default {
     p1: 'Beaucoup de vignes de la région sont en pente ou en terrasses. Le drone y accède facilement et applique le traitement depuis le ciel. Vous demandez une estimation en ligne, et vous recevez ensuite un devis détaillé.',
     p2: 'Ce site a été réalisé dans le cadre d\'un projet d\'étude (CPNV, PAE) en Suisse.',
     statusTitle: 'Projet VitiAero, lancement prochain',
-    statusText: 'VitiAero prépare son lancement dans le canton de Vaud, ainsi que les démarches nécessaires à l\'exploitation commerciale. Aucun nombre de clients, d\'hectares traités ou d\'années d\'expérience n\'est annoncé tant que l\'activité n\'a pas démarré.',
+    whoTitle: 'Qui sommes-nous ?',
+    whoText: 'VitiAero est né d\'un projet d\'étude au CPNV. Nous sommes deux apprentis automaticiens en dernière année, dont un pilote de drone FPV. Les vignerons et l\'opérateur de drone que nous avons interrogés nous ont aidés à construire ce service.',
+    statusText: 'VitiAero prépare son lancement en Suisse romande, ainsi que les démarches nécessaires à l\'exploitation commerciale. Aucun nombre de clients, d\'hectares traités ou d\'années d\'expérience n\'est annoncé tant que l\'activité n\'a pas démarré.',
     alt: 'Vignoble en terrasses du Lavaux',
     valuesTitle: 'Ce qui guide le projet',
     values: [
-      { icon: 'pin', title: 'Ancrage régional', text: 'Un projet pensé pour le Lavaux, la Riviera et le vignoble vaudois, avec leurs terrasses et leurs fortes pentes.' },
+      { icon: 'pin', title: 'Ancrage régional', text: 'Un projet pensé pour les vignobles de Suisse romande, avec leurs terrasses et leurs fortes pentes, depuis Chardonne.' },
       { icon: 'shield', title: 'Sécurité avant tout', text: 'Chaque parcelle est évaluée avant intervention. Une intervention peut être reportée ou refusée.' },
       { icon: 'target', title: 'Précision', text: 'Itinéraire préparé à l\'avance et réglages adaptés à la parcelle et au traitement prévu.' },
       { icon: 'rules', title: 'Respect des règles', text: 'Les exigences suisses applicables aux drones et aux produits phytosanitaires font partie de la préparation de chaque intervention.' },
@@ -501,6 +516,10 @@ export default {
       loading: 'Chargement de la liste des produits…',
       error: 'La liste des produits n\'a pas pu être chargée. Vous pourrez préciser le produit dans votre message.',
       source: (v) => `Source : OSAV, Index des produits phytosanitaires, version du ${v}.`,
+      bioOnly: 'Bio seulement',
+      bioTag: 'bio',
+      bioNote: 'Mention « bio » indicative, selon la matière active : la liste des intrants du FiBL fait foi.',
+      moreNumbers: (n) => `+ ${n} autre${n > 1 ? 's' : ''} n°`,
       groups: {
         mildiou: 'Mildiou',
         oidium: 'Oïdium',
@@ -520,6 +539,29 @@ export default {
     dateHint: 'Laissez vide si la date est encore à définir.',
     marginLabel: 'Marge acceptée',
     periodNone: 'À définir ensemble',
+    details: {
+      obstaclesLabel: 'Obstacles sur ou près de la parcelle',
+      obstacles: ['Murs', 'Escaliers', 'Ligne électrique', 'Route'],
+      obstaclesOtherPh: 'Autre obstacle (arbre, câble, maison…)',
+      takeoffLabel: 'Où peut-on décoller et remplir ?',
+      takeoffPh: 'Place, chemin, cave… idéalement avec un point d\'eau',
+      resistantLabel: 'Cépage résistant',
+      resistantHint: '(par exemple PIWI) : moins de traitements à prévoir',
+      supplyLabel: 'Produits',
+      supply: ['Je fournis mes produits', 'VitiAero fournit les produits'],
+      filesLabel: 'Photos de la parcelle (facultatif)',
+      filesHint: 'Accès, obstacles, point de décollage… 3 fichiers au maximum, 4 Mo chacun.',
+      filesAdd: 'Ajouter des photos',
+      filesRemove: 'Retirer',
+      fileTooBig: 'Ce fichier dépasse 4 Mo.',
+      fileType: 'Format non accepté. Images et PDF uniquement.',
+      fileCount: '3 fichiers au maximum.',
+      neighborsLabel: 'Ajouter un voisin à la demande',
+      neighborsHint: 'Vos voisins ont aussi des vignes à traiter ? Une demande groupée réduit les déplacements : -10 % sur le traitement, confirmé dans le devis.',
+      neighborName: 'Nom du voisin',
+      neighborContact: 'Téléphone ou e-mail',
+      neighborAdd: 'Ajouter un voisin',
+    },
     dispersedAuto: 'Vos parcelles sont dispersées (cinq ou plus, ou à plus de 1 km les unes des autres) : une majoration de 10 à 30 % est prévue, confirmée après étude.',
     quoteCta: 'Demander un devis personnalisé',
     ratesToggle: 'Voir la grille des tarifs',
@@ -540,6 +582,7 @@ export default {
       otherTitle: 'Autres situations',
       other: [
         ['Petite intervention', 'Minimum 300 CHF par passage'],
+        ['Demande groupée avec un voisin', '-10 % sur le traitement'],
         ['Parcelles dispersées (cinq ou plus, ou à plus de 1 km)', '+10 à 30 %'],
         ['Temps d\'attente important', '100 CHF/h'],
         ['Hors zone habituelle', 'Sur devis'],
@@ -573,6 +616,7 @@ export default {
     totalYear: 'Total estimé par an',
     range: (a, b) => `${a} à ${b}`,
     perHaYear: (x) => `soit ${x} par ha et par an`,
+    minimumPerJob: (amount) => `Minimum par intervention : ${amount}`,
     travelPending: 'Frais de déplacement à confirmer dans le devis.',
 
     // Etape 4 : estimation detaillee
@@ -594,6 +638,7 @@ export default {
       difficult: 'Parcelle très difficile (+10 à 25 %)',
       dispersed: 'Parcelles dispersées (+10 à 30 %)',
       promo: (code, pct) => `Code promo ${code} (-${pct} %)`,
+      group: (pct) => `Demande groupée avec un voisin (-${pct} %)`,
       total: 'Total estimé par an',
     },
     savings: (amount, passes) => `Vous économisez ${amount} par an grâce à vos ${passes} passages.`,
@@ -615,6 +660,8 @@ export default {
       treatment: 'Produits',
       period: 'Date souhaitée',
       promo: 'Code promo',
+      neighbors: 'Voisins ajoutés',
+      files: 'Photos jointes',
       message: 'Message',
     },
     infoUser: 'Cette demande sera rattachée à votre compte. Vous la suivrez dans votre espace client.',

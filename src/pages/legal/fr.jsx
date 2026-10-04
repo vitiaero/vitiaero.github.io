@@ -43,7 +43,11 @@ function Confidentialite() {
         <li>Identité : nom et prénom.</li>
         <li>Coordonnées : adresse e-mail, téléphone, commune, adresse ou lieu-dit.</li>
         <li>Parcelles : le tracé et la surface que vous dessinez sur la carte.</li>
-        <li>Votre demande : type de traitement, période, message, code promo éventuel.</li>
+        <li>Votre demande : produits souhaités, date, obstacles, lieu de décollage, photos jointes, message.</li>
+        <li>
+          Voisins ajoutés à une demande groupée : nom et contact, transmis par vous. Ils ne
+          servent qu'à leur proposer le traitement groupé ; prévenez-les avant de les ajouter.
+        </li>
         <li>Compte : adresse e-mail et mot de passe (conservé uniquement sous forme hachée).</li>
         <li>Suivi : interventions réalisées ou planifiées sur vos parcelles (date, surface, traitement, remarques).</li>
         <li>

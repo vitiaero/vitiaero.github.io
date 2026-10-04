@@ -38,6 +38,8 @@ function Hero() {
             <Link to="/estimation" className="btn btn-primary btn-arrow">{t.common.requestEstimate}<BtnArrow /></Link>
             <a href="#comment" className="btn btn-glass">{h.how}</a>
           </div>
+          {/* Le formulaire court (sans carte, avec photos) voulu par les vignerons */}
+          <Link to="/devis" className="hm-hero-quick">{h.quick}</Link>
         </div>
       </div>
     </section>
@@ -232,7 +234,11 @@ function FinalCta() {
       <Reveal className="hm-cta-body">
         <h2 className="hm-h2 xl" id="hm-cta-title">{c.title}</h2>
         <p>{c.lead}</p>
-        <Link to="/estimation" className="btn btn-primary btn-arrow">{t.common.requestEstimate}<BtnArrow /></Link>
+        <div className="hm-cta-actions">
+          <Link to="/estimation" className="btn btn-primary btn-arrow">{t.common.requestEstimate}<BtnArrow /></Link>
+          <Link to="/contact?sujet=test" className="btn btn-glass">{c.test}</Link>
+          <Link to="/contact?sujet=demo" className="btn btn-glass">{c.demo}</Link>
+        </div>
       </Reveal>
     </section>
   );

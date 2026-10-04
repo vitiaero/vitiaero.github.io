@@ -10,7 +10,8 @@ export default function CountUp({ value, duration = 1300 }) {
   // n'est pas animee, elle afficherait "0 à 500" pendant le comptage.
   const raw = String(value).match(/^(\D*)(\d+)(.*)$/);
   const m = raw && !/\d/.test(raw[3]) ? raw : null;
-  const [display, setDisplay] = useState(value); // valeur finale par defaut
+  // Chiffre affiche pendant le comptage ; null = valeur finale (par defaut).
+  const [display, setDisplay] = useState(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -32,7 +33,7 @@ export default function CountUp({ value, duration = 1300 }) {
       const tick = (t) => {
         const p = Math.min(1, (t - start) / duration);
         const eased = 1 - Math.pow(1 - p, 3);
-        setDisplay(prefix + Math.round(target * eased) + suffix);
+        setDisplay(p < 1 ? prefix + Math.round(target * eased) + suffix : null);
         if (p < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
@@ -57,5 +58,12 @@ export default function CountUp({ value, duration = 1300 }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <span ref={ref}>{display}</span>;
+  // Le texte de la page reste toujours la valeur finale (lecteurs d'ecran,
+  // copier-coller, moteurs de recherche, captures) : le chiffre qui defile est
+  // dessine par-dessus en CSS (::after), a partir de data-count.
+  return (
+    <span ref={ref} className={`countup${display ? ' is-counting' : ''}`} data-count={display || undefined}>
+      <span className="countup-v">{value}</span>
+    </span>
+  );
 }

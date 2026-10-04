@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Icon from '../components/Icons.jsx';
 import { api } from '../api.js';
 import { useFormValidation, FieldError, FormErrorSummary, required, emailRule } from '../forms.jsx';
@@ -39,7 +39,13 @@ export default function Contact() {
   const { t } = useI18n();
   const c = t.contact;
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', website: '' });
+  // Arrivee depuis « Reserver une parcelle test » ou « Assister a une
+  // demonstration » (accueil) : le message est pre-rempli.
+  const [params] = useSearchParams();
+  const [form, setForm] = useState(() => ({
+    name: '', email: '', phone: '', website: '',
+    message: t.contact.subjects?.[params.get('sujet')] || '',
+  }));
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);

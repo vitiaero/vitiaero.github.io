@@ -240,6 +240,11 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 }
 .skip-link:focus { top: 16px; }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* Compteur anime : la valeur finale reste dans le texte (cachee pendant le
+   comptage, sa place est gardee) ; le chiffre qui defile est dessine dessus. */
+.countup { position: relative; display: inline-block; }
+.countup.is-counting .countup-v { color: transparent; }
+.countup.is-counting::after { content: attr(data-count); position: absolute; left: 0; top: 0; white-space: nowrap; }
 
 /* -------------------------- Bandeau de lancement -------------------------- */
 .launch-notice { background: var(--ink); color: var(--on-dark); font-size: 13px; line-height: 1.4; }

@@ -5,6 +5,8 @@ import { BASE, formatCHF } from '../../shared/pricing.js';
 
 const STATUSES = ['Nouvelle', 'En etude', 'Devis envoye', 'Acceptee', 'Refusee'];
 const OPTION_LABELS = [['urgent', 'urgente'], ['difficult', 'parcelle tres difficile'], ['dispersed', 'parcelles dispersees']];
+const OBSTACLE_LABELS = { murs: 'murs', escaliers: 'escaliers', ligne: 'ligne electrique', route: 'route' };
+const SUPPLY_LABELS = { client: 'fournis par le client', vitiaero: 'fournis par VitiAero' };
 
 // Estimation annuelle calculee par le serveur (montant ou fourchette).
 function estimateText(est) {
@@ -89,6 +91,26 @@ function RequestsTab() {
               <div className="line"><span className="k">Surface</span><span className="v">{formatHa(r.area_m2)} ha ({Math.round(r.area_m2).toLocaleString('fr-CH')} m2)</span></div>
               {r.promo_code && <div className="line"><span className="k">Code promo</span><span className="v">{r.promo_code}</span></div>}
               {r.message && <div className="line"><span className="k">Message</span><span className="v" style={{ maxWidth: '60%' }}>{r.message}</span></div>}
+              {/* Precisions de l'etape « Votre besoin » */}
+              {r.details && (r.details.obstacles?.length > 0 || r.details.obstaclesOther) && (
+                <div className="line"><span className="k">Obstacles</span><span className="v" style={{ maxWidth: '60%' }}>{[...(r.details.obstacles || []).map((o) => OBSTACLE_LABELS[o] || o), r.details.obstaclesOther].filter(Boolean).join(', ')}</span></div>
+              )}
+              {r.details?.takeoff && <div className="line"><span className="k">Decollage et remplissage</span><span className="v" style={{ maxWidth: '60%' }}>{r.details.takeoff}</span></div>}
+              {r.details?.resistant && <div className="line"><span className="k">Cepage</span><span className="v">resistant</span></div>}
+              {r.details?.supply && <div className="line"><span className="k">Produits</span><span className="v">{SUPPLY_LABELS[r.details.supply]}</span></div>}
+              {r.details?.neighbors?.length > 0 && (
+                <div className="line"><span className="k">Voisins (demande groupee)</span><span className="v" style={{ maxWidth: '60%' }}>{r.details.neighbors.map((n) => (n.contact ? `${n.name} (${n.contact})` : n.name)).join(', ')}</span></div>
+              )}
+              {r.files?.length > 0 && (
+                <div className="line">
+                  <span className="k">Photos</span>
+                  <span className="v">
+                    {r.files.map((fl, i) => (
+                      <button key={fl.id} type="button" className="btn btn-ghost btn-sm" onClick={() => openFile(r.id, i, fl.name, 'estimations')}>{fl.name}</button>
+                    ))}
+                  </span>
+                </div>
+              )}
               {r.estimate && (
                 <>
                   <div className="line"><span className="k">Passages par an</span><span className="v">{r.passes}</span></div>
@@ -213,8 +235,9 @@ function ClientsTab() {
 // type (HTML, SVG...) pourrait executer du code avec les droits de l'equipe.
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
 
-async function openFile(messageId, index, name) {
-  const res = await fetch(apiUrl(`/api/admin/messages/${Number(messageId)}/files/${Number(index)}`), {
+// kind : 'messages' (demande de devis) ou 'estimations' (photos de l'estimation).
+async function openFile(messageId, index, name, kind = 'messages') {
+  const res = await fetch(apiUrl(`/api/admin/${kind === 'estimations' ? 'estimations' : 'messages'}/${Number(messageId)}/files/${Number(index)}`), {
     headers: { Authorization: `Bearer ${getToken()}` },
     credentials: 'omit',
   });

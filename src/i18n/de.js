@@ -6,7 +6,7 @@ export default {
     fallbackTitle: 'VitiAero - Pflanzenschutz im Rebbau per Drohne',
     pages: {
       '/': {
-        title: 'VitiAero - Pflanzenschutz im Rebbau per Drohne im Kanton Waadt',
+        title: 'VitiAero - Pflanzenschutz im Rebbau per Drohne in der Westschweiz',
         desc: 'Behandlung von Reben in Steillagen per Drohne in der Westschweiz. Fordern Sie online eine kostenlose und unverbindliche Schätzung an.',
       },
       '/estimation': {
@@ -18,7 +18,7 @@ export default {
         desc: 'Analyse der Parzelle, Vorbereitung des Flugs, Behandlung per Drohne und Einsatzbericht. Einsatzbedingungen und Schweizer Regelwerk.',
       },
       '/devis': {
-        title: 'Offerte anfragen - Rebbehandlung per Drohne im Kanton Waadt | VitiAero',
+        title: 'Offerte anfragen - Rebbehandlung per Drohne in der Westschweiz | VitiAero',
         desc: 'Beschreiben Sie Ihre Parzelle und erhalten Sie eine persönliche Schätzung für das Sprühen per Drohne in der Westschweiz.',
       },
       '/equipement': {
@@ -31,7 +31,7 @@ export default {
       },
       '/a-propos': {
         title: 'Über uns - VitiAero',
-        desc: 'VitiAero, Sprühdienst per Drohne für den Rebbau in der Westschweiz, im Dienst der Waadtländer Weinberge und des Lavaux.',
+        desc: 'VitiAero, Sprühdienst per Drohne für den Rebbau in der Westschweiz, mit Sitz in Chardonne.',
       },
       '/connexion': { title: 'Anmelden - VitiAero', desc: 'Greifen Sie auf Ihren VitiAero-Kundenbereich zu.' },
       '/inscription': { title: 'Konto erstellen - VitiAero', desc: 'Erstellen Sie Ihr VitiAero-Konto, um Ihre Anfragen zu verfolgen.' },
@@ -78,7 +78,7 @@ export default {
     navigation: 'Navigation',
     yourAccount: 'Ihr Konto',
     contact: 'Kontakt',
-    region: 'Westschweiz, Kanton Waadt',
+    region: 'Westschweiz, ab Chardonne (bis 100 km)',
     project: 'Studienprojekt (CPNV, PAE)',
     privacy: 'Datenschutzerklärung',
     cookies: 'Cookie-Verwaltung',
@@ -88,7 +88,7 @@ export default {
 
   launchNotice: {
     aria: 'Hinweis zum Start des Dienstes',
-    text: 'VitiAero bereitet den Start im Kanton Waadt vor. Anfragen für eine Schätzung sind bereits möglich.',
+    text: 'VitiAero bereitet den Start in der Westschweiz vor. Anfragen für eine Schätzung sind bereits möglich.',
   },
 
   privacyBanner: {
@@ -105,6 +105,7 @@ export default {
       title: 'Ihre Reben in Steillagen, per Drohne behandelt.',
       lead: 'Online-Schätzung, kostenlos und unverbindlich.',
       how: 'So funktioniert es',
+      quick: 'Schnelle Anfrage, ohne Karte',
     },
     why: {
       eyebrow: 'Warum eine Drohne',
@@ -118,7 +119,7 @@ export default {
       items: [
         { title: 'Zugang zu schwierigen Parzellen', text: 'Eine Lösung, die sich besonders für steile, schmale, zerstückelte oder mit herkömmlichen Maschinen schwer zugängliche Parzellen eignet.' },
         { title: 'Weniger Einschränkungen durch das Gelände', text: 'Mit der Drohne lässt sich arbeiten, ohne ein schweres Fahrzeug direkt durch die Parzelle zu fahren.' },
-        { title: 'Hindernisse im Flug erkannt', text: 'Ein 360°-Radar und Kameras auf der Oberseite erkennen Hindernisse rund um die Drohne, auch bei Regen oder Nebel.' },
+        { title: 'Hindernisse im Flug erkannt', text: 'Ein 360°-Radar und Kameras auf der Oberseite erkennen Hindernisse rund um die Drohne, auch früh am Morgen bei schwachem Licht.' },
       ],
     },
     how: {
@@ -127,7 +128,7 @@ export default {
       cta: 'Anfrage starten',
       steps: [
         { no: 'Schritt 1', title: 'Parzellen einzeichnen', text: 'Zeichnen Sie Ihre Parzellen auf der Karte ein oder geben Sie ihre Katasternummer an. Die Fläche wird automatisch berechnet.' },
-        { no: 'Schritt 2', title: 'Bedarf beschreiben', text: 'Geben Sie die gewünschte Behandlung und den passenden Zeitraum an.' },
+        { no: 'Schritt 2', title: 'Bedarf beschreiben', text: 'Geben Sie die Anzahl Durchgänge, Ihre Produkte, falls Sie sie kennen, und das gewünschte Datum an.' },
         { no: 'Schritt 3', title: 'Anfrage senden', text: 'Sie erhalten sofort eine kostenlose und unverbindliche Schätzung.' },
         { no: 'Schritt 4', title: 'Offerte erhalten', text: 'Unser Team prüft Ihre Anfrage und schickt Ihnen eine detaillierte Offerte.' },
       ],
@@ -145,6 +146,7 @@ export default {
         { k: 'Sprühtank', v: '50 L' },
         { k: 'Typ', v: 'Landwirtschaftliche Sprühdrohne' },
         { k: 'Stärke', v: 'Behandelt Parzellen in Steillagen' },
+        { k: 'Behandlungen', v: 'Fungizide, Insektizide (auch gegen die Goldgelbe Vergilbung) und Bioprodukte' },
       ],
     },
     cine: {
@@ -174,8 +176,11 @@ export default {
           title: 'Drohne & Einsatz',
           items: [
             { q: 'Eignet sich die Drohne für Reben in Steillagen?', a: 'Ja, gerade steile oder schwer zugängliche Parzellen sind für einen Drohneneinsatz interessant. Jede Parzelle wird jedoch vor dem Einsatz geprüft, um Gelände, Hindernisse, Zugang und Sicherheitsbedingungen zu klären.' },
-            { q: 'Wo sind Sie im Einsatz?', a: 'VitiAero arbeitet vorrangig im Kanton Waadt, insbesondere in der Region Lavaux und an der Riviera. Anfragen aus anderen Gebieten der Westschweiz können je nach Distanz und Einsatzbedingungen ebenfalls geprüft werden.', link: { to: '/contact', label: 'Unser Einsatzgebiet ansehen' } },
+            { q: 'Wo sind Sie im Einsatz?', a: 'In der Westschweiz, ab unserem Stützpunkt in Chardonne, bis rund 100 km. Darüber hinaus werden Anfragen auf Offerte geprüft.', link: { to: '/contact', label: 'Unser Einsatzgebiet ansehen' } },
             { q: 'Welches Brühevolumen wird eingesetzt?', a: 'Das Brühevolumen hängt unter anderem von der Behandlung, dem eingesetzten Mittel, dem Stadium der Reben und den Eigenschaften der Parzelle ab. Die Einstellungen werden auf jeden Einsatz und die geltenden Vorschriften abgestimmt.' },
+            { q: 'Wer entscheidet, bei Wind abzubrechen?', a: 'Der Fernpilot vor Ort. Er misst den Wind vor und während des Flugs und bricht die Behandlung ab, sobald die Sicherheitsgrenze oder das Abdriftrisiko erreicht ist (DJI gibt für die T55 höchstens 6 m/s an). Der Durchgang wird dann ohne Mehrkosten verschoben.' },
+            { q: 'Wer bezahlt, wenn ein Durchgang misslingt?', a: 'Konnte ein Durchgang wegen uns nicht richtig ausgeführt werden (Panne, falsche Einstellung, vergessene Fläche), wiederholen wir ihn kostenlos. Verhindert das Wetter die Behandlung, wird der Durchgang verschoben und nicht verrechnet.' },
+            { q: 'Wie gehen Sie mit Tagen um, an denen nach dem Regen alle anrufen?', a: 'Die Parzellen werden in der Reihenfolge der bestätigten Anfragen behandelt, benachbarte Parzellen werden zusammengelegt, um Zeit zu sparen. Verträge über mehrere Durchgänge werden im Voraus geplant, so bleibt Platz für einzelne Anfragen.' },
             { q: 'Was geschieht, wenn das Wetter keinen Einsatz zulässt?', a: 'Sicherheit und Qualität des Einsatzes haben Vorrang. Bei Wind, Regen oder anderen Bedingungen, die einen sicheren und regelkonformen Einsatz verhindern, kann die Behandlung verschoben werden.' },
           ],
         },
@@ -183,7 +188,7 @@ export default {
           icon: 'shield',
           title: 'Sicherheit & Regelwerk',
           items: [
-            { q: 'Braucht es Bewilligungen für eine Behandlung per Drohne?', a: 'Ja. Das Ausbringen flüssiger Mittel per Drohne unterliegt in der Schweiz besonderen Anforderungen. Je nach Einsatz sind Bewilligungen und Kontrollen nötig. Die Machbarkeit wird vor jedem Einsatz geprüft, und die Vorschriften zu den eingesetzten Mitteln sind einzuhalten.', link: { to: '/le-service#reglementation', label: 'Sicherheit & Regelwerk' } },
+            { q: 'Braucht es Bewilligungen für eine Behandlung per Drohne?', a: 'Ja. Der Flug braucht eine Betriebsbewilligung des Bundesamts für Zivilluftfahrt (BAZL), und das Sprühsystem wird alle drei Jahre von Agroscope geprüft. Darum kümmern wir uns: Sie müssen nichts beantragen. Die eingesetzten Mittel müssen in der Schweiz zugelassen sein und gemäss ihren Anwendungsbedingungen verwendet werden.', link: { to: '/le-service#reglementation', label: 'Sicherheit & Vorschriften' } },
             { q: 'Sind die Pflanzenschutzmittel im Preis inbegriffen?', a: 'Sofern die Offerte nichts anderes angibt, sind die Pflanzenschutzmittel nicht im Tarif der Leistung enthalten. Ihr Einsatz bleibt an die zugelassenen Mittel und deren Anwendungsbedingungen in der Schweiz gebunden.' },
             { q: 'Ersetzt die Drohne eine herkömmliche Behandlung?', a: 'Nicht zwingend. Die Behandlung per Drohne ist eine ergänzende Lösung, die besonders bei schwer zugänglichen Parzellen interessant sein kann. Je nach Situation können weitere Methoden nötig bleiben.' },
           ],
@@ -198,6 +203,8 @@ export default {
       eyebrow: 'Unverbindlich',
       title: 'Bereit für die Schätzung Ihrer Rebbehandlung?',
       lead: 'Zeichnen Sie Ihre Parzellen ein, beschreiben Sie Ihren Bedarf und erhalten Sie in wenigen Minuten eine Schätzung.',
+      test: 'Testparzelle reservieren',
+      demo: 'An einer Vorführung teilnehmen',
     },
   },
 
@@ -226,10 +233,10 @@ export default {
       transport: 'Transport',
       eyebrow: 'Die Drohne',
       title: 'Eine grosse Drohne, einfach einsetzbar.',
-      text: 'Vier klappbare Arme und grosse 62-Zoll-Propeller. 45 kg in der Standardkonfiguration, Tank inbegriffen.',
+      text: 'Vier klappbare Arme und grosse 62-Zoll-Propeller. 45 kg leer, mit Akku, in der Standardkonfiguration.',
       alt: '360°-Radar auf der Oberseite der DJI Agras T55',
       points: [
-        { title: 'Radar und Kameras', text: 'Ein 360°-Radar und drei Kameras auf der Oberseite erkennen Hindernisse, auch bei Regen oder Nebel.' },
+        { title: 'Radar und Kameras', text: 'Ein 360°-Radar und drei Kameras auf der Oberseite erkennen Hindernisse, auch früh am Morgen bei schwachem Licht.' },
         { title: 'Integrierte Beleuchtung', text: 'Fernlicht, Abblendlicht und Beleuchtung nach unten, um den Landeplatz gut zu sehen.' },
         { title: 'Flugradius', text: 'Bis zu 2 km einstellbarer Flugradius.' },
         { title: 'Selbstverriegelnde Arme', text: 'Ausgeklappt verriegeln sich die Arme von selbst. Griffe erleichtern den Transport.' },
@@ -283,7 +290,11 @@ export default {
     phoneTitle: 'Telefon',
     emailTitle: 'E-Mail',
     areaTitle: 'Einsatzgebiet',
-    areaText: (base) => `Hauptgebiet: Kanton Waadt und Westschweiz. Anfahrten bis rund 100 km ab unserem Stützpunkt in ${base}. Darüber hinaus auf Offerte.`,
+    subjects: {
+      test: 'Guten Tag, ich möchte eine Testparzelle reservieren, um die Behandlung per Drohne auszuprobieren.',
+      demo: 'Guten Tag, ich möchte an einer Vorführung der Behandlung per Drohne teilnehmen.',
+    },
+    areaText: (base) => `Westschweiz, ab unserem Stützpunkt in ${base}: bis rund 100 km. Darüber hinaus auf Offerte.`,
     estimateTitle: 'Sie möchten einen Preis?',
     estimateText: 'Die Online-Schätzung nennt Ihnen in wenigen Minuten einen Betrag, unverbindlich.',
     formTitle: 'Ihre Nachricht',
@@ -389,6 +400,8 @@ export default {
         { k: 'Datum', v: '12.05.2026' },
         { k: 'Fläche', v: '1,24 ha' },
         { k: 'Bahnen', v: '1' },
+        { k: 'Produkt', v: 'Kupferfungizid, fiktive W-Nr.' },
+        { k: 'Dosis', v: '0,8 kg/ha, also 1 kg insgesamt' },
         { k: 'Brühevolumen', v: '112 L' },
         { k: 'Dauer', v: '35 min' },
         { k: 'Bedingungen', v: 'Wind 6 km/h, 18 °C, klarer Himmel' },
@@ -445,11 +458,13 @@ export default {
     p1: 'Viele Reben der Region liegen in Hanglage oder auf Terrassen. Die Drohne erreicht sie problemlos und bringt die Behandlung aus der Luft aus. Sie fordern online eine Schätzung an und erhalten danach eine detaillierte Offerte.',
     p2: 'Diese Website entstand im Rahmen eines Studienprojekts (CPNV, PAE) in der Schweiz.',
     statusTitle: 'Projekt VitiAero, Start in Vorbereitung',
-    statusText: 'VitiAero bereitet den Start im Kanton Waadt sowie die für den kommerziellen Betrieb nötigen Schritte vor. Solange die Tätigkeit nicht aufgenommen ist, werden weder Kundenzahlen noch behandelte Hektaren oder Jahre an Erfahrung genannt.',
+    statusText: 'VitiAero bereitet den Start in der Westschweiz sowie die für den kommerziellen Betrieb nötigen Schritte vor. Solange die Tätigkeit nicht aufgenommen ist, werden weder Kundenzahlen noch behandelte Hektaren oder Jahre Erfahrung angegeben.',
+    whoTitle: 'Wer sind wir?',
+    whoText: 'VitiAero ist aus einem Studienprojekt am CPNV entstanden. Wir sind zwei Automatiker-Lernende im letzten Lehrjahr, einer von uns fliegt FPV-Drohnen. Die befragten Winzer und der Drohnenbetreiber haben uns geholfen, diesen Dienst aufzubauen.',
     alt: 'Rebterrassen des Lavaux',
     valuesTitle: 'Was das Projekt leitet',
     values: [
-      { icon: 'pin', title: 'Regionale Verankerung', text: 'Ein Projekt für das Lavaux, die Riviera und den Waadtländer Rebbau, mit ihren Terrassen und steilen Hängen.' },
+      { icon: 'pin', title: 'Regionale Verankerung', text: 'Ein Projekt für die Weinberge der Westschweiz, mit ihren Terrassen und steilen Hängen, ab Chardonne.' },
       { icon: 'shield', title: 'Sicherheit zuerst', text: 'Jede Parzelle wird vor dem Einsatz geprüft. Ein Einsatz kann verschoben oder abgelehnt werden.' },
       { icon: 'target', title: 'Präzision', text: 'Im Voraus vorbereitete Route und Einstellungen, abgestimmt auf Parzelle und vorgesehene Behandlung.' },
       { icon: 'rules', title: 'Regeln einhalten', text: 'Die Schweizer Anforderungen an Drohnen und Pflanzenschutzmittel gehören zur Vorbereitung jedes Einsatzes.' },
@@ -494,6 +509,10 @@ export default {
       loading: 'Produktliste wird geladen…',
       error: 'Die Produktliste konnte nicht geladen werden. Sie können das Produkt in Ihrer Nachricht angeben.',
       source: (v) => `Quelle: BLV, Pflanzenschutzmittelverzeichnis, Version vom ${v}.`,
+      bioOnly: 'Nur Bio',
+      bioTag: 'Bio',
+      bioNote: 'Bio-Hinweis unverbindlich, nach Wirkstoff: massgebend ist die Betriebsmittelliste des FiBL.',
+      moreNumbers: (n) => `+ ${n} weitere Nr.`,
       groups: {
         mildiou: 'Falscher Mehltau',
         oidium: 'Echter Mehltau',
@@ -514,6 +533,29 @@ export default {
     marginLabel: 'Akzeptierter Spielraum',
     periodNone: 'Gemeinsam festlegen',
     dispersedAuto: 'Ihre Parzellen sind verstreut (fünf oder mehr, oder mehr als 1 km voneinander entfernt): ein Zuschlag von 10 bis 30 % ist vorgesehen, nach Prüfung bestätigt.',
+    details: {
+      obstaclesLabel: 'Hindernisse auf oder neben der Parzelle',
+      obstacles: ['Mauern', 'Treppen', 'Stromleitung', 'Strasse'],
+      obstaclesOtherPh: 'Anderes Hindernis (Baum, Kabel, Haus…)',
+      takeoffLabel: 'Wo können wir starten und auffüllen?',
+      takeoffPh: 'Platz, Weg, Keller… idealerweise mit Wasseranschluss',
+      resistantLabel: 'Pilzwiderstandsfähige Sorte',
+      resistantHint: '(zum Beispiel PIWI): weniger Behandlungen nötig',
+      supplyLabel: 'Produkte',
+      supply: ['Ich liefere meine Produkte', 'VitiAero liefert die Produkte'],
+      filesLabel: 'Fotos der Parzelle (freiwillig)',
+      filesHint: 'Zufahrt, Hindernisse, Startplatz… höchstens 3 Dateien, je 4 MB.',
+      filesAdd: 'Fotos hinzufügen',
+      filesRemove: 'Entfernen',
+      fileTooBig: 'Diese Datei ist grösser als 4 MB.',
+      fileType: 'Format nicht akzeptiert. Nur Bilder und PDF.',
+      fileCount: 'Höchstens 3 Dateien.',
+      neighborsLabel: 'Einen Nachbarn zur Anfrage hinzufügen',
+      neighborsHint: 'Haben Ihre Nachbarn auch Reben zu behandeln? Eine gemeinsame Anfrage spart Anfahrten: -10 % auf die Behandlung, in der Offerte bestätigt.',
+      neighborName: 'Name des Nachbarn',
+      neighborContact: 'Telefon oder E-Mail',
+      neighborAdd: 'Nachbarn hinzufügen',
+    },
     quoteCta: 'Persönliche Offerte anfragen',
     ratesToggle: 'Tariftabelle anzeigen',
     ratesNote: 'Richtpreise. Der endgültige Preis wird nach Prüfung der Parzelle und der Einsatzbedingungen bestätigt. Pflanzenschutzmittel nicht inbegriffen, sofern die Offerte nichts anderes angibt. Die Einsatzbedingungen werden vor der Bestätigung der Leistung geprüft.',
@@ -533,6 +575,7 @@ export default {
       otherTitle: 'Weitere Situationen',
       other: [
         ['Kleiner Einsatz', 'Mindestens 300 CHF pro Durchgang'],
+        ['Gemeinsame Anfrage mit einem Nachbarn', '-10 % auf die Behandlung'],
         ['Verstreute Parzellen (fünf oder mehr, oder mehr als 1 km entfernt)', '+10 bis 30 %'],
         ['Längere Wartezeit', '100 CHF/h'],
         ['Ausserhalb des üblichen Gebiets', 'Auf Offerte'],
@@ -564,6 +607,7 @@ export default {
     totalYear: 'Geschätztes Total pro Jahr',
     range: (a, b) => `${a} bis ${b}`,
     perHaYear: (x) => `also ${x} pro ha und Jahr`,
+    minimumPerJob: (amount) => `Mindestbetrag pro Einsatz: ${amount}`,
     travelPending: 'Anfahrtskosten werden in der Offerte bestätigt.',
 
     resultTitle: 'Ihre Schätzung ist bereit.',
@@ -584,6 +628,7 @@ export default {
       difficult: 'Sehr schwierige Parzelle (+10 bis 25 %)',
       dispersed: 'Verstreute Parzellen (+10 bis 30 %)',
       promo: (code, pct) => `Aktionscode ${code} (-${pct} %)`,
+      group: (pct) => `Gemeinsame Anfrage mit einem Nachbarn (-${pct} %)`,
       total: 'Geschätztes Total pro Jahr',
     },
     savings: (amount, passes) => `Sie sparen ${amount} pro Jahr dank Ihrer ${passes} Durchgänge.`,
@@ -605,6 +650,8 @@ export default {
       treatment: 'Produkte',
       period: 'Gewünschtes Datum',
       promo: 'Aktionscode',
+      neighbors: 'Hinzugefügte Nachbarn',
+      files: 'Beigefügte Fotos',
       message: 'Nachricht',
     },
     infoUser: 'Diese Anfrage wird Ihrem Konto zugeordnet. Sie verfolgen sie in Ihrem Kundenbereich.',

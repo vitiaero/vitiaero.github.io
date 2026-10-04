@@ -6,7 +6,9 @@ import { asset } from '../config.js';
 // La liste (public/data/produits-vigne.json) est chargee a l'ouverture de
 // l'etape « Votre besoin ». Recherche par nom, numero W, matiere active ou
 // maladie ; tri par maladie ciblee (de la plus frequente en vigne a la moins
-// frequente, puis A-Z) ou alphabetique. Six produits au maximum.
+// frequente, puis A-Z) ou alphabetique, filtre « bio ». Six produits au
+// maximum. Les doublons (importations paralleles) sont fusionnes : x liste
+// les autres numeros W du meme produit.
 export const MAX_PRODUCTS = 6;
 
 // Recherche sans accents ni majuscules (« oidium » trouve « oïdium »).
@@ -19,6 +21,7 @@ export default function ProductPicker({ value, onChange, p }) {
   const [failed, setFailed] = useState(false);
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState('group');
+  const [bioOnly, setBioOnly] = useState(false);
 
   useEffect(() => {
     if (cache) return undefined;
@@ -38,17 +41,17 @@ export default function ProductPicker({ value, onChange, p }) {
     if (!data) return [];
     // Chaque mot doit se retrouver quelque part (« oidium soufre »).
     const words = fold(query).split(/\s+/).filter(Boolean);
-    const list = words.length
-      ? data.products.filter((x) => {
-        const text = fold([x.n, x.w, ...x.s, ...x.p].join(' '));
-        return words.every((w) => text.includes(w));
-      })
-      : data.products;
+    const list = data.products.filter((x) => {
+      if (bioOnly && !x.b) return false;
+      if (!words.length) return true;
+      const text = fold([x.n, x.w, ...(x.x || []), ...x.s, ...x.p].join(' '));
+      return words.every((w) => text.includes(w));
+    });
     if (sort === 'az') return [{ key: 'az', items: list }];
     return data.groups
       .map((g) => ({ key: g, items: list.filter((x) => x.g === g) }))
       .filter((s) => s.items.length > 0);
-  }, [data, query, sort]);
+  }, [data, query, sort, bioOnly]);
 
   const count = sections.reduce((n, s) => n + s.items.length, 0);
 
@@ -82,6 +85,10 @@ export default function ProductPicker({ value, onChange, p }) {
           onChange={(e) => setQuery(e.target.value)}
           aria-label={p.searchPh}
         />
+        <label className="pp-bio">
+          <input type="checkbox" checked={bioOnly} onChange={(e) => setBioOnly(e.target.checked)} />
+          <span>{p.bioOnly}</span>
+        </label>
         <div className="pp-sort" role="group" aria-label={p.sortLabel}>
           <button type="button" className={sort === 'group' ? 'on' : ''} aria-pressed={sort === 'group'} onClick={() => setSort('group')}>{p.sortGroup}</button>
           <button type="button" className={sort === 'az' ? 'on' : ''} aria-pressed={sort === 'az'} onClick={() => setSort('az')}>{p.sortAz}</button>
@@ -106,7 +113,10 @@ export default function ProductPicker({ value, onChange, p }) {
                       <li key={x.w}>
                         <label className={`pp-item${on ? ' on' : ''}${!on && full ? ' off' : ''}`}>
                           <input type="checkbox" checked={on} disabled={!on && full} onChange={() => toggle(x)} />
-                          <span className="pp-name">{x.n} <small>{x.w}</small></span>
+                          <span className="pp-name">
+                            {x.n} <small>{x.w}{x.x ? ` ${p.moreNumbers(x.x.length)}` : ''}</small>
+                            {x.b ? <em className="pp-tag">{p.bioTag}</em> : null}
+                          </span>
                           <span className="pp-meta">
                             {x.s.length > 0 && <>{x.s.join(', ')}</>}
                             {x.p.length > 0 && <> · {x.p.slice(0, 3).join(', ')}{x.p.length > 3 ? '…' : ''}</>}
@@ -121,7 +131,8 @@ export default function ProductPicker({ value, onChange, p }) {
           </div>
           <p className="pp-source">
             {p.source(data.version)}{' '}
-            <a href={data.url} target="_blank" rel="noopener noreferrer">psm.admin.ch</a>
+            <a href={data.url} target="_blank" rel="noopener noreferrer">psm.admin.ch</a>{' '}
+            {p.bioNote}
           </p>
         </>
       )}

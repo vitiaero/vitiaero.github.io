@@ -38,6 +38,9 @@ export const URGENT_RATE = 0.2; // intervention urgente
 export const DIFFICULT_RATE = [0.1, 0.25]; // parcelle tres difficile
 export const DISPERSED_RATE = [0.1, 0.3]; // parcelles tres dispersees
 export const WAITING_PER_HOUR = 100; // temps d'attente important
+// Demande groupee : au moins un voisin ajoute a la demande (remplace le code
+// promo). Rabais sur le traitement, confirme dans le devis.
+export const GROUP_RATE = 0.1;
 
 const round = (n) => Math.round(n);
 
@@ -112,7 +115,7 @@ export function isDispersed(parcels) {
 // anciennes ;
 // promoPercent : reduction du code promo, appliquee au traitement.
 // Les majorations et le code promo portent sur le montant du traitement.
-export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = false, difficult = false, dispersed = false, promoPercent = 0 }) {
+export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = false, difficult = false, dispersed = false, grouped = false, promoPercent = 0 }) {
   const p = clampPasses(passes);
   const ha = Math.max(0, Number(areaM2) || 0) / 10000;
   const unit = PRICE_PER_HA[p - 1];
@@ -148,8 +151,9 @@ export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = fa
   const dispersedRange = dispersed ? DISPERSED_RATE.map((r) => round(treatment * r)) : [0, 0];
   const promoRate = Math.min(100, Math.max(0, Number(promoPercent) || 0)) / 100;
   const promo = round(treatment * promoRate);
+  const groupDiscount = grouped ? round(treatment * GROUP_RATE) : 0;
 
-  const base = treatment + travelTotal + urgentAmount - promo;
+  const base = treatment + travelTotal + urgentAmount - promo - groupDiscount;
   const totalMin = base + difficultRange[0] + dispersedRange[0];
   const totalMax = base + difficultRange[1] + dispersedRange[1];
 
@@ -167,6 +171,8 @@ export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = fa
     dispersedRange: dispersed ? dispersedRange : null,
     promoPercent: Math.round(promoRate * 100),
     promo,
+    groupDiscount,
+    groupPercent: grouped ? Math.round(GROUP_RATE * 100) : 0,
     totalMin,
     totalMax,
     // Vrai quand tout est chiffre (deplacement connu et dans la zone)

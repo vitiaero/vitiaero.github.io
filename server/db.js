@@ -190,6 +190,8 @@ function migrate() {
   add('distance_km', 'REAL');
   add('distance_method', 'TEXT'); // 'route' ou 'direct'
   add('estimate', 'TEXT'); // JSON du calcul (shared/pricing.js)
+  add('details', 'TEXT'); // JSON : obstacles, decollage, cepage resistant, produits fournis, voisins
+  add('files', 'TEXT'); // JSON des photos jointes (comme messages.files)
 
   // Table messages : le formulaire de devis ajoute quelques champs au contact.
   const mcols = all('PRAGMA table_info(messages)').map((c) => c.name);

@@ -100,7 +100,9 @@ app.use('/api', rateLimit({ name: 'api', windowMs: 15 * 60 * 1000, max: 600 }));
 // photos de parcelle encodees en base64 (3 fichiers de 4 Mo au maximum).
 const jsonSmall = express.json({ limit: '1mb' });
 const jsonLarge = express.json({ limit: '20mb' });
-app.use((req, res, next) => (req.path === '/api/quote' ? jsonLarge(req, res, next) : jsonSmall(req, res, next)));
+// Devis et estimation acceptent des photos : corps plus volumineux.
+const LARGE_BODY = new Set(['/api/quote', '/api/estimations']);
+app.use((req, res, next) => (LARGE_BODY.has(req.path) ? jsonLarge(req, res, next) : jsonSmall(req, res, next)));
 // Anti-force brute : 20 tentatives par IP toutes les 15 minutes, par formulaire.
 const loginLimiter = rateLimit({ name: 'login', windowMs: 15 * 60 * 1000, max: 20 });
 const registerLimiter = rateLimit({ name: 'register', windowMs: 15 * 60 * 1000, max: 20 });
@@ -630,21 +632,26 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
   if (parcels.length === 0) {
     return res.status(400).json({ error: 'Merci de tracer au moins une parcelle sur la carte.' });
   }
+  // Precisions de l'etape « Votre besoin » et photos (verifiees avant tout
+  // enregistrement).
+  let details;
+  let files;
+  try {
+    details = cleanDetails(b.details);
+    files = saveFiles(b.files);
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
   const area = parcels.reduce((sum, p) => sum + p.area_m2, 0);
   const now = new Date().toISOString();
 
   // Rattache la demande au compte si l'utilisateur est connecte
   const user = userFromToken(req);
 
-  // Verifie le code promo eventuel
-  let promoCode = null;
-  let promoPercent = 0;
-  if (typeof b.promo_code === 'string' && b.promo_code.trim() && b.promo_code.length <= 40) {
-    const promo = get('SELECT * FROM promo_codes WHERE UPPER(code) = ? AND active = 1', [
-      b.promo_code.trim().toUpperCase(),
-    ]);
-    if (promo) { promoCode = promo.code; promoPercent = Number(promo.discount) || 0; }
-  }
+  // Le code promo n'est plus propose : la demande groupee (un voisin ou plus)
+  // donne droit au rabais GROUP_RATE.
+  const promoCode = null;
+  const grouped = details.neighbors.length > 0;
 
   // Estimation recalculee ici avec la grille partagee (shared/pricing.js)
   const passes = clampPasses(b.passes);
@@ -652,13 +659,13 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
   // cochee. Urgence et parcelle difficile ne sont plus proposees.
   const options = { urgent: false, difficult: false, dispersed: isDispersed(parcels) };
   const distance = await roadDistance(parcelsCenter(parcels));
-  const estimate = computeEstimate({ areaM2: area, passes, distanceKm: distance.km, promoPercent, ...options });
+  const estimate = computeEstimate({ areaM2: area, passes, distanceKm: distance.km, grouped, ...options });
 
   const id = run(
     `INSERT INTO estimations
       (user_id, name, email, phone, commune, address, treatment, period, message, parcels, area_m2, promo_code, status, created_at,
-       passes, options, distance_km, distance_method, estimate)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       passes, options, distance_km, distance_method, estimate, details, files)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       user ? user.id : null,
       name,
@@ -679,6 +686,8 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
       distance.km,
       distance.method,
       JSON.stringify(estimate),
+      JSON.stringify(details),
+      files.length ? JSON.stringify(files) : null,
     ]
   );
 
@@ -688,7 +697,37 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
 // Demande telle que renvoyee au navigateur (champs JSON decodes).
 function withJson(r) {
   const parse = (v, fallback) => { try { return v ? JSON.parse(v) : fallback; } catch { return fallback; } };
-  return { ...r, parcels: parse(r.parcels, []), options: parse(r.options, null), estimate: parse(r.estimate, null) };
+  return {
+    ...r,
+    parcels: parse(r.parcels, []),
+    options: parse(r.options, null),
+    estimate: parse(r.estimate, null),
+    details: parse(r.details, null),
+    files: parse(r.files, []),
+  };
+}
+
+// Precisions de l'etape « Votre besoin », demandees lors des entretiens avec
+// les vignerons. Tout est facultatif ; les valeurs inconnues sont ignorees.
+const OBSTACLES = ['murs', 'escaliers', 'ligne', 'route'];
+const SUPPLY = ['client', 'vitiaero'];
+const MAX_NEIGHBORS = 3;
+function cleanDetails(d) {
+  const empty = { obstacles: [], obstaclesOther: null, takeoff: null, resistant: false, supply: null, neighbors: [] };
+  if (d === undefined || d === null) return empty;
+  if (typeof d !== 'object' || Array.isArray(d)) throw new Error('Precisions non valables.');
+  const obstacles = Array.isArray(d.obstacles) ? [...new Set(d.obstacles.filter((o) => OBSTACLES.includes(o)))] : [];
+  const obstaclesOther = optionalText(d.obstaclesOther, 300);
+  const takeoff = optionalText(d.takeoff, 300);
+  if (obstaclesOther === undefined || takeoff === undefined) throw new Error('Un des champs est trop long.');
+  const neighbors = [];
+  for (const n of Array.isArray(d.neighbors) ? d.neighbors.slice(0, MAX_NEIGHBORS) : []) {
+    const name = optionalText(n?.name, 120);
+    const contact = optionalText(n?.contact, 190);
+    if (name === undefined || contact === undefined) throw new Error('Un des champs est trop long.');
+    if (name) neighbors.push({ name, contact });
+  }
+  return { obstacles, obstaclesOther, takeoff, resistant: d.resistant === true, supply: SUPPLY.includes(d.supply) ? d.supply : null, neighbors };
 }
 
 app.get('/api/estimations/mine', requireAuth, (req, res) => {
@@ -761,9 +800,10 @@ app.get('/api/admin/messages', requireAdmin, (req, res) => {
   }));
 });
 
-// Piece jointe d'une demande de devis : reservee a l'equipe.
-app.get('/api/admin/messages/:id/files/:index', requireAdmin, (req, res) => {
-  const row = get('SELECT files FROM messages WHERE id = ?', [req.params.id]);
+// Piece jointe d'une demande de devis ou d'estimation : reservee a l'equipe.
+app.get('/api/admin/:kind(messages|estimations)/:id/files/:index', requireAdmin, (req, res) => {
+  const table = req.params.kind === 'estimations' ? 'estimations' : 'messages';
+  const row = get(`SELECT files FROM ${table} WHERE id = ?`, [req.params.id]);
   let files = [];
   try { files = row?.files ? JSON.parse(row.files) : []; } catch { files = []; }
   const file = files[Number(req.params.index)];

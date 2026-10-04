@@ -43,7 +43,11 @@ function Confidentialite() {
         <li>Identity: first and last name.</li>
         <li>Contact details: email address, phone, municipality, address or place name.</li>
         <li>Plots: the outline and area you draw on the map.</li>
-        <li>Your request: type of treatment, period, message, any promo code.</li>
+        <li>Your request: products wanted, date, obstacles, take-off point, attached photos, message.</li>
+        <li>
+          Neighbours added to a grouped request: name and contact, provided by you. They are only
+          used to offer them the grouped treatment; let them know before adding them.
+        </li>
         <li>Account: email address and password (stored only in hashed form).</li>
         <li>Record: treatments carried out or planned on your plots (date, area, treatment, notes).</li>
         <li>

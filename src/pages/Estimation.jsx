@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import MapDraw from '../components/MapDraw.jsx';
 import ProductPicker from '../components/ProductPicker.jsx';
+import NeedDetails, { emptyDetails } from '../components/NeedDetails.jsx';
 import PrintHeader from '../components/PrintHeader.jsx';
 import { useAuth } from '../auth.jsx';
 import { api } from '../api.js';
@@ -46,6 +47,14 @@ function periodValue(date, margin) {
   const m = MARGINS.find(([k]) => k === margin) || MARGINS[0];
   return `${swissDate(date)} (${m[1]})`;
 }
+
+// Photos jointes : lues dans le navigateur, envoyees en base64 (comme Devis).
+const readAsDataUrl = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = () => reject(new Error('lecture impossible'));
+  reader.readAsDataURL(file);
+});
 
 function formatArea(m2, locale) {
   return {
@@ -172,7 +181,10 @@ function Summary({ est, area, route, e, locale }) {
       <div className="est-summary-total">
         <span>{e.totalYear}</span>
         <strong><Total est={est} e={e} /></strong>
-        {est.ha > 0 && <small>{e.perHaYear(formatCHF(est.totalMin / est.ha))}</small>}
+        {/* Petite surface : le minimum s'applique, un prix a l'hectare n'aurait pas de sens */}
+        {est.minimumApplied
+          ? <small>{e.minimumPerJob(formatCHF(MIN_PER_PASS))}</small>
+          : est.ha > 0 && <small>{e.perHaYear(formatCHF(est.totalMin / est.ha))}</small>}
       </div>
       {!est.complete && <p className="est-summary-note">{e.travelPending}</p>}
     </aside>
@@ -180,7 +192,7 @@ function Summary({ est, area, route, e, locale }) {
 }
 
 // Detail du prix (etape 4).
-function Breakdown({ est, promo, e, locale }) {
+function Breakdown({ est, e, locale }) {
   const l = e.lines;
   const ha = est.ha.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const tr = est.travel;
@@ -228,10 +240,10 @@ function Breakdown({ est, promo, e, locale }) {
       {est.dispersedRange && (
         <div className="est-bill-line"><span className="k">{l.dispersed}</span><span className="v">{range(est.dispersedRange)}</span></div>
       )}
-      {est.promo > 0 && promo && (
+      {est.groupDiscount > 0 && (
         <div className="est-bill-line minus">
-          <span className="k">{l.promo(promo.code, est.promoPercent)}</span>
-          <span className="v">-{formatCHF(est.promo)}</span>
+          <span className="k">{l.group(est.groupPercent)}</span>
+          <span className="v">-{formatCHF(est.groupDiscount)}</span>
         </div>
       )}
 
@@ -264,10 +276,10 @@ export default function Estimation() {
   const [consent, setConsent] = useState(false);
   const { errors, validateAll, fieldProps, summaryRef, reset: resetErrors } = useFormValidation(EST_RULES);
 
-  // Code promo
-  const [promoInput, setPromoInput] = useState('');
-  const [promo, setPromo] = useState(null); // { code, discount, description }
-  const [promoMsg, setPromoMsg] = useState('');
+  // Precisions de l'etape 2 (obstacles, decollage, voisins...) et photos
+  const [details, setDetails] = useState(emptyDetails);
+  const [files, setFiles] = useState([]);
+  const grouped = details.neighbors.some((n) => n.name.trim());
 
   // Distance par la route depuis le depot (calculee par le serveur)
   const [route, setRoute] = useState({ status: 'idle' });
@@ -311,7 +323,7 @@ export default function Estimation() {
     passes: form.passes,
     distanceKm: route.status === 'ok' ? route.km : null,
     dispersed,
-    promoPercent: promo ? promo.discount : 0,
+    grouped,
   });
 
   const update = (k) => (ev) => setForm((f) => ({ ...f, [k]: ev.target.value }));
@@ -336,25 +348,6 @@ export default function Estimation() {
     go(Math.min(4, step + 1));
   }
 
-  async function validatePromo() {
-    setPromoMsg('');
-    const code = promoInput.trim();
-    if (!code) return;
-    try {
-      const res = await api.post('/api/promo/validate', { code });
-      if (res.valid) {
-        setPromo({ code: res.code, discount: res.discount, description: res.description });
-        setPromoMsg(e.promoOk(res.discount, res.description));
-      } else {
-        setPromo(null);
-        setPromoMsg(t.serverErrors[res.error] || e.promoInvalid);
-      }
-    } catch {
-      setPromo(null);
-      setPromoMsg(e.promoError);
-    }
-  }
-
   async function submit() {
     setError('');
     if (!consent) { setError(e.errConsent); return; }
@@ -366,7 +359,13 @@ export default function Estimation() {
         treatment: treatmentValue(products),
         period: periodValue(date, margin),
         parcels,
-        promo_code: promo ? promo.code : null,
+        details: {
+          ...details,
+          neighbors: details.neighbors.filter((n) => n.name.trim()),
+        },
+        files: await Promise.all(files.map(async (fl) => ({
+          name: fl.name, type: fl.type, size: fl.size, data: await readAsDataUrl(fl),
+        }))),
       };
       const res = await api.post('/api/estimations', payload);
       navigate('/confirmation', {
@@ -463,6 +462,8 @@ export default function Estimation() {
                     {dispersed && (
                       <p className="est-dispersed" role="status">{e.dispersedAuto}</p>
                     )}
+
+                    <NeedDetails value={details} onChange={setDetails} files={files} onFilesChange={setFiles} d={e.details} />
                   </>
                 )}
 
@@ -506,17 +507,6 @@ export default function Estimation() {
                       <input tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
                     </div>
 
-                    {/* Code promo */}
-                    <div className="field">
-                      <label htmlFor="est-promo">{e.promo}</label>
-                      <div className="map-search">
-                        <input id="est-promo" maxLength={40} className="input" value={promoInput} onChange={(ev) => setPromoInput(ev.target.value)} placeholder={e.promoPh} />
-                        <button type="button" className="btn btn-outline btn-sm" onClick={validatePromo}>{e.validate}</button>
-                      </div>
-                      {promoMsg && (
-                        <div className="hint" style={{ color: promo ? 'var(--accent-dark)' : 'var(--danger)' }}>{promoMsg}</div>
-                      )}
-                    </div>
                   </>
                 )}
 
@@ -548,7 +538,7 @@ export default function Estimation() {
                 {est.savings > 0 && <p className="est-savings">{e.savings(formatCHF(est.savings), est.passes)}</p>}
               </div>
 
-              <Breakdown est={est} promo={promo} e={e} locale={locale} />
+              <Breakdown est={est} e={e} locale={locale} />
 
               <ul className="est-notes">
                 {e.notes.map((n) => <li key={n}>{n}</li>)}
@@ -573,7 +563,8 @@ export default function Estimation() {
                 {form.commune && <div className="line"><span className="k">{e.recap.commune}</span><span className="v">{form.commune}</span></div>}
                 <div className="line"><span className="k">{e.recap.treatment}</span><span className="v">{productsText}</span></div>
                 <div className="line"><span className="k">{e.recap.period}</span><span className="v">{periodText}</span></div>
-                {promo && <div className="line"><span className="k">{e.recap.promo}</span><span className="v">{promo.code} (-{promo.discount}%)</span></div>}
+                {grouped && <div className="line"><span className="k">{e.recap.neighbors}</span><span className="v">{details.neighbors.filter((n) => n.name.trim()).map((n) => n.name).join(', ')}</span></div>}
+                {files.length > 0 && <div className="line"><span className="k">{e.recap.files}</span><span className="v">{files.length}</span></div>}
                 {form.message && <div className="line"><span className="k">{e.recap.message}</span><span className="v" style={{ maxWidth: '60%' }}>{form.message}</span></div>}
               </div>
 
