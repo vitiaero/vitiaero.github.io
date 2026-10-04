@@ -244,6 +244,9 @@
 }
 .eqx-camera { padding: 10px; display: flex; flex-wrap: wrap; align-items: stretch; gap: 14px; }
 .eqx-camera-media { flex: 1 1 150px; min-height: 150px; border-radius: 20px; }
+/* Photo produit sur fond blanc (radiocommande) : affichee en entier */
+.eqx-camera-media.is-product { position: relative; overflow: hidden; background: #fff; }
+.eqx-camera-media.is-product img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px; }
 .eqx-camera-body { flex: 1 1 150px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; padding: 10px 8px 10px 4px; }
 .eqx-camera-body .mono-chip { align-self: flex-start; }
 .eqx-camera h3 { margin-bottom: 6px; font-size: 18px; }

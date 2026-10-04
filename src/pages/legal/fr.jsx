@@ -79,9 +79,11 @@ function Confidentialite() {
 
       <h2 className="h3">6. Services externes</h2>
       <p>
-        Pour afficher la carte et rechercher une commune, le site charge des fonds de carte
-        et un service de recherche fournis par swisstopo (Confédération suisse) et par
-        OpenStreetMap. Lorsque la carte s'affiche, votre adresse IP est transmise à ces
+        Pour afficher la carte et rechercher une commune ou une parcelle cadastrale, le site
+        charge des fonds de carte et des services de recherche fournis par swisstopo
+        (Confédération suisse, geo.admin.ch) et par OpenStreetMap. La commune et le numéro de
+        parcelle saisis, ou l'endroit cliqué sur le plan cadastral, sont envoyés à
+        geo.admin.ch pour retrouver la parcelle. Lorsque la carte s'affiche, votre adresse IP est transmise à ces
         prestataires, qui peuvent l'utiliser à des fins techniques et de sécurité selon
         leurs propres règles. Ces services sont utilisés uniquement pour la fonction de
         carte de la page d'estimation.
@@ -168,6 +170,29 @@ function Mentions() {
           reproduits à titre d'illustration pour ce projet d'étude, sans but commercial.
         </li>
         <li>Vidéo du vol au-dessus d'Epesses : VitiAero.</li>
+      </ul>
+
+      <h2 className="h3">Données géographiques</h2>
+      <ul>
+        <li>
+          Photos aériennes, carte nationale, recherche de lieux et de parcelles : © swisstopo,
+          Office fédéral de topographie, géodonnées ouvertes de la Confédération
+          (geo.admin.ch).
+        </li>
+        <li>
+          Plan cadastral et contours des parcelles : mensuration officielle des cantons,
+          diffusée par swisstopo. Les limites et les numéros affichés ou ajoutés à partir du
+          numéro de parcelle sont indicatifs ; seul le registre foncier fait foi.
+        </li>
+        <li>
+          Plan : © les contributeurs d'OpenStreetMap, données sous licence ODbL
+          (openstreetmap.org/copyright).
+        </li>
+        <li>
+          Liste des produits de la page d'estimation : OSAV, Index des produits
+          phytosanitaires (psm.admin.ch), version du 02.09.2026, reprise à titre indicatif ;
+          seul l'index officiel fait foi.
+        </li>
       </ul>
 
       <h2 className="h3">Responsabilité</h2>

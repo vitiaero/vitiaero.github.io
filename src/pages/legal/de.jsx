@@ -79,9 +79,11 @@ function Confidentialite() {
 
       <h2 className="h3">6. Externe Dienste</h2>
       <p>
-        Um die Karte anzuzeigen und eine Gemeinde zu suchen, lädt die Website Kartenhintergründe
-        und einen Suchdienst von swisstopo (Schweizerische Eidgenossenschaft) und von
-        OpenStreetMap. Wenn die Karte angezeigt wird, wird Ihre IP-Adresse an diese Anbieter
+        Um die Karte anzuzeigen und eine Gemeinde oder eine Katasterparzelle zu suchen, lädt die
+        Website Kartenhintergründe und Suchdienste von swisstopo (Schweizerische
+        Eidgenossenschaft, geo.admin.ch) und von OpenStreetMap. Die eingegebene Gemeinde und
+        Parzellennummer oder die auf dem Katasterplan angeklickte Stelle werden an geo.admin.ch
+        gesendet, um die Parzelle zu finden. Wenn die Karte angezeigt wird, wird Ihre IP-Adresse an diese Anbieter
         übermittelt. Sie können sie nach ihren eigenen Regeln für technische Zwecke und zur
         Sicherheit verwenden. Diese Dienste werden nur für die Karte auf der Seite der
         Schätzung genutzt.
@@ -169,6 +171,28 @@ function Mentions() {
           wiedergegeben.
         </li>
         <li>Video des Flugs über Epesses: VitiAero.</li>
+      </ul>
+
+      <h2 className="h3">Geodaten</h2>
+      <ul>
+        <li>
+          Luftbilder, Landeskarte, Orts- und Parzellensuche: © swisstopo, Bundesamt für
+          Landestopografie, offene Geodaten des Bundes (geo.admin.ch).
+        </li>
+        <li>
+          Katasterplan und Parzellenumrisse: amtliche Vermessung der Kantone, veröffentlicht von
+          swisstopo. Die angezeigten oder über die Parzellennummer hinzugefügten Grenzen und
+          Nummern sind unverbindlich; massgebend ist allein das Grundbuch.
+        </li>
+        <li>
+          Stadtplan: © OpenStreetMap-Mitwirkende, Daten unter der Lizenz ODbL
+          (openstreetmap.org/copyright).
+        </li>
+        <li>
+          Produktliste der Schätzungsseite: BLV, Pflanzenschutzmittelverzeichnis
+          (psm.admin.ch), Version vom 02.09.2026, zur Information übernommen; massgebend ist
+          allein das offizielle Verzeichnis.
+        </li>
       </ul>
 
       <h2 className="h3">Haftung</h2>

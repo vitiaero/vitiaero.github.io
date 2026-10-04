@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import MapDraw from '../components/MapDraw.jsx';
+import ProductPicker from '../components/ProductPicker.jsx';
 import PrintHeader from '../components/PrintHeader.jsx';
 import { useAuth } from '../auth.jsx';
 import { api } from '../api.js';
@@ -8,7 +9,7 @@ import { useFormValidation, FieldError, FormErrorSummary, required, emailRule } 
 import { useI18n } from '../i18n/index.jsx';
 import {
   BASE, PRICE_PER_HA, REFERENCE_PRICE, TRAVEL_BANDS, TRAVEL_REDUCTIONS, MIN_PER_PASS,
-  computeEstimate, formatCHF, parcelsCenter,
+  computeEstimate, formatCHF, isDispersed, parcelsCenter,
 } from '../../shared/pricing.js';
 
 // Champs obligatoires de la derniere etape : verifies a la sortie du champ et
@@ -20,14 +21,31 @@ const EST_RULES = {
 };
 
 // Valeurs enregistrees (en francais, lues par l'equipe dans l'administration).
-// Les libelles affiches viennent de t.estimation.treatments / periods, meme ordre.
-const TREATMENTS = [
-  'Protection de la vigne (traitement foliaire)',
-  'Traitement contre le mildiou / l\'oïdium',
-  'Autre (à préciser)',
+// Marge autour de la date souhaitee ; libelles affiches : t.estimation.margins.
+const MARGINS = [
+  ['exact', 'le jour même'],
+  ['2d', '± 2 jours'],
+  ['1w', '± 1 semaine'],
+  ['flex', 'date indicative'],
 ];
-const PERIODS = ['Dès que possible', 'Au printemps', 'En été', 'À définir ensemble'];
-const OPTIONS = ['urgent', 'difficult', 'dispersed'];
+
+// Date du jour et limite (18 mois) au format du calendrier (AAAA-MM-JJ).
+const isoDay = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const todayIso = () => isoDay(new Date());
+const maxIso = () => { const d = new Date(); d.setMonth(d.getMonth() + 18); return isoDay(d); };
+const swissDate = (iso) => (iso ? iso.split('-').reverse().join('.') : '');
+
+// Textes enregistres pour l'equipe : produits choisis et periode.
+function treatmentValue(products) {
+  return products.length
+    ? `Produits : ${products.map((x) => `${x.n} (${x.w})`).join(', ')}`
+    : 'Produit à définir ensemble';
+}
+function periodValue(date, margin) {
+  if (!date) return 'À définir ensemble';
+  const m = MARGINS.find(([k]) => k === margin) || MARGINS[0];
+  return `${swissDate(date)} (${m[1]})`;
+}
 
 function formatArea(m2, locale) {
   return {
@@ -237,8 +255,8 @@ export default function Estimation() {
   const errorRef = useRef(null);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', commune: '', address: '',
-    treatment: TREATMENTS[0], period: PERIODS[0], message: '',
-    passes: 1, urgent: false, difficult: false, dispersed: false,
+    products: [], date: '', margin: 'exact', message: '',
+    passes: 1,
     website: '', // champ piege anti-robot, laisse vide par les humains
   });
   const [error, setError] = useState('');
@@ -283,21 +301,20 @@ export default function Estimation() {
 
   const totalArea = parcels.reduce((s, p) => s + (p.area_m2 || 0), 0);
   const fmt = formatArea(totalArea, locale);
-  const treatmentLabel = (v) => e.treatments[TREATMENTS.indexOf(v)] || v;
-  const periodLabel = (v) => e.periods[PERIODS.indexOf(v)] || v;
+  const dispersed = useMemo(() => isDispersed(parcels), [parcels]);
+  const productsText = form.products.length ? form.products.map((x) => x.n).join(', ') : e.productsNone;
+  const marginLabel = e.margins[MARGINS.findIndex(([k]) => k === form.margin)];
+  const periodText = form.date ? `${swissDate(form.date)} (${marginLabel})` : e.periodNone;
 
   const est = computeEstimate({
     areaM2: totalArea,
     passes: form.passes,
     distanceKm: route.status === 'ok' ? route.km : null,
-    urgent: form.urgent,
-    difficult: form.difficult,
-    dispersed: form.dispersed,
+    dispersed,
     promoPercent: promo ? promo.discount : 0,
   });
 
   const update = (k) => (ev) => setForm((f) => ({ ...f, [k]: ev.target.value }));
-  const toggle = (k) => (ev) => setForm((f) => ({ ...f, [k]: ev.target.checked }));
 
   function go(n) {
     setError('');
@@ -343,7 +360,14 @@ export default function Estimation() {
     if (!consent) { setError(e.errConsent); return; }
     setSubmitting(true);
     try {
-      const payload = { ...form, parcels, promo_code: promo ? promo.code : null };
+      const { products, date, margin, ...rest } = form;
+      const payload = {
+        ...rest,
+        treatment: treatmentValue(products),
+        period: periodValue(date, margin),
+        parcels,
+        promo_code: promo ? promo.code : null,
+      };
       const res = await api.post('/api/estimations', payload);
       navigate('/confirmation', {
         state: { id: res.id, area_m2: res.area_m2, connected: !!user, estimate: res.estimate },
@@ -406,33 +430,40 @@ export default function Estimation() {
                     <RatesTable e={e} />
                     <p className="rates-note">{e.ratesNote}</p>
 
+                    <div className="mt-3">
+                      <ProductPicker
+                        value={form.products}
+                        onChange={(list) => setForm((f) => ({ ...f, products: list }))}
+                        p={e.products}
+                      />
+                    </div>
+
+                    {/* Date souhaitee au calendrier, avec la marge acceptee (meteo) */}
                     <div className="form-row mt-3">
                       <div className="field">
-                        <label htmlFor="est-treatment">{e.treatment}</label>
-                        <select id="est-treatment" className="select" value={form.treatment} onChange={update('treatment')}>
-                          {TREATMENTS.map((v) => <option key={v} value={v}>{treatmentLabel(v)}</option>)}
-                        </select>
+                        <label htmlFor="est-date">{e.dateLabel}</label>
+                        <input
+                          id="est-date"
+                          type="date"
+                          className="input"
+                          min={todayIso()}
+                          max={maxIso()}
+                          value={form.date}
+                          onChange={update('date')}
+                        />
+                        <p className="hint">{e.dateHint}</p>
                       </div>
                       <div className="field">
-                        <label htmlFor="est-period">{e.period}</label>
-                        <select id="est-period" className="select" value={form.period} onChange={update('period')}>
-                          {PERIODS.map((v) => <option key={v} value={v}>{periodLabel(v)}</option>)}
+                        <label htmlFor="est-margin">{e.marginLabel}</label>
+                        <select id="est-margin" className="select" value={form.margin} onChange={update('margin')} disabled={!form.date}>
+                          {MARGINS.map(([k], i) => <option key={k} value={k}>{e.margins[i]}</option>)}
                         </select>
                       </div>
                     </div>
 
-                    <fieldset className="est-options">
-                      <legend>{e.optionsLabel}</legend>
-                      {OPTIONS.map((k) => (
-                        <label key={k} className={`est-option${form[k] ? ' on' : ''}`}>
-                          <input type="checkbox" checked={form[k]} onChange={toggle(k)} />
-                          <span>
-                            <strong>{e.options[k].label}</strong>
-                            <small>{e.options[k].hint}</small>
-                          </span>
-                        </label>
-                      ))}
-                    </fieldset>
+                    {dispersed && (
+                      <p className="est-dispersed" role="status">{e.dispersedAuto}</p>
+                    )}
                   </>
                 )}
 
@@ -541,8 +572,8 @@ export default function Estimation() {
                 <div className="line"><span className="k">{e.recap.email}</span><span className="v">{form.email}</span></div>
                 {form.phone && <div className="line"><span className="k">{e.recap.phone}</span><span className="v">{form.phone}</span></div>}
                 {form.commune && <div className="line"><span className="k">{e.recap.commune}</span><span className="v">{form.commune}</span></div>}
-                <div className="line"><span className="k">{e.recap.treatment}</span><span className="v">{treatmentLabel(form.treatment)}</span></div>
-                <div className="line"><span className="k">{e.recap.period}</span><span className="v">{periodLabel(form.period)}</span></div>
+                <div className="line"><span className="k">{e.recap.treatment}</span><span className="v">{productsText}</span></div>
+                <div className="line"><span className="k">{e.recap.period}</span><span className="v">{periodText}</span></div>
                 {promo && <div className="line"><span className="k">{e.recap.promo}</span><span className="v">{promo.code} (-{promo.discount}%)</span></div>}
                 {form.message && <div className="line"><span className="k">{e.recap.message}</span><span className="v" style={{ maxWidth: '60%' }}>{form.message}</span></div>}
               </div>

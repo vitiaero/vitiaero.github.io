@@ -263,6 +263,9 @@ function Gps({ e }) {
             <p className="caption">{memory.title}. {memory.text}</p>
           </Reveal>
           <Reveal as="article" className="eqx-card is-dark eqx-camera" delay={200}>
+            <div className="eqx-camera-media is-product">
+              <img src={still('radiocommande')} alt={camera.alt} loading="lazy" />
+            </div>
             <div className="eqx-camera-body">
               <span className="mono-chip">{camera.v}</span>
               <div>

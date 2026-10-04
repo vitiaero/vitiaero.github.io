@@ -305,6 +305,34 @@
 .search-results li { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--line); font-size: 0.88rem; cursor: pointer; }
 .search-results li:last-child { border-bottom: none; }
 .search-results li:hover { background: var(--accent-soft); }
+/* Choix des produits (index OSAV) : liste sobre, recherche et tri */
+.pp { min-width: 0; margin: 0; padding: 0; border: 0; }
+.pp-legend { margin-bottom: 0.25rem; padding: 0; font-size: 0.95rem; font-weight: 600; }
+.pp-hint { margin: 0 0 0.6rem; }
+.pp-chosen { display: grid; gap: 0.35rem; margin: 0 0 0.7rem; padding: 0; list-style: none; }
+.pp-chosen li { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; padding: 0.45rem 0.7rem; border-radius: 10px; background: var(--accent-soft); font-size: 0.88rem; font-weight: 600; }
+.pp-chosen button { min-width: 32px; min-height: 32px; border: 0; border-radius: 8px; background: none; color: var(--ink-soft); font-size: 1.1rem; line-height: 1; }
+.pp-chosen button:hover { background: rgba(20, 21, 19, 0.08); }
+.pp-tools { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; align-items: center; }
+.pp-sort { display: flex; gap: 0.3rem; }
+.pp-sort button { padding: 0.5rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 10px; background: transparent; color: var(--muted); font-size: 0.82rem; white-space: nowrap; }
+.pp-sort button.on { border-color: var(--ink); background: var(--ink); color: var(--on-dark); }
+.pp-count { margin: 0.6rem 0 0.35rem; font-size: 0.8rem; color: var(--muted); }
+.pp-list { max-height: 360px; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.pp-list > .hint { padding: 0.8rem; }
+.pp-group ul { margin: 0; padding: 0; list-style: none; }
+.pp-group-title { position: sticky; top: 0; z-index: 1; margin: 0; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--line); background: var(--surface-2); font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+.pp-item { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 0.65rem; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--line); cursor: pointer; }
+.pp-item input { grid-row: span 2; margin-top: 0.2rem; accent-color: var(--ink); }
+.pp-item.on { background: var(--accent-soft); }
+.pp-item.off { opacity: 0.5; cursor: not-allowed; }
+.pp-name { font-size: 0.9rem; font-weight: 600; }
+.pp-name small { margin-left: 0.3rem; font-family: var(--mono); font-size: 0.72rem; font-weight: 400; color: var(--muted); }
+.pp-meta { font-size: 0.8rem; line-height: 1.45; color: var(--muted); }
+.pp-source { margin: 0.45rem 0 0; font-size: 0.78rem; color: var(--muted); }
+.pp-source a { color: inherit; text-decoration: underline; }
+.est-dispersed { margin: 1rem 0 0; padding: 0.8rem 1rem; border-radius: var(--radius); background: var(--accent-soft); font-size: 0.9rem; line-height: 1.5; }
+@media (max-width: 560px) { .pp-tools { grid-template-columns: 1fr; } }
 /* Ajout d'une parcelle par son numero cadastral, ou par clic sur la carte */
 .map-cadastre { padding-top: 1rem; border-top: 1px dashed var(--line-strong); }
 .map-cadastre-label { display: block; margin-bottom: 0.45rem; font-size: 0.88rem; font-weight: 600; }

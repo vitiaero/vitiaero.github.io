@@ -13,23 +13,27 @@ const halo = { color: INK, opacity: 0.6, fill: false, interactive: false };
 
 // Fonds de carte swisstopo (WMTS, projection Web Mercator) + plan OpenStreetMap.
 // Les libelles affiches sont traduits (t.map.layers), les cles restent fixes.
+// La source est affichee dans le coin de la carte, comme le demandent les
+// conditions de swisstopo (geodonnees ouvertes) et la licence ODbL d'OSM.
+const SWISSTOPO = '&copy; <a href="https://www.swisstopo.admin.ch" target="_blank" rel="noopener">swisstopo</a>';
 const BASE_LAYERS = {
   satellite: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',
-    attribution: '&copy; swisstopo',
+    attribution: SWISSTOPO,
   },
   carte: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg',
-    attribution: '&copy; swisstopo',
+    attribution: SWISSTOPO,
   },
   plan: {
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributeurs OpenStreetMap</a>',
   },
-  // Plan cadastral officiel (limites et numeros de parcelles), fourni par swisstopo.
+  // Plan cadastral officiel (limites et numeros de parcelles) : mensuration
+  // officielle des cantons, diffusee par swisstopo.
   cadastre: {
     url: 'https://wmts.geo.admin.ch/1.0.0/ch.kantone.cadastralwebmap-farbe/default/current/3857/{z}/{x}/{y}.png',
-    attribution: '&copy; swisstopo, cadastre',
+    attribution: `Plan cadastral : cantons, ${SWISSTOPO}`,
   },
 };
 
@@ -231,8 +235,9 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
       zoom: 13,
       maxZoom: 19,
       zoomControl: true,
-      attributionControl: false,
+      attributionControl: true,
     });
+    map.attributionControl.setPrefix(false);
     mapRef.current = map;
 
     baseLayerRef.current = L.tileLayer(BASE_LAYERS.satellite.url, {

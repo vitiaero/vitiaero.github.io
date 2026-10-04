@@ -87,10 +87,29 @@ export function parcelsCenter(parcels) {
   return n ? { lat: lat / n, lng: lng / n } : null;
 }
 
+// Parcelles dispersees, detectees sur la carte (le client n'a rien a cocher) :
+// cinq parcelles ou plus, ou deux parcelles dont les centres sont a plus de
+// 1 km l'une de l'autre.
+export const DISPERSED_MIN_PARCELS = 5;
+export const DISPERSED_MAX_KM = 1;
+
+export function isDispersed(parcels) {
+  const centers = (parcels || []).map((p) => parcelsCenter([p])).filter(Boolean);
+  if (centers.length >= DISPERSED_MIN_PARCELS) return true;
+  for (let i = 0; i < centers.length; i++) {
+    for (let j = i + 1; j < centers.length; j++) {
+      if (haversineKm(centers[i], centers[j]) > DISPERSED_MAX_KM) return true;
+    }
+  }
+  return false;
+}
+
 // Estimation annuelle.
 // areaM2 : surface totale ; passes : passages par an (1 a 10) ;
 // distanceKm : distance par la route depuis BASE (null = inconnue) ;
-// urgent / difficult / dispersed : situations particulieres cochees ;
+// dispersed : parcelles dispersees (isDispersed). urgent et difficult ne sont
+// plus proposes dans le formulaire, mais restent lus pour les demandes
+// anciennes ;
 // promoPercent : reduction du code promo, appliquee au traitement.
 // Les majorations et le code promo portent sur le montant du traitement.
 export function computeEstimate({ areaM2, passes, distanceKm = null, urgent = false, difficult = false, dispersed = false, promoPercent = 0 }) {

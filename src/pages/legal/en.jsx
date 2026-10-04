@@ -77,8 +77,10 @@ function Confidentialite() {
 
       <h2 className="h3">6. External services</h2>
       <p>
-        To show the map and search for a municipality, the website loads base maps and a
-        search service provided by swisstopo (Swiss Confederation) and by OpenStreetMap. When
+        To show the map and search for a municipality or a cadastral plot, the website loads
+        base maps and search services provided by swisstopo (Swiss Confederation, geo.admin.ch)
+        and by OpenStreetMap. The municipality and plot number you enter, or the spot you click
+        on the cadastral map, are sent to geo.admin.ch to find the plot. When
         the map is shown, your IP address is sent to these providers, which may use it for
         technical and security purposes under their own rules. These services are only used
         for the map on the estimate page.
@@ -163,6 +165,28 @@ function Mentions() {
           reproduced for illustration in this student project, with no commercial purpose.
         </li>
         <li>Video of the flight over Epesses: VitiAero.</li>
+      </ul>
+
+      <h2 className="h3">Geographic data</h2>
+      <ul>
+        <li>
+          Aerial photos, national map, place and plot search: © swisstopo, Federal Office of
+          Topography, open geodata of the Swiss Confederation (geo.admin.ch).
+        </li>
+        <li>
+          Cadastral map and plot outlines: official cantonal surveying, published by swisstopo.
+          The boundaries and numbers shown or added from a plot number are indicative; only the
+          land register is legally binding.
+        </li>
+        <li>
+          Street map: © OpenStreetMap contributors, data under the ODbL licence
+          (openstreetmap.org/copyright).
+        </li>
+        <li>
+          Product list on the estimate page: FSVO, Swiss plant protection product register
+          (psm.admin.ch), version of 02.09.2026, reproduced for information only; only the
+          official register is binding.
+        </li>
       </ul>
 
       <h2 className="h3">Liability</h2>

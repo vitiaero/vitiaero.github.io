@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import {
   initDb, all, get, run, persist, hashPasswordAsync, verifyPassword, polygonArea, tokenDigest, DUMMY_PASSWORD_HASH,
 } from './db.js';
-import { BASE, computeEstimate, clampPasses, haversineKm, parcelsCenter } from '../shared/pricing.js';
+import { BASE, computeEstimate, clampPasses, haversineKm, isDispersed, parcelsCenter } from '../shared/pricing.js';
 import { apiOriginFrom, buildCsp } from '../shared/security.js';
 
 const app = express();
@@ -618,7 +618,8 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
     phone: optionalText(b.phone, 40),
     commune: optionalText(b.commune, 120),
     address: optionalText(b.address, 200),
-    treatment: optionalText(b.treatment, 120),
+    // Produits choisis dans l'index de l'OSAV (nom et numero W), jusqu'a six.
+    treatment: optionalText(b.treatment, 600),
     period: optionalText(b.period, 120),
     message: optionalText(b.message, 4000),
   };
@@ -647,7 +648,9 @@ app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
 
   // Estimation recalculee ici avec la grille partagee (shared/pricing.js)
   const passes = clampPasses(b.passes);
-  const options = { urgent: !!b.urgent, difficult: !!b.difficult, dispersed: !!b.dispersed };
+  // Parcelles dispersees : deduit des parcelles elles-memes, pas d'une case
+  // cochee. Urgence et parcelle difficile ne sont plus proposees.
+  const options = { urgent: false, difficult: false, dispersed: isDispersed(parcels) };
   const distance = await roadDistance(parcelsCenter(parcels));
   const estimate = computeEstimate({ areaM2: area, passes, distanceKm: distance.km, promoPercent, ...options });
 
