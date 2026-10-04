@@ -13,15 +13,16 @@ import { equipVideos } from '../content.js';
 import { asset } from '../config.js';
 import { useI18n } from '../i18n/index.jsx';
 
-// Page Equipement : le DJI Agras T50, d'apres la maquette "Refonte site Lavaux
-// et T50" (grille de cartes). Donnees publiees par DJI, reformulees dans
-// src/i18n. Visuels : DJI, et le plan du drone qui se deplie fourni par le
+// Page Equipement : le DJI Agras T55, d'apres la maquette "Refonte site Lavaux
+// et T50" (grille de cartes). Donnees publiees par DJI (ag.dji.com, page
+// T55), reformulees dans src/i18n : seuls les chiffres verifies sont affiches.
+// Visuels : DJI, et l'enregistrement de l'application fourni par le
 // proprietaire.
 const still = (name) => asset(`/images/equip/${name}.jpg`);
 
 // Sous-menu colle en haut de l'ecran : la section visible est mise en evidence
 // par une pastille claire qui glisse d'un lien a l'autre.
-const SECTION_TAB = { t50: 't50', drone: 'drone', pulverisation: 'pulverisation', preparation: 'pulverisation', cartographie: 'cartographie' };
+const SECTION_TAB = { t55: 't55', drone: 'drone', pulverisation: 'pulverisation', preparation: 'pulverisation', cartographie: 'cartographie' };
 
 function SubNav({ items, label }) {
   const [active, setActive] = useState(items[0].id);
@@ -78,10 +79,10 @@ function Hero({ e }) {
   const words = e.title.split(' ');
   const model = words.pop();
   return (
-    <section id="t50" className="eqx-hero" aria-labelledby="eqx-title">
+    <section id="t55" className="eqx-hero" aria-labelledby="eqx-title">
       <div className="eqx-hero-media">
-        <img src={still('t50-deplie')} alt={e.heroAlt} fetchpriority="high" />
-        <BgVideo className="eqx-hero-video" variants={equipVideos['t50-deplie']} poster={still('t50-deplie')} loop={false} toggle />
+        <img src={still('t55-vol')} alt={e.heroAlt} fetchpriority="high" />
+        <BgVideo className="eqx-hero-video" variants={equipVideos['t55-vol']} poster={still('t55-vol')} toggle />
       </div>
       <div className="eqx-hero-body">
         <div className="eqx-hero-top">
@@ -124,7 +125,7 @@ function SectionHead({ kicker, title, text, tone, id }) {
 
 function Drone({ e }) {
   const d = e.drone;
-  const [radar, relief, signal, fold] = d.points;
+  const [radar, lights, signal, fold] = d.points;
   const giant = useRef(null);
   const drone = useRef(null);
   useParallax(giant, 0.1);
@@ -134,28 +135,28 @@ function Drone({ e }) {
       <SectionHead kicker={d.eyebrow} title={d.title} text={d.text} id="eqx-drone-title" />
       <div className="eqx-bento">
         <Reveal as="article" className="eqx-card eqx-visual">
-          <span className="giant" ref={giant} aria-hidden="true">T50</span>
+          <span className="giant" ref={giant} aria-hidden="true">T55</span>
           <img ref={drone} className="eqx-visual-img" src={asset('/images/drone-cutout.png')} alt={e.title} loading="lazy" />
           <ul className="eqx-visual-chips">{d.chips.map((c) => <li key={c}>{c}</li>)}</ul>
           <p className="hm-stat-card">
-            <span className="big">40<span className="unit">L</span></span>
+            <span className="big">50<span className="unit">L</span></span>
             <span className="lbl">{d.tankLabel}</span>
           </p>
         </Reveal>
         <Reveal as="article" className="eqx-card eqx-radar" delay={100}>
-          <div className="eqx-media"><img src={still('t50-radar')} alt={d.alt} loading="lazy" /></div>
+          <div className="eqx-media"><img src={still('t55-radar')} alt={d.alt} loading="lazy" /></div>
           <div className="eqx-card-body">
             <h3>{radar.title}</h3>
             <p>{radar.text}</p>
           </div>
         </Reveal>
         <Reveal as="article" className="eqx-card eqx-relief">
-          <div className="eqx-media"><img src={asset('/images/t50-rows.jpg')} alt="" loading="lazy" /></div>
+          <div className="eqx-media"><img src={asset('/images/t55-coteau.jpg')} alt="" loading="lazy" /></div>
           <div className="eqx-card-body">
-            <span className="round" aria-hidden="true"><Icon name="relief" size={18} /></span>
+            <span className="round" aria-hidden="true"><Icon name="light" size={18} /></span>
             <div>
-              <h3>{relief.title}</h3>
-              <p>{relief.text}</p>
+              <h3>{lights.title}</h3>
+              <p>{lights.text}</p>
             </div>
           </div>
         </Reveal>
@@ -195,8 +196,10 @@ function Spray({ e }) {
       </Reveal>
       <div className="eqx-parts">
         {s.parts.map((p, i) => (
-          <Reveal as="article" className="eqx-part" key={p.key} delay={i * 110} data-hover-host="">
-            <HoverVideo variants={equipVideos[p.key]} poster={still(p.key)} alt={p.alt} />
+          <Reveal as="article" className="eqx-part" key={p.key} delay={i * 110} data-hover-host={equipVideos[p.key] ? '' : undefined}>
+            {equipVideos[p.key]
+              ? <HoverVideo variants={equipVideos[p.key]} poster={still(p.key)} alt={p.alt} />
+              : <div className="hv"><img src={still(p.key)} alt={p.alt} loading="lazy" /></div>}
             <div className="eqx-part-body">
               <div className="eqx-part-head"><h3>{p.title}</h3><span className="num">{String(i + 1).padStart(2, '0')}</span></div>
               <p>{p.text}</p>
@@ -231,43 +234,35 @@ function Prep({ e }) {
   );
 }
 
+// Cartographie : l'itineraire rang par rang (enregistrement de l'application),
+// puis deux cartes verifiees sur le T55 : les obstacles memorises et la
+// camera FPV. Les temps de releve publies pour le T50 ont ete retires.
 function Gps({ e }) {
   const m = e.map;
-  const routes = m.cards.slice(0, 2);
-  const camera = m.cards[2];
-  const [mode, setMode] = useState(0);
-  const cur = routes[mode];
+  const [auto, memory, camera] = m.cards;
   return (
     <section id="cartographie" className="eqx-section" aria-labelledby="eqx-gps-title">
       <SectionHead kicker={m.eyebrow} title={m.title} text={m.text} id="eqx-gps-title" />
       <div className="eqx-gps">
         <Reveal as="article" className="eqx-card eqx-gps-main">
           <div className="eqx-gps-img">
-            {routes.map((r, i) => (
-              <img key={r.key} src={asset(`/images/equip/${r.key}.webp`)} alt={r.alt} loading="lazy" className={i === mode ? 'on' : ''} aria-hidden={i === mode ? undefined : 'true'} />
-            ))}
-            <div className="eqx-toggle" role="group" aria-label={m.toggleLabel}>
-              {routes.map((r, i) => (
-                <button key={r.key} type="button" aria-pressed={i === mode} className={i === mode ? 'on' : ''} onClick={() => setMode(i)}>{r.title}</button>
-              ))}
-            </div>
+            <img className="on" src={still('parcelles')} alt={m.alt} loading="lazy" />
+            <BgVideo className="eqx-gps-v" variants={equipVideos.parcelles} poster={still('parcelles')} toggle />
           </div>
-          <div className="eqx-gps-foot" aria-live="polite">
-            <p className="eqx-gps-num" key={`n-${mode}`}><span className="huge">{cur.big}</span><span className="small">{cur.small}</span></p>
-            <div className="eqx-gps-text" key={`t-${mode}`}>
-              <h3>{cur.title}</h3>
-              <p>{cur.text}</p>
+          <div className="eqx-gps-foot">
+            <p className="eqx-gps-num"><span className="huge">{auto.big}</span><span className="small">{auto.small}</span></p>
+            <div className="eqx-gps-text">
+              <h3>{auto.title}</h3>
+              <p>{auto.text}</p>
             </div>
           </div>
         </Reveal>
         <div className="eqx-gps-side">
           <Reveal as="article" className="eqx-card eqx-gps-video" delay={100}>
-            <img src={still('parcelles')} alt={m.alt} loading="lazy" />
-            <BgVideo className="eqx-gps-v" variants={equipVideos.parcelles} poster={still('parcelles')} toggle />
-            <p className="caption">{m.videoCaption}</p>
+            <img src={asset('/images/t55-champ.jpg')} alt={memory.alt} loading="lazy" />
+            <p className="caption">{memory.title}. {memory.text}</p>
           </Reveal>
-          <Reveal as="article" className="eqx-card is-dark eqx-camera" delay={200} data-hover-host="">
-            <HoverVideo variants={equipVideos.camera} poster={still('camera')} alt={camera.alt} className="eqx-camera-media" />
+          <Reveal as="article" className="eqx-card is-dark eqx-camera" delay={200}>
             <div className="eqx-camera-body">
               <span className="mono-chip">{camera.v}</span>
               <div>

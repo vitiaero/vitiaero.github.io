@@ -35,11 +35,11 @@ export const preLaunch = true;
 const OFFLINE = import.meta.env.VITE_OFFLINE === '1';
 const withoutUhd = (list) => (OFFLINE ? list.filter((v) => v.width <= 1920) : list);
 export const videos = {
-  hero: withoutUhd([
-    { src: asset('/videos/hero-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.12M.08"', width: 3840, height: 2160, framerate: 25, bitrate: 5900000 },
-    { src: asset('/videos/hero-2160.mp4'), type: 'video/mp4; codecs="avc1.640033"', width: 3840, height: 2160, framerate: 25, bitrate: 17500000 },
-    { src: asset('/videos/hero-1080.mp4'), type: 'video/mp4; codecs="avc1.640032"', width: 1920, height: 1080, framerate: 25, bitrate: 8100000 },
-  ]),
+  // DJI Agras T55 en pulverisation sur un coteau (video DJI, 6 s en boucle).
+  hero: [
+    { src: asset('/videos/hero-t55.av1.mp4'), type: 'video/mp4; codecs="av01.0.08M.08"', width: 1920, height: 960, framerate: 25, bitrate: 3600000 },
+    { src: asset('/videos/hero-t55.mp4'), type: 'video/mp4; codecs="avc1.640028"', width: 1920, height: 960, framerate: 25, bitrate: 6700000 },
+  ],
   vignoble: withoutUhd([
     { src: asset('/videos/vignoble-fpv-2160.av1.mp4'), type: 'video/mp4; codecs="av01.0.13M.08"', width: 3840, height: 2160, framerate: 60, bitrate: 22900000 },
     { src: asset('/videos/vignoble-fpv-2160.mp4'), type: 'video/mp4; codecs="avc1.640034"', width: 3840, height: 2160, framerate: 60, bitrate: 23300000 },
@@ -47,21 +47,18 @@ export const videos = {
   ]),
 };
 
-// Visuels de la page Equipement (DJI, et le plan du drone qui se deplie fourni
-// par le proprietaire). Chaque video existe en AV1 puis en H.264, meme
-// definition ; l'image fixe du meme nom est dans /images/equip.
+// Visuels de la page Equipement (DJI Agras T55, et l'enregistrement d'ecran
+// de l'application DJI fourni par le proprietaire). Chaque video existe en AV1
+// puis en H.264, meme definition ; l'image fixe du meme nom est dans
+// /images/equip. Les pieces sans video (pompe, gicleurs) n'ont qu'une photo.
 const equip = (name, width, height, av1, avc, bitrate) => [
   { src: asset(`/videos/equip/${name}.av1.mp4`), type: `video/mp4; codecs="${av1}"`, width, height, framerate: 25, bitrate: Math.round(bitrate / 2) },
   { src: asset(`/videos/equip/${name}.mp4`), type: `video/mp4; codecs="${avc}"`, width, height, framerate: 25, bitrate },
 ];
 export const equipVideos = {
-  't50-deplie': equip('t50-deplie', 1280, 720, 'av01.0.05M.08', 'avc1.64001f', 2400000),
-  spray: equip('spray', 1920, 1080, 'av01.0.08M.08', 'avc1.640032', 8400000),
-  pompe: equip('pompe', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1600000),
-  gicleur: equip('gicleur', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1800000),
-  electrovanne: equip('electrovanne', 1280, 1280, 'av01.0.08M.08', 'avc1.640028', 1000000),
-  parcelles: equip('parcelles', 968, 588, 'av01.0.05M.08', 'avc1.64001f', 1100000),
-  camera: equip('camera', 1200, 730, 'av01.0.05M.08', 'avc1.64001f', 1000000),
+  't55-vol': equip('t55-vol', 1920, 960, 'av01.0.08M.08', 'avc1.640028', 7200000),
+  spray: equip('spray', 1386, 924, 'av01.0.08M.08', 'avc1.640028', 3200000),
+  parcelles: equip('parcelles', 968, 460, 'av01.0.04M.08', 'avc1.64001f', 700000),
 };
 
 // Extrait du vol FPV au-dessus des terrasses d'Epesses (Lavaux), filme par le
@@ -76,8 +73,7 @@ export const film = withoutUhd([
 ]);
 
 // Chemins des images. Si une image manque, un repli sobre s'affiche (voir CSS).
-// Uniquement le DJI Agras T50 : les photos d'autres modeles ont ete retirees.
+// Uniquement le DJI Agras T55 : les photos d'autres modeles ont ete retirees.
 export const images = {
   lavaux: asset('/images/lavaux.jpg'),
-  vignes: asset('/images/t50-rows.jpg'),
 };

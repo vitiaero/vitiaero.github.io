@@ -45,7 +45,6 @@
 .eq-split .lead { margin-top: 1rem; }
 /* Logo complet sur fond blanc : pose dans une tuile arrondie (le fond blanc
    du fichier ne peut pas se fondre dans la page a l'interieur d'un bloc anime). */
-.about-logo { width: 180px; max-width: 62%; margin-bottom: 1.4rem; padding: 12px; border-radius: var(--radius-lg); background: #fff; }
 .spec-list { display: grid; gap: 0.9rem; margin: 1.6rem 0 0; padding: 0; list-style: none; }
 .spec-list li { display: flex; gap: 0.8rem; align-items: flex-start; }
 .spec-list .k { min-width: 130px; color: var(--muted); }
@@ -306,6 +305,13 @@
 .search-results li { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--line); font-size: 0.88rem; cursor: pointer; }
 .search-results li:last-child { border-bottom: none; }
 .search-results li:hover { background: var(--accent-soft); }
+/* Ajout d'une parcelle par son numero cadastral, ou par clic sur la carte */
+.map-cadastre { padding-top: 1rem; border-top: 1px dashed var(--line-strong); }
+.map-cadastre-label { display: block; margin-bottom: 0.45rem; font-size: 0.88rem; font-weight: 600; }
+.map-cadastre > .btn { width: 100%; justify-content: center; }
+.cad-results li { padding: 0; }
+.cad-results button { width: 100%; padding: 0.55rem 0.75rem; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
+.cad-results button:hover, .cad-results button:focus-visible { background: var(--accent-soft); }
 .layer-switch { display: flex; gap: 0.3rem; margin-bottom: 0.8rem; }
 .layer-switch button { flex: 1; padding: 0.45rem; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--muted); font-size: 0.8rem; }
 .layer-switch button.active { border-color: var(--ink); background: var(--ink); color: var(--on-dark); }

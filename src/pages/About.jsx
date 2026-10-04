@@ -3,7 +3,6 @@ import Reveal from '../components/Reveal.jsx';
 import Img from '../components/Img.jsx';
 import Icon from '../components/Icons.jsx';
 import { images } from '../content.js';
-import { asset } from '../config.js';
 import { useI18n } from '../i18n/index.jsx';
 
 export default function About() {
@@ -15,7 +14,6 @@ export default function About() {
         <div className="container">
           <div className="split">
             <Reveal>
-              <img src={asset('/images/logo-vitiaero-full.png')} alt="VitiAero" className="about-logo" />
               <span className="eyebrow">{a.eyebrow}</span>
               <h1 className="h1">{a.title}</h1>
               <p className="lead mt-2">{a.lead}</p>

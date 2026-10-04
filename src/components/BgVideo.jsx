@@ -9,9 +9,11 @@ import { useI18n } from '../i18n/index.jsx';
 // mouvement reduit, rien n'est telecharge : l'image placee dessous reste.
 //
 // toggle : bouton pause / lecture (une video qui bouge plus de cinq secondes
-//   doit pouvoir etre arretee, WCAG 2.2.2).
-// onDemand : sur mobile ou en mouvement reduit, le bouton permet quand meme de
-//   lancer la video, qui n'est alors chargee qu'au clic.
+//   doit pouvoir etre arretee, WCAG 2.2.2). Sur mobile ou en mouvement reduit,
+//   ce bouton permet quand meme de lancer la video, chargee seulement au clic.
+//   Si l'appareil refuse la lecture automatique (economie d'energie, reglage
+//   du navigateur), le bouton repasse sur « lecture » pour la lancer a la main.
+// onDemand : meme lecture au clic, pour une video sans bouton pause.
 const NO_VIDEO = '(max-width: 720px), (prefers-reduced-motion: reduce)';
 
 async function playsWell(v, needHardware) {
@@ -60,7 +62,7 @@ export default function BgVideo({ variants, poster, className, loop = true, togg
     video.addEventListener('ended', onEnded);
 
     if (window.matchMedia(NO_VIDEO).matches) {
-      if (onDemand) {
+      if (onDemand || toggle) {
         pausedByUser.current = true;
         setPaused(true);
         setMode('demand');
@@ -76,7 +78,10 @@ export default function BgVideo({ variants, poster, className, loop = true, togg
     const play = () => {
       if (pausedByUser.current) return;
       video.muted = true;
-      video.play?.().then(() => setPaused(false)).catch(() => {});
+      video.play?.().then(() => setPaused(false)).catch((err) => {
+        // Lecture automatique refusee : le bouton propose de la lancer.
+        if (err?.name === 'NotAllowedError') setPaused(true);
+      });
     };
 
     // Si une version est absente ou illisible, on passe a la suivante, plus
@@ -114,7 +119,7 @@ export default function BgVideo({ variants, poster, className, loop = true, togg
       video.removeEventListener('error', onError);
       video.removeEventListener('ended', onEnded);
     };
-  }, [variants, loop, onDemand]);
+  }, [variants, loop, onDemand, toggle]);
 
   const onToggle = () => {
     const video = ref.current;

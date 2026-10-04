@@ -29,6 +29,7 @@ const paths = {
   calendar: <><rect x="4" y="5" width="16" height="15" rx="2" {...F} /><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 9.5h16M8 3v4M16 3v4" /><rect x="13.5" y="13" width="3" height="3" rx=".8" {...S} /></>,
   tag: <><path d="M4 4h7l9 9-7 7-9-9V4z" {...F} /><path d="M4 4h7l9 9-7 7-9-9V4z" /><circle cx="8.5" cy="8.5" r="1.5" {...S} /></>,
   signal: <><path d="M5 19a10 10 0 0 1 0-14" /><path d="M19 5a10 10 0 0 1 0 14" /><path d="M8.5 15.5a5 5 0 0 1 0-7" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /><circle cx="12" cy="12" r="1.8" {...S} /></>,
+  light: <><path d="M9.5 6a6 6 0 0 0 0 12z" {...F} /><path d="M9.5 6a6 6 0 0 0 0 12z" /><path d="M13 8.5 20.5 7M13 12h8M13 15.5l7.5 1.5" /></>,
   // Interface
   leaf: <><path d="M4 20c8 2 14-4 15-15C9 6 3 11 4 20z" /><path d="M4 20C8 15 12 12 16 10" /></>,
   clock: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,

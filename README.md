@@ -1,7 +1,7 @@
 # VitiAero
 
 Site vitrine et application d'estimation pour un service de traitement de vigne
-par drone (DJI Agras T50), dans le canton de Vaud. Projet d'étude CPNV (PAE).
+par drone (DJI Agras T55), dans le canton de Vaud. Projet d'étude CPNV (PAE).
 
 ## Démarrer
 

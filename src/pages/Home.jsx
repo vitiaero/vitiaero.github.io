@@ -15,7 +15,7 @@ import { useI18n } from '../i18n/index.jsx';
 
 // Page d'accueil, d'apres la maquette « Refonte site Lavaux et T50 », epuree le
 // 27 septembre puis allegee le 28 (7 sections) : un message par bloc, textes
-// courts, uniquement des images du DJI Agras T50 et du Lavaux. Les textes
+// courts, uniquement des images du DJI Agras T55 et du Lavaux. Les textes
 // viennent de src/i18n (verifies).
 const img = (p) => asset(`/images/${p}`);
 const pad = (i) => String(i + 1).padStart(2, '0');
@@ -44,8 +44,9 @@ function Hero() {
   );
 }
 
-// Trois photos du DJI Agras T50 : au-dessus des rangs, en vol, le radar avant.
-const WHY_IMAGES = ['t50-rows.jpg', 't50-flight.jpg', 'equip/t50-radar.jpg'];
+// Trois photos du DJI Agras T55 (DJI) : sur un coteau, en vol, de face avec
+// son radar sur le dessus.
+const WHY_IMAGES = ['t55-pente.jpg', 't55-coteau.jpg', 't55-route.jpg'];
 
 function WhyDrone() {
   const { t } = useI18n();
@@ -115,11 +116,11 @@ function DroneSection() {
   return (
     <section className="hm-drone" id="drone" aria-labelledby="hm-drone-title">
       <Reveal className="hm-drone-visual">
-        <span className="giant" ref={giant} aria-hidden="true">T50</span>
+        <span className="giant" ref={giant} aria-hidden="true">T55</span>
         <img className="hm-drone-img" ref={drone} src={img('drone-cutout.png')} alt={d.alt} loading="lazy" />
         <p className="hm-drone-credit">{d.credit}</p>
         <p className="hm-stat-card">
-          <span className="big">40<span className="unit">L</span></span>
+          <span className="big">50<span className="unit">L</span></span>
           <span className="lbl">{d.tankLabel}</span>
         </p>
       </Reveal>

@@ -107,6 +107,45 @@ function ringsFromKML(text) {
   return rings;
 }
 
+// --- Parcelles du cadastre (service federal geo.admin.ch) ---
+// Le client tape « Commune numero » ou clique sur une parcelle : le contour
+// officiel (mensuration cantonale, couche CadastralWebMap diffusee par
+// swisstopo) est ajoute tel quel, sans rien tracer a la main.
+const GEO_API = 'https://api3.geo.admin.ch/rest/services';
+const CADASTRE_LAYER = 'ch.kantone.cadastralwebmap-farbe';
+
+async function getJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// Biens-fonds correspondant au texte, du plus pertinent au moins pertinent.
+// Le libelle garde la commune et le numero, sans l'identifiant EGRID.
+async function searchParcels(text, lang) {
+  const data = await getJson(`${GEO_API}/api/SearchServer?searchText=${encodeURIComponent(text)}&type=locations&origins=parcel&limit=8&sr=4326&lang=${lang}`);
+  return (data.results || []).map((r) => ({
+    id: r.id,
+    num: String(r.attrs?.num ?? ''),
+    label: (r.attrs?.label || '').replace(/<[^>]+>/g, '').replace(/\s*\(CH[\d\s]+\)\s*$/, '').trim(),
+  })).filter((r) => r.id && r.label);
+}
+
+async function parcelById(id) {
+  const data = await getJson(`${GEO_API}/all/MapServer/${CADASTRE_LAYER}/${encodeURIComponent(id)}?geometryFormat=geojson&sr=4326`);
+  return data.feature || null;
+}
+
+async function parcelAt(map, latlng) {
+  const b = map.getBounds();
+  const s = map.getSize();
+  const data = await getJson(`${GEO_API}/all/MapServer/identify?geometry=${latlng.lng},${latlng.lat}`
+    + `&geometryType=esriGeometryPoint&layers=all:${CADASTRE_LAYER}`
+    + `&mapExtent=${b.getWest()},${b.getSouth()},${b.getEast()},${b.getNorth()}`
+    + `&imageDisplay=${s.x},${s.y},96&tolerance=0&sr=4326&geometryFormat=geojson&returnGeometry=true`);
+  return data.results?.[0] || null;
+}
+
 function formatArea(m2, locale) {
   const rounded = Math.round(m2);
   const ha = m2 / 10000;
@@ -153,6 +192,17 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
   const [searching, setSearching] = useState(false);
   const fileRef = useRef(null);
   const [importMsg, setImportMsg] = useState(null); // { ok: bool, text }
+
+  // Ajout par numero de parcelle, ou par clic sur la carte (mode « choisir »).
+  const [cadQuery, setCadQuery] = useState('');
+  const [cadResults, setCadResults] = useState([]);
+  const [cadBusy, setCadBusy] = useState(false);
+  const [cadMsg, setCadMsg] = useState(null); // { ok: bool, text }
+  const [picking, setPicking] = useState(false);
+  const pickingRef = useRef(false);
+  const baseBeforePickRef = useRef(null);
+  const mRef = useRef(m);
+  mRef.current = m;
 
   // Mini tutoriel : bulle d'aide affichee a la premiere visite seulement.
   const [showTip, setShowTip] = useState(() => {
@@ -243,7 +293,7 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
         fillColor: LIME,
         fillOpacity: 0.3,
       }).addTo(group);
-      poly.bindTooltip(m.parcel(idx + 1), { sticky: true });
+      poly.bindTooltip(parcel.label || m.parcel(idx + 1), { sticky: true });
     });
   }
 
@@ -279,6 +329,10 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
 
   // --- Gestion du trace ---
   function onMapClick(e) {
+    if (pickingRef.current) {
+      pickAt(e.latlng);
+      return;
+    }
     if (!drawingRef.current) return;
     const map = mapRef.current;
     const pts = pointsRef.current;
@@ -310,6 +364,7 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
   function startDrawing() {
     if (readOnly) return;
     if (showTip) dismissTip();
+    stopPicking();
     drawingRef.current = true;
     pointsRef.current = [];
     lastClickRef.current = 0;
@@ -369,12 +424,125 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
 
   function clearAll() {
     stopDrawing();
+    setCadMsg(null);
     onChangeRef.current?.([]);
     didFitRef.current = true; // n'ajuste plus la vue apres effacement
   }
 
   function removeParcel(idx) {
     onChangeRef.current?.((valueRef.current || []).filter((_, i) => i !== idx));
+  }
+
+  // --- Parcelles du cadastre ---
+  // Ajoute le contour officiel d'un bien-fonds (Feature GeoJSON de
+  // geo.admin.ch). Une parcelle deja dans la liste n'est pas ajoutee deux fois.
+  function addCadastre(feature, label) {
+    const t2 = mRef.current;
+    const list = valueRef.current || [];
+    if (list.some((p) => p.cadId === feature.id)) {
+      setCadMsg({ ok: false, text: t2.cadAlready(label) });
+      return;
+    }
+    const parts = ringsFromGeoJSON(feature.geometry).map(ringToPoints).filter(Boolean);
+    if (parts.length === 0) {
+      setCadMsg({ ok: false, text: t2.cadNotFound });
+      return;
+    }
+    const added = parts.map((points) => ({ points, area_m2: polygonArea(points), label, cadId: feature.id }));
+    onChangeRef.current?.([...list, ...added].slice(0, MAX_PARCELS));
+    if (showTip) dismissTip();
+    const area = added.reduce((s, p) => s + p.area_m2, 0);
+    setCadMsg({ ok: true, text: t2.cadAdded(label, formatArea(area, locale).m2) });
+    const bounds = L.latLngBounds(added.flatMap((p) => p.points));
+    if (bounds.isValid()) mapRef.current?.fitBounds(bounds.pad(0.6), { maxZoom: 18 });
+  }
+
+  async function chooseCadastre(item) {
+    setCadBusy(true);
+    setCadResults([]);
+    try {
+      const feature = await parcelById(item.id);
+      if (feature) addCadastre(feature, item.label);
+      else setCadMsg({ ok: false, text: m.cadNotFound });
+    } catch {
+      setCadMsg({ ok: false, text: m.cadError });
+    } finally {
+      setCadBusy(false);
+    }
+  }
+
+  // « Chardonne 100 » : si un seul bien-fonds porte exactement ce numero, il
+  // est ajoute directement ; sinon on propose la liste des correspondances.
+  async function searchCadastre(e) {
+    e?.preventDefault();
+    const q = cadQuery.trim();
+    setCadMsg(null);
+    setCadResults([]);
+    const num = q.match(/(\d+)\s*$/)?.[1];
+    if (!num || q.length === num.length) {
+      setCadMsg({ ok: false, text: m.cadNeedBoth });
+      return;
+    }
+    setCadBusy(true);
+    try {
+      const found = await searchParcels(q, lang);
+      const exact = found.filter((r) => r.num === num && !/\bDP\b/.test(r.label));
+      if (exact.length === 1) {
+        setCadBusy(false);
+        await chooseCadastre(exact[0]);
+        return;
+      }
+      if (found.length === 0) setCadMsg({ ok: false, text: m.cadNotFound });
+      setCadResults(exact.length > 1 ? exact : found);
+    } catch {
+      setCadMsg({ ok: false, text: m.cadError });
+    } finally {
+      setCadBusy(false);
+    }
+  }
+
+  // Mode « choisir sur la carte » : le fond passe au plan cadastral (limites
+  // et numeros visibles), un clic ajoute la parcelle situee sous le curseur.
+  function startPicking() {
+    if (readOnly) return;
+    stopDrawing();
+    if (showTip) dismissTip();
+    pickingRef.current = true;
+    setPicking(true);
+    setCadMsg({ ok: true, text: m.cadPickHint });
+    baseBeforePickRef.current = base;
+    switchBase('cadastre');
+    if (containerRef.current) containerRef.current.style.cursor = 'pointer';
+  }
+
+  function stopPicking() {
+    if (!pickingRef.current) return;
+    pickingRef.current = false;
+    setPicking(false);
+    setCadMsg(null);
+    if (baseBeforePickRef.current && baseBeforePickRef.current !== 'cadastre') switchBase(baseBeforePickRef.current);
+    baseBeforePickRef.current = null;
+    if (containerRef.current) containerRef.current.style.cursor = '';
+  }
+
+  async function pickAt(latlng) {
+    const map = mapRef.current;
+    const t2 = mRef.current;
+    if (!map) return;
+    setCadBusy(true);
+    try {
+      const feature = await parcelAt(map, latlng);
+      if (!feature) {
+        setCadMsg({ ok: false, text: t2.cadNone });
+        return;
+      }
+      const num = feature.properties?.number;
+      addCadastre(feature, num ? t2.cadLabel(num) : t2.parcel((valueRef.current || []).length + 1));
+    } catch {
+      setCadMsg({ ok: false, text: t2.cadError });
+    } finally {
+      setCadBusy(false);
+    }
   }
 
   // --- Import d'un fichier de parcelles (GeoJSON ou KML) ---
@@ -515,6 +683,42 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
           </ul>
         )}
 
+        {/* Ajout direct d'une parcelle par son numero cadastral */}
+        <div className="map-cadastre mt-3">
+          <label className="map-cadastre-label" htmlFor="map-cad-q">{m.cadTitle}</label>
+          <form className="map-search" onSubmit={searchCadastre}>
+            <input
+              id="map-cad-q"
+              className="input"
+              placeholder={m.cadPh}
+              value={cadQuery}
+              onChange={(e) => setCadQuery(e.target.value)}
+              autoComplete="off"
+            />
+            <button className="btn btn-dark btn-sm" type="submit" disabled={cadBusy}>
+              {cadBusy ? '...' : m.cadAdd}
+            </button>
+          </form>
+          {cadResults.length > 0 && (
+            <ul className="search-results cad-results" aria-label={m.cadChoose}>
+              {cadResults.map((r) => (
+                <li key={r.id}><button type="button" onClick={() => chooseCadastre(r)}>{r.label}</button></li>
+              ))}
+            </ul>
+          )}
+          <button
+            type="button"
+            className={`btn btn-sm mt-2 ${picking ? 'btn-primary' : 'btn-outline'}`}
+            aria-pressed={picking}
+            onClick={() => (picking ? stopPicking() : startPicking())}
+          >
+            {picking ? m.cadPickStop : m.cadPick}
+          </button>
+          {cadMsg && (
+            <p className={`import-msg${cadMsg.ok ? ' ok' : ''}`} role="status">{cadMsg.text}</p>
+          )}
+        </div>
+
         <div className="layer-switch mt-3" role="group" aria-label={m.layersAria}>
           {Object.keys(BASE_LAYERS).map((key) => (
             <button key={key} className={base === key ? 'active' : ''} onClick={() => switchBase(key)}>
@@ -591,7 +795,7 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
           <div className="parcel-list">
             {value.map((p, i) => (
               <div className="row" key={i}>
-                <span>{m.parcel(i + 1)} &middot; {formatArea(p.area_m2, locale).m2} m2</span>
+                <span>{p.label || m.parcel(i + 1)} &middot; {formatArea(p.area_m2, locale).m2} m2</span>
                 <button onClick={() => removeParcel(i)}>{m.remove}</button>
               </div>
             ))}
