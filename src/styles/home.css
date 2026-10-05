@@ -142,6 +142,9 @@
   transform: translateY(calc(-50% + var(--py, 0px)));
   filter: drop-shadow(0 30px 40px rgba(20, 21, 19, 0.25));
 }
+/* Trois vues superposees qui se fondent au defilement (voir useTurn, Home.jsx) */
+.hm-drone-turn { aspect-ratio: 16 / 9; }
+.hm-drone-turn img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity 0.2s linear; }
 /* Le drone arrive par la droite quand la carte apparait */
 .hm-drone-visual.reveal-armed .hm-drone-img, .eqx-visual.reveal-armed .eqx-visual-img { translate: 14% 0; opacity: 0; transition: translate 1.6s var(--ease) 0.15s, opacity 1s var(--ease) 0.15s; }
 .hm-drone-visual.reveal-armed.reveal-in .hm-drone-img, .eqx-visual.reveal-armed.reveal-in .eqx-visual-img { translate: 0 0; opacity: 1; }

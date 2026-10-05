@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Icon from '../components/Icons.jsx';
 import BgVideo from '../components/BgVideo.jsx';
@@ -106,19 +106,72 @@ function Steps() {
   );
 }
 
+// Le T55 « tourne » pendant le defilement : trois rendus DJI pris a la meme
+// hauteur (face, trois quarts, arriere) se succedent selon la position de la
+// carte a l'ecran. Rien ne bouge en mouvement reduit : vue de face.
+const TURN = ['drone-tour-1.webp', 'drone-tour-2.webp', 'drone-tour-3.webp'];
+
+function useTurn(hostRef, imgsRef) {
+  useEffect(() => {
+    // La carte qui contient le drone sert de repere (l'image deborde de la carte).
+    const host = hostRef.current?.parentElement;
+    if (!host) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = host.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Vue de face tant que le centre de la carte est sous les trois quarts de
+      // l'ecran ; vue arriere une fois qu'il passe au-dessus du quart.
+      const center = r.top + r.height / 2;
+      const p = Math.min(1, Math.max(0, (vh * 0.75 - center) / (vh * 0.5)));
+      const turn = p * (TURN.length - 1);
+      // Une seule vue a la fois, toujours pleinement visible : on passe a la
+      // suivante d'un coup (fondu tres court en CSS), comme une image par image.
+      const shown = Math.round(turn);
+      imgsRef.current.forEach((im, i) => {
+        if (im) im.style.opacity = i === shown ? '1' : '0';
+      });
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [hostRef, imgsRef]);
+}
+
 function DroneSection() {
   const { t } = useI18n();
   const d = t.home.drone;
   const giant = useRef(null);
   const drone = useRef(null);
+  const turnImgs = useRef([]);
   useParallax(giant, 0.1);
   useParallax(drone, -0.06);
+  useTurn(drone, turnImgs);
   return (
     <section className="hm-drone" id="drone" aria-labelledby="hm-drone-title">
       <Reveal className="hm-drone-visual">
         <span className="giant" ref={giant} aria-hidden="true">T55</span>
-        {/* Vue de face ici, vue 3/4 sur la page Equipement : les deux pages ne se repetent pas */}
-        <img className="hm-drone-img" ref={drone} src={img('drone-face.png')} alt={d.alt} loading="lazy" />
+        {/* Le drone tourne au defilement (vue 3/4 fixe sur la page Equipement) */}
+        <div className="hm-drone-img hm-drone-turn" ref={drone} role="img" aria-label={d.alt}>
+          {TURN.map((src, i) => (
+            <img
+              key={src}
+              ref={(el) => { turnImgs.current[i] = el; }}
+              src={img(src)}
+              alt=""
+              loading="lazy"
+              style={{ opacity: i === 0 ? 1 : 0 }}
+            />
+          ))}
+        </div>
         <p className="hm-drone-credit">{d.credit}</p>
         <p className="hm-stat-card">
           <span className="big">50<span className="unit">L</span></span>
