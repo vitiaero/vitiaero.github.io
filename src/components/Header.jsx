@@ -115,8 +115,11 @@ export default function Header() {
 
         <div className="nav-actions">
           <LangSwitch />
-          {/* La demande se fait sans compte : « Connexion » est dans le pied de page */}
-          {user && <button type="button" className="nav-login" onClick={handleLogout}>{t.nav.logout}</button>}
+          {user ? (
+            <button type="button" className="nav-login" onClick={handleLogout}>{t.nav.logout}</button>
+          ) : (
+            <Link to="/connexion" className="nav-login">{t.nav.login}</Link>
+          )}
           <Link to="/estimation" className="btn btn-outline btn-sm nav-cta">{t.common.requestEstimate}</Link>
         </div>
 
@@ -139,7 +142,11 @@ export default function Header() {
           ))}
         </nav>
         <LangSwitch variant="inline" />
-        {user && <button type="button" className="btn btn-outline" onClick={handleLogout}>{t.nav.logout}</button>}
+        {user ? (
+          <button type="button" className="btn btn-outline" onClick={handleLogout}>{t.nav.logout}</button>
+        ) : (
+          <Link to="/connexion" className="btn btn-outline" onClick={close}>{t.nav.login}</Link>
+        )}
         <Link to="/estimation" className="btn btn-primary" onClick={close}>{t.common.requestEstimate}</Link>
       </div>
     </header>
