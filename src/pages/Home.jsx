@@ -117,7 +117,8 @@ function DroneSection() {
     <section className="hm-drone" id="drone" aria-labelledby="hm-drone-title">
       <Reveal className="hm-drone-visual">
         <span className="giant" ref={giant} aria-hidden="true">T55</span>
-        <img className="hm-drone-img" ref={drone} src={img('drone-cutout.png')} alt={d.alt} loading="lazy" />
+        {/* Vue de face ici, vue 3/4 sur la page Equipement : les deux pages ne se repetent pas */}
+        <img className="hm-drone-img" ref={drone} src={img('drone-face.png')} alt={d.alt} loading="lazy" />
         <p className="hm-drone-credit">{d.credit}</p>
         <p className="hm-stat-card">
           <span className="big">50<span className="unit">L</span></span>

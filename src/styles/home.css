@@ -52,8 +52,11 @@
 
 /* --------------------------- Pourquoi le drone --------------------------- */
 .hm-why { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px 64px; }
-/* La colonne de gauche portait l'etiquette : le texte garde sa place a droite */
-.hm-why-main { grid-column: 2; display: flex; flex-direction: column; gap: 32px; }
+/* Plus d'etiquette a gauche : le texte prend toute la largeur, avec une
+   longueur de ligne confortable pour la grande phrase. */
+.hm-why-main { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 32px; }
+.hm-why-main .hm-statement { max-width: 34ch; }
+.hm-why-main .hm-why-cols { max-width: 980px; }
 /* Titre en encre, suite du propos en gris : une seule phrase lue d'un trait */
 .hm-statement { font-size: clamp(1.7rem, 3.2vw, 2.75rem); font-weight: 500; line-height: 1.12; letter-spacing: -0.03em; text-wrap: pretty; }
 .hm-statement h2 { display: inline; font: inherit; letter-spacing: inherit; color: var(--ink); }
@@ -61,7 +64,6 @@
 .hm-why-cols { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px 40px; align-items: start; font-size: 17px; line-height: 1.6; color: var(--ink-soft); }
 @media (max-width: 900px) {
   .hm-why { grid-template-columns: 1fr; gap: 8px; }
-  .hm-why-main { grid-column: auto; }
   .hm-why-cols { grid-template-columns: 1fr; }
 }
 
