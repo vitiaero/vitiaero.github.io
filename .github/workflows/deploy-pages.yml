@@ -4,9 +4,11 @@
 # - permissions minimales, accordees job par job (lecture seule par defaut) ;
 # - Actions officielles de GitHub uniquement, figees sur l'empreinte exacte d'un
 #   commit (un tag peut etre deplace, une empreinte non). Dependabot les met a jour ;
-# - aucun secret : l'adresse de l'API est publique par nature (elle se retrouve
-#   dans le JavaScript du site). Elle se regle dans Settings > Secrets and
-#   variables > Actions > onglet Variables, sous le nom VITE_API_URL ;
+# - l'adresse de l'API est publique par nature (elle se retrouve dans le
+#   JavaScript du site). Elle se regle dans Settings > Secrets and variables >
+#   Actions > onglet Variables, sous le nom VITE_API_URL ;
+# - un seul secret, ACCESS_CODE : le code d'acces d'avant le lancement (onglet
+#   Secrets). Seule son empreinte entre dans le site, jamais le code ;
 # - declenche uniquement par un envoi sur main ou a la main : jamais par une
 #   pull request venant d'un fork, donc aucun code exterieur n'est execute ici.
 name: Publier sur GitHub Pages
@@ -56,6 +58,19 @@ jobs:
       - name: Verifier les vulnerabilites connues
         run: npm audit --audit-level=high
 
+      # Avant le lancement, le site ne s'ouvre qu'avec le code d'acces (secret
+      # ACCESS_CODE). S'il manque, la publication s'arrete ici plutot que de
+      # mettre le site en ligne sans code. Le jour du lancement : supprimer
+      # cette etape, la ligne ACCESS_CODE plus bas, puis le secret.
+      - name: Verifier le code d'acces
+        env:
+          ACCESS_CODE: ${{ secrets.ACCESS_CODE }}
+        run: |
+          if [ -z "$ACCESS_CODE" ]; then
+            echo "::error::Secret ACCESS_CODE absent : le site serait publie sans code d'acces."
+            exit 1
+          fi
+
       # Sans VITE_API_URL, le site est publie seul : les formulaires et la
       # connexion affichent alors un message clair au lieu d'une erreur reseau.
       - name: Compiler le site
@@ -63,6 +78,7 @@ jobs:
           VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_STATIC_ONLY: ${{ vars.VITE_API_URL == '' && '1' || '0' }}
+          ACCESS_CODE: ${{ secrets.ACCESS_CODE }}
         run: npm run build
 
       - name: Preparer les fichiers pour Pages

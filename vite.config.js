@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
@@ -26,6 +27,18 @@ function normalizeBase(raw) {
     throw new Error(`Chemin de base invalide : ${raw}`);
   }
   return clean ? `/${clean}/` : '/';
+}
+
+// Code d'acces avant le lancement (secret GitHub ACCESS_CODE, jamais dans le
+// depot). Seule son empreinte PBKDF2 entre dans le site ; le navigateur refait
+// le meme calcul (src/components/AccessGate.jsx). Sans code : aucun ecran d'acces.
+function accessGate(code) {
+  const clean = String(code || '').trim().toLowerCase();
+  if (!clean) return '';
+  const salt = 'vitiaero-acces-v1';
+  const iterations = 300000;
+  const hash = crypto.pbkdf2Sync(clean, salt, iterations, 32, 'sha256').toString('hex');
+  return JSON.stringify({ salt, iterations, hash });
 }
 
 // Compilation uniquement : ajoute la CSP et la politique de referent dans
@@ -73,6 +86,7 @@ export default defineConfig(({ mode }) => {
       // Meme chose pour l'apercu dans l'application Claude (npm run apercu),
       // qui ne lance que le serveur des pages.
       'import.meta.env.VITE_STATIC_ONLY': JSON.stringify(env.VITE_STATIC_ONLY === '1' || mode === 'apercu' ? '1' : ''),
+      'import.meta.env.VITE_ACCESS_GATE': JSON.stringify(accessGate(env.ACCESS_CODE)),
     },
     build: {
       sourcemap: false, // le code source original n'est pas publie

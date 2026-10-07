@@ -56,11 +56,22 @@ Noter l'adresse de l'API fournie par l'hébergeur (par exemple
 ### 3. Activer GitHub Pages
 
 1. Dépôt > **Settings > Pages** > Source : **GitHub Actions**.
-2. **Settings > Secrets and variables > Actions > onglet Variables** >
+2. **Settings > Secrets and variables > Actions > onglet Secrets** >
+   **New repository secret** : nom `ACCESS_CODE`, valeur le code d'accès
+   d'avant le lancement. Obligatoire : sans lui, la publication s'arrête.
+3. Facultatif, quand une API existe : **onglet Variables** >
    **New repository variable** : nom `VITE_API_URL`, valeur l'adresse de l'API.
    C'est une variable, pas un secret : elle finit dans le JavaScript public.
-3. **Actions** > « Publier sur GitHub Pages » > **Run workflow** (ou envoyer un
+4. **Actions** > « Publier sur GitHub Pages » > **Run workflow** (ou envoyer un
    commit sur `main`).
+
+**Le code d'accès** cache le site aux visiteurs et aux moteurs de recherche
+(« privé entre guillemets »). Il est vérifié dans le navigateur : les images et
+vidéos restent accessibles par leur adresse exacte, et un code court se devine
+par un script. Ce n'est donc pas une vraie protection. Le code n'est jamais
+dans le dépôt : seule son empreinte entre dans le site. Les majuscules sont
+acceptées. Une fois le code saisi, l'appareil s'en souvient. Pour changer le
+code : modifier le secret, puis relancer le workflow.
 
 Le site est publié à `https://NOM.github.io/NOM-DU-DEPOT/`. Le chemin de base est
 détecté automatiquement.
@@ -155,6 +166,9 @@ Le serveur envoie alors tous les en-têtes de sécurité, CSP complète comprise
 2. `public/robots.txt` : activer les règles d'indexation commentées.
 3. Remplacer `https://www.vitiaero.ch` par l'adresse réelle dans
    `public/sitemap.xml`, `index.html` et `BASE_URL` dans `src/App.jsx`.
+4. Retirer le code d'accès : dans `.github/workflows/deploy-pages.yml`, supprimer
+   l'étape « Verifier le code d'acces » et la ligne `ACCESS_CODE` de l'étape
+   « Compiler le site », puis supprimer le secret `ACCESS_CODE` sur GitHub.
 
 ## Vérifier en local
 

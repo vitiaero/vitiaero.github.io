@@ -10,6 +10,7 @@ import './styles/home.css';
 import './styles/equipement.css';
 import './styles/app.css';
 import App from './App.jsx';
+import AccessGate from './components/AccessGate.jsx';
 import { AuthProvider } from './auth.jsx';
 import { LangProvider } from './i18n/index.jsx';
 import { BASE_PATH } from './config.js';
@@ -55,13 +56,15 @@ createRoot(document.getElementById('root')).render(
     </p>
   ) : (
     <React.StrictMode>
-      <Router {...routerProps}>
-        <LangProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </LangProvider>
-      </Router>
+      <AccessGate>
+        <Router {...routerProps}>
+          <LangProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </LangProvider>
+        </Router>
+      </AccessGate>
     </React.StrictMode>
   )
 );
