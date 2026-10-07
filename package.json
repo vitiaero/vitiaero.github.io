@@ -17,6 +17,7 @@
     "check": "npm test && npm run build && npm audit --audit-level=high",
     "check:media": "node scripts/check-media.mjs",
     "check:production": "node scripts/check-production.mjs",
+    "publish:branch": "node scripts/publish-branch.mjs",
     "launch:status": "node scripts/launch-status.mjs",
     "legal:version": "node scripts/legal-version.mjs",
     "backup": "node server/backup-cli.js",

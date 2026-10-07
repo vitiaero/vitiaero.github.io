@@ -9,7 +9,8 @@ administration.
 l'annonce sur chaque page (bandeau, pied de page, pages juridiques). Les
 coordonnées, conditions et prestataires sont inventés dans
 `shared/business.js` (`fictional: true`) ; le site n'est pas indexé et la
-version publiée n'enregistre aucune demande. Les formulaires fonctionnent en
+version publiée (https://vitiaero.github.io, voir `docs/DEPLOIEMENT.md`)
+n'enregistre aucune demande. Les formulaires fonctionnent en
 local avec `npm run dev`. Les documents de `docs/` décrivent ce qu'il faudrait
 pour lancer réellement un tel service.
 
@@ -32,6 +33,7 @@ Le site s'ouvre sur `http://localhost:5173`, l'API tourne sur le port 3001.
 | `npm run check:media` | Contrôle du registre des médias |
 | `npm run backup` / `npm run restore` | Sauvegarde chiffrée / restauration |
 | `npm run check:production` | Contrôle du site publié |
+| `npm run publish:branch` | Publie le site sur https://vitiaero.github.io (branche `vitiaero-publication`) |
 | `npm run serve` | Compile puis démarre comme en production |
 | `npm start` | Démarre le serveur seul (hébergeur) |
 

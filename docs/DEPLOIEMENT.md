@@ -1,5 +1,25 @@
 # Mettre VitiAero en ligne
 
+## Publication actuelle (projet PAE)
+
+Le site est publié à **https://vitiaero.github.io** depuis la branche
+`vitiaero-publication` du dépôt, qui ne contient que le site compilé (sans
+API : en mode entreprise fictive, les formulaires s'affichent mais
+n'enregistrent rien).
+
+1. Une seule fois : dépôt > **Settings > Pages** > Source : **Deploy from a
+   branch**, branche **`vitiaero-publication`**, dossier **`/ (root)`**, puis
+   **Save**.
+2. Après chaque modification enregistrée (commit) : `npm run publish:branch`.
+   Le script lance les tests, compile le site et l'envoie sur
+   `vitiaero-publication` ; GitHub Pages le met à jour en une à deux minutes.
+   `npm run publish:branch -- --dry-run` prépare tout sans rien envoyer.
+
+Le workflow « Publier sur GitHub Pages » (section A.3) sert à l'autre réglage,
+Source : GitHub Actions ; il échoue tant que ce réglage n'est pas choisi.
+
+Les sections suivantes décrivent la mise en ligne d'un service réel.
+
 Deux façons de publier le site. Les réglages du serveur, les e-mails, les
 sauvegardes et la surveillance sont détaillés dans `EXPLOITATION.md` ; la
 sécurité dans `SECURITY.md`.
@@ -57,9 +77,12 @@ son pays : il apparaît alors dans la politique de confidentialité.
 Sans `VITE_API_URL`, le site est publié seul : les formulaires restent fermés
 et renvoient vers l'adresse e-mail.
 
-### 4. Le domaine vitiaero.ch
+### 4. Un domaine propre (par exemple vitiaero.ch)
 
-`public/CNAME` contient `vitiaero.ch` et part avec chaque publication.
+Le site est publié sans domaine propre, à `https://vitiaero.github.io`. Pour
+utiliser un domaine dont vous êtes titulaire : créer `public/CNAME` contenant
+ce seul nom (par exemple `vitiaero.ch`), mettre la même adresse dans
+`shared/business.js` (`site.url`), puis :
 
 1. Chez le registraire, les enregistrements vers GitHub :
 
@@ -92,8 +115,8 @@ requête selon l'état de lancement.
    - installation et compilation : `npm ci && npm run build`
    - démarrage : `npm start`
 2. Variables : celles de `EXPLOITATION.md`, **sans** `ALLOWED_ORIGINS`.
-3. Faire pointer le domaine vers l'hébergeur selon ses instructions, et
-   retirer `public/CNAME` si GitHub Pages n'est plus utilisé.
+3. Faire pointer le domaine vers l'hébergeur selon ses instructions (sans
+   fichier `public/CNAME`, qui ne sert qu'à GitHub Pages).
 
 ---
 

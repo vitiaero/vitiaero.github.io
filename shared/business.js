@@ -49,9 +49,10 @@ export const business = {
     contentResponsible: 'Adrien Delhay', // fourni (24.9.2026), a confirmer (A9)
   },
 
-  // Adresse publique du site, sans barre finale (fournie : fichier CNAME).
+  // Adresse publique du site, sans barre finale : GitHub Pages du depot
+  // vitiaero/vitiaero.github.io (branche vitiaero-publication, octobre 2026).
   site: {
-    url: 'https://vitiaero.ch',
+    url: 'https://vitiaero.github.io',
     domainHolderConfirmed: null, // date a laquelle le titulaire du domaine a ete verifie (A10)
   },
 

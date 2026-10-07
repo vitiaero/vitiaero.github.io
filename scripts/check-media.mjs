@@ -17,7 +17,8 @@ function listFiles(dir, prefix = '') {
 }
 
 export function checkMedia(publicDir = path.join(ROOT, 'public'), media = MEDIA) {
-  const declared = new Set([...media.flatMap((m) => m.files), ...NON_MEDIA_FILES]);
+  const files = media.flatMap((m) => m.files);
+  const declared = new Set([...files, ...NON_MEDIA_FILES]);
   const present = new Set(listFiles(publicDir));
   const errors = [];
   for (const m of media) {
@@ -26,7 +27,7 @@ export function checkMedia(publicDir = path.join(ROOT, 'public'), media = MEDIA)
   }
   return {
     unregistered: [...present].filter((f) => !declared.has(f)).sort(),
-    missing: [...declared].filter((f) => !present.has(f)).sort(),
+    missing: files.filter((f) => !present.has(f)).sort(),
     errors,
     blockers: mediaBlockers(media),
   };

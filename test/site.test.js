@@ -46,8 +46,8 @@ test('en-tete de page : balises remplacees et echappees', () => {
   const meta = pageMeta(business, '/le-service', fr.meta.pages, { ready: false, fallbackTitle: fr.meta.fallbackTitle });
   const html = applyHead(template, { ...meta, title: 'Titre "test" <b>' });
   assert.match(html, /<title>Titre &quot;test&quot; &lt;b&gt;<\/title>/);
-  assert.match(html, /<link rel="canonical" href="https:\/\/vitiaero\.ch\/le-service" \/>/);
-  assert.match(html, /<meta property="og:image" content="https:\/\/vitiaero\.ch\/images\/og-vitiaero\.jpg" \/>/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/vitiaero\.github\.io\/le-service" \/>/);
+  assert.match(html, /<meta property="og:image" content="https:\/\/vitiaero\.github\.io\/images\/og-vitiaero\.jpg" \/>/);
   assert.match(html, /<meta name="robots" content="noindex, nofollow" \/>/);
   assert.throws(() => applyHead('<html><head></head></html>', meta), /introuvable/);
 });

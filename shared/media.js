@@ -99,7 +99,8 @@ export const MEDIA = [
   },
 ];
 
-// Fichiers de public/ qui ne sont pas des medias (textes techniques).
+// Fichiers de public/ qui ne sont pas des medias (textes techniques,
+// facultatifs : CNAME seulement pour un domaine propre sur GitHub Pages).
 export const NON_MEDIA_FILES = ['CNAME'];
 
 // Medias qui empechent encore le lancement : droit non confirme, ou
