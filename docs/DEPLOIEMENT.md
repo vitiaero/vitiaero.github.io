@@ -43,8 +43,9 @@ même dépôt :
 | Variable | Valeur |
 |---|---|
 | `NODE_ENV` | `production` |
-| `ADMIN_PASSWORD` | mot de passe long et unique |
-| `ALLOWED_ORIGINS` | adresse du site, sans barre finale : `https://NOM.github.io` ou `https://www.vitiaero.ch` |
+| `ADMIN_PASSWORD` | **obligatoire** : mot de passe long et unique, 12 caractères au moins (le changer puis redémarrer = rotation) |
+| `ALLOWED_ORIGINS` | adresse du site, sans barre finale : `https://NOM.github.io` ou `https://vitiaero.ch` |
+| `TRUST_PROXY` | `1` par défaut ; à adapter au nombre de relais de l'hébergeur (voir `SECURITY.md`) |
 | `ADMIN_EMAIL` | facultatif |
 | `DEMO_DATA` | `1` seulement pour une démonstration (client et codes promo fictifs) |
 | `CLIENT_PASSWORD` | seulement avec `DEMO_DATA=1` |

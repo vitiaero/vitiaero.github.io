@@ -101,7 +101,7 @@ function Confidentialite() {
         Requests with no follow-up are kept for 24 months. Account data is kept while the
         account is active, then deleted or anonymised. Documents related to any invoicing are
         kept for the legal periods (10 years). Technical security counters (limits per IP
-        address) are deleted after a few minutes.
+        address) are kept in memory only and deleted after two hours at the latest.
       </p>
 
       <h2 className="h3">8. Disclosure to third parties and transfers abroad</h2>

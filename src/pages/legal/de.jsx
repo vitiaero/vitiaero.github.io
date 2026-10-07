@@ -105,7 +105,7 @@ function Confidentialite() {
         solange das Konto aktiv ist, und danach gelöscht oder anonymisiert. Unterlagen zu
         einer allfälligen Rechnungsstellung werden gemäss den gesetzlichen Fristen aufbewahrt
         (10 Jahre). Die technischen Sicherheitszähler (Begrenzung pro IP-Adresse) werden
-        nach wenigen Minuten gelöscht.
+        nur im Arbeitsspeicher gehalten und spätestens nach zwei Stunden gelöscht.
       </p>
 
       <h2 className="h3">8. Weitergabe an Dritte und Übermittlung ins Ausland</h2>

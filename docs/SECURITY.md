@@ -300,15 +300,25 @@ variable utilisateur insérée dans une commande shell.
 
 ## 10. Variables de l'API (hébergeur séparé)
 
+Le serveur fonctionne **en mode en ligne par défaut**. Le mode local (mots de passe
+simples, données fictives) demande l'option `--dev`, déjà présente dans
+`npm run dev` et `npm run serve`, ou `NODE_ENV=development`. Oublier une variable
+chez l'hébergeur ne peut donc plus ouvrir un compte connu de tous.
+
 | Variable | Rôle |
 |---|---|
-| `NODE_ENV=production` | Mots de passe de démonstration refusés, pas de données fictives |
-| `ADMIN_PASSWORD` | Mot de passe administrateur, long et unique |
-| `ADMIN_EMAIL` | Facultatif |
-| `ALLOWED_ORIGINS` | Origine exacte du site, par exemple `https://www.vitiaero.ch` |
-| `TRUST_PROXY` | `1` derrière le proxy de l'hébergeur (défaut en production), `false` sans proxy |
+| `ADMIN_PASSWORD` | **Obligatoire**, 12 caractères au moins, long et unique. Sans elle, aucun compte administrateur n'est créé (le journal l'indique, sans jamais afficher de mot de passe) |
+| `ADMIN_EMAIL` | Facultatif (`admin@vitiaero.ch` par défaut), lu à la création du compte |
+| `ALLOWED_ORIGINS` | Origine exacte du site, par exemple `https://vitiaero.ch` |
+| `TRUST_PROXY` | Nombre de relais devant le serveur : `1` (défaut en ligne), `2` avec un relais en plus (Cloudflare...), `false` sans relais |
+| `NODE_ENV` | `production` conseillé (Express), plus indispensable à la sécurité |
 | `DEMO_DATA=1` | Seulement pour une démonstration : crée le client et les codes promo fictifs |
-| `CLIENT_PASSWORD` | Mot de passe du client fictif, si `DEMO_DATA=1` |
+| `CLIENT_PASSWORD` | Mot de passe du client fictif (12 caractères au moins), si `DEMO_DATA=1` |
+
+**Changer le mot de passe administrateur** (fuite, départ d'une personne...) :
+modifier `ADMIN_PASSWORD` chez l'hébergeur puis redémarrer le service. Au
+démarrage, l'ancien mot de passe est remplacé et toutes les sessions ouvertes de
+l'administrateur sont fermées.
 
 Aucun de ces secrets ne doit apparaître dans le dépôt ni dans GitHub Pages.
 
@@ -324,8 +334,7 @@ Aucun de ces secrets ne doit apparaître dans le dépôt ni dans GitHub Pages.
 - [ ] Ouverture d'une photo et téléchargement d'un PDF dans l'administration.
 - [ ] Appel de l'API depuis une autre origine refusé (pas d'en-tête CORS).
 - [ ] `npm audit` et alertes Dependabot, puis chaque mois.
-- [ ] Mot de passe administrateur changé si les journaux de l'hébergeur ont affiché
-      un mot de passe généré.
+- [ ] Journal de démarrage : « mode en ligne » affiché, aucun mot de passe visible.
 - [ ] Sauvegardes de la base testées (restauration).
 
 ---
@@ -335,4 +344,6 @@ Aucun de ces secrets ne doit apparaître dans le dépôt ni dans GitHub Pages.
 - Client : `client@vitiaero.ch` / `client1234`
 - Codes promo : `VIGNE10`, `LAVAUX15`
 
-En ligne, `admin1234` est refusé et ces données n'existent pas (sauf `DEMO_DATA=1`).
+Ils n'existent qu'avec l'option `--dev` (`npm run dev`, `npm run serve`). En ligne,
+`admin1234` ne peut pas exister et ces données ne sont pas créées (sauf `DEMO_DATA=1`,
+avec alors `CLIENT_PASSWORD`).

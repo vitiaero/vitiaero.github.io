@@ -76,10 +76,20 @@ export function tokenDigest(token) {
 }
 
 // --- Persistance sur disque ---
+// Ecriture dans un fichier temporaire, puis remplacement : un arret brutal
+// pendant l'ecriture ne peut pas laisser une base a moitie ecrite.
 export function persist() {
   if (!db) return;
-  const data = db.export();
-  fs.writeFileSync(DB_FILE, Buffer.from(data));
+  const data = Buffer.from(db.export());
+  const tmp = `${DB_FILE}.tmp`;
+  fs.writeFileSync(tmp, data);
+  try {
+    fs.renameSync(tmp, DB_FILE);
+  } catch {
+    // Windows : un antivirus peut bloquer un instant le remplacement.
+    fs.writeFileSync(DB_FILE, data);
+    fs.rmSync(tmp, { force: true });
+  }
 }
 
 // --- Petits utilitaires de requete ---
@@ -220,21 +230,54 @@ export function polygonArea(points) {
   return turfArea({ type: 'Polygon', coordinates: [ring] });
 }
 
-// Mot de passe d'un compte de demonstration.
-// En local, on garde les mots de passe simples du projet. En ligne, ils
-// viennent des variables d'environnement de l'hebergeur ; si elles ne sont pas
-// definies, un mot de passe aleatoire est genere et affiche une seule fois dans
-// les journaux, pour qu'aucun compte connu de tous ne se retrouve sur internet.
-const inProduction = process.env.NODE_ENV === 'production';
+// Mode de fonctionnement. Le serveur se considere EN LIGNE par defaut : les
+// mots de passe simples du projet et les donnees de demonstration n'existent
+// qu'avec l'option --dev (npm run dev, npm run serve) ou NODE_ENV=development.
+// Oublier NODE_ENV chez l'hebergeur ne peut donc plus ouvrir admin1234.
+export const IS_PRODUCTION = !(process.argv.includes('--dev') || process.env.NODE_ENV === 'development');
+const inProduction = IS_PRODUCTION;
 
-function demoPassword(envName, localValue) {
+// Mot de passe d'un compte de depart.
+// En local, on garde les mots de passe simples du projet. En ligne, ils
+// viennent uniquement des variables de l'hebergeur, 12 caracteres au moins.
+// Aucun mot de passe n'est jamais ecrit dans les journaux : sans variable
+// valable, le compte n'est pas cree et le journal explique quoi faire.
+const MIN_ONLINE_PASSWORD = 12;
+
+function accountPassword(envName, localValue) {
   const fromEnv = process.env[envName];
-  if (fromEnv && fromEnv.length >= 8) return fromEnv;
+  if (fromEnv && fromEnv.length >= (inProduction ? MIN_ONLINE_PASSWORD : 8)) return fromEnv;
   if (!inProduction) return localValue;
-  const generated = crypto.randomBytes(12).toString('base64url');
-  console.log(`[VitiAero] ${envName} n'est pas defini. Mot de passe genere : ${generated}`);
-  console.log(`[VitiAero] Notez-le, ou definissez ${envName} chez l'hebergeur pour le fixer.`);
-  return generated;
+  console.error(`[VitiAero] ${envName} absent ou trop court (${MIN_ONLINE_PASSWORD} caracteres au moins) : compte non cree.`);
+  return null;
+}
+
+// Compte administrateur : cree au premier demarrage, puis tenu a jour.
+// Rotation du mot de passe : changer ADMIN_PASSWORD chez l'hebergeur et
+// redemarrer ; l'ancien mot de passe et les sessions ouvertes ne valent plus rien.
+async function syncAdmin() {
+  const password = accountPassword('ADMIN_PASSWORD', 'admin1234');
+  const admin = get("SELECT * FROM users WHERE role = 'admin' ORDER BY id LIMIT 1");
+  if (!admin) {
+    if (!password) return;
+    const email = String(process.env.ADMIN_EMAIL || 'admin@vitiaero.ch').trim().toLowerCase();
+    // Adresse deja prise par un compte client (inscrit avant la creation de
+    // l'administrateur) : on ne transforme jamais un compte client en admin.
+    if (get('SELECT id FROM users WHERE email = ?', [email])) {
+      console.error('[VitiAero] ADMIN_EMAIL est deja utilise par un compte client : choisir une autre adresse.');
+      return;
+    }
+    run(
+      'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
+      ['Équipe VitiAero', email, await hashPasswordAsync(password), 'admin', new Date().toISOString()]
+    );
+    return;
+  }
+  if (process.env.ADMIN_PASSWORD && password && !(await verifyPassword(password, admin.password)).ok) {
+    run('UPDATE users SET password = ? WHERE id = ?', [await hashPasswordAsync(password), admin.id]);
+    run('DELETE FROM sessions WHERE user_id = ?', [admin.id]);
+    console.log('[VitiAero] Mot de passe administrateur remplace par ADMIN_PASSWORD ; sessions fermees.');
+  }
 }
 
 // Donnees de demonstration (client fictif, demandes et codes promo d'exemple) :
@@ -244,22 +287,15 @@ const withDemoData = !inProduction || process.env.DEMO_DATA === '1';
 
 function seed() {
   const now = new Date().toISOString();
-  const count = get('SELECT COUNT(*) AS n FROM users');
+  const count = get("SELECT COUNT(*) AS n FROM users WHERE role = 'client'");
   if (count.n > 0) return; // deja rempli
 
-  // Compte administrateur
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@vitiaero.ch';
-  run(
-    'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
-    ['Équipe VitiAero', adminEmail, hashPassword(demoPassword('ADMIN_PASSWORD', 'admin1234')), 'admin', now]
-  );
-
-  if (!withDemoData) return;
-
   // Client de demonstration
+  const clientPassword = accountPassword('CLIENT_PASSWORD', 'client1234');
+  if (!clientPassword) return;
   const clientId = run(
     'INSERT INTO users (name, email, password, role, created_at) VALUES (?,?,?,?,?)',
-    ['Marie Dupont', 'client@vitiaero.ch', hashPassword(demoPassword('CLIENT_PASSWORD', 'client1234')), 'client', now]
+    ['Marie Dupont', 'client@vitiaero.ch', hashPassword(clientPassword), 'client', now]
   );
 
   // Codes promotionnels de demonstration
@@ -334,18 +370,12 @@ export async function initDb() {
 
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-  if (fs.existsSync(DB_FILE)) {
-    const buffer = fs.readFileSync(DB_FILE);
-    db = new SQL.Database(buffer);
-    createSchema();
-    migrate();
-    persist();
-  } else {
-    db = new SQL.Database();
-    createSchema();
-    migrate();
-    seed();
-    persist();
-  }
+  const fresh = !fs.existsSync(DB_FILE);
+  db = fresh ? new SQL.Database() : new SQL.Database(fs.readFileSync(DB_FILE));
+  createSchema();
+  migrate();
+  await syncAdmin();
+  if (fresh && withDemoData) seed();
+  persist();
   return db;
 }

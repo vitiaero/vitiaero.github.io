@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   initDb, all, get, run, persist, hashPasswordAsync, verifyPassword, polygonArea, tokenDigest, DUMMY_PASSWORD_HASH,
+  IS_PRODUCTION,
 } from './db.js';
 import { BASE, computeEstimate, clampPasses, haversineKm, isDispersed, parcelsCenter } from '../shared/pricing.js';
 import { apiOriginFrom, buildCsp } from '../shared/security.js';
@@ -25,7 +26,8 @@ app.disable('x-powered-by');
 // En local, seul le proxy de Vite (meme machine) est cru. Sans proxy devant le
 // serveur, mettre TRUST_PROXY=false : sinon l'en-tete X-Forwarded-For, que
 // n'importe qui peut ecrire, permettrait de contourner la limitation.
-const TRUST_PROXY = process.env.TRUST_PROXY ?? (process.env.NODE_ENV === 'production' ? '1' : 'loopback');
+// Deux relais (par exemple Cloudflare devant l'hebergeur) : TRUST_PROXY=2.
+const TRUST_PROXY = process.env.TRUST_PROXY ?? (IS_PRODUCTION ? '1' : 'loopback');
 app.set('trust proxy', TRUST_PROXY === 'false' ? false : /^\d+$/.test(TRUST_PROXY) ? Number(TRUST_PROXY) : TRUST_PROXY);
 
 // --- CORS : quand le site est heberge ailleurs que l'API (GitHub Pages) ---
@@ -74,12 +76,42 @@ app.use((req, res, next) => {
 // Chaque limiteur a son nom : le compteur ne depend pas de l'ecriture de
 // l'adresse (/api/auth/login, /API/AUTH/LOGIN/ et /api/auth/login/ comptent ensemble).
 const rateBuckets = new Map();
+// Plafond de compteurs en memoire : au-dela, les plus anciens sont oublies
+// (un envoi depuis des milliers d'adresses ne peut pas saturer la memoire).
+const MAX_BUCKETS = 50000;
+
+// Adresse utilisee pour compter. Une adresse IPv6 est regroupee par bloc /64 :
+// un fournisseur attribue en general un bloc entier a chaque abonne, qui
+// pourrait sinon changer d'adresse a chaque essai pour echapper a la limite.
+function rateKey(ip) {
+  const raw = String(ip || '').replace(/%.*$/, '').replace(/^::ffff:(?=\d+\.\d+\.\d+\.\d+$)/i, '');
+  if (!raw.includes(':')) return raw || 'inconnue';
+  const [head, tail] = raw.split('::');
+  const left = head ? head.split(':') : [];
+  const right = tail ? tail.split(':') : [];
+  const groups = tail === undefined
+    ? left
+    : [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill('0'), ...right];
+  return `${groups.slice(0, 4).map((g) => (parseInt(g, 16) || 0).toString(16)).join(':')}::/64`;
+}
+
+function purgeBuckets(now) {
+  for (const [k, v] of rateBuckets) if (now > v.reset) rateBuckets.delete(k);
+}
+
 function rateLimit({ name, windowMs, max }) {
   return (req, res, next) => {
     const now = Date.now();
-    const key = (req.ip || req.socket?.remoteAddress || 'ip') + '|' + name;
+    const key = rateKey(req.ip || req.socket?.remoteAddress) + '|' + name;
     let b = rateBuckets.get(key);
-    if (!b || now > b.reset) { b = { count: 0, reset: now + windowMs }; rateBuckets.set(key, b); }
+    if (!b || now > b.reset) {
+      if (!b && rateBuckets.size >= MAX_BUCKETS) {
+        purgeBuckets(now);
+        if (rateBuckets.size >= MAX_BUCKETS) rateBuckets.delete(rateBuckets.keys().next().value);
+      }
+      b = { count: 0, reset: now + windowMs };
+      rateBuckets.set(key, b);
+    }
     b.count += 1;
     if (b.count > max) {
       res.setHeader('Retry-After', String(Math.ceil((b.reset - now) / 1000)));
@@ -88,21 +120,23 @@ function rateLimit({ name, windowMs, max }) {
     next();
   };
 }
-setInterval(() => { // purge des compteurs expires
-  const now = Date.now();
-  for (const [k, v] of rateBuckets) if (now > v.reset) rateBuckets.delete(k);
-}, 10 * 60 * 1000).unref?.();
+setInterval(() => purgeBuckets(Date.now()), 10 * 60 * 1000).unref?.(); // compteurs expires
 // Garde-fou general : au plus 600 appels a l'API par IP toutes les 15 minutes.
 // Place avant la lecture du corps : un envoi massif est refuse sans etre lu.
 app.use('/api', rateLimit({ name: 'api', windowMs: 15 * 60 * 1000, max: 600 }));
 
-// Corps JSON : 1 Mo partout, sauf la demande de devis qui peut porter des
-// photos de parcelle encodees en base64 (3 fichiers de 4 Mo au maximum).
+// Corps JSON : 1 Mo partout, sauf la demande de devis et l'estimation, qui
+// peuvent porter des photos encodees en base64 (3 fichiers de 4 Mo au maximum).
+// Ces deux routes lisent leur corps APRES leur propre limitation de debit (voir
+// plus bas) : une fois la limite atteinte, un envoi de 20 Mo est refuse sans
+// etre lu.
 const jsonSmall = express.json({ limit: '1mb' });
 const jsonLarge = express.json({ limit: '20mb' });
-// Devis et estimation acceptent des photos : corps plus volumineux.
 const LARGE_BODY = new Set(['/api/quote', '/api/estimations']);
-app.use((req, res, next) => (LARGE_BODY.has(req.path) ? jsonLarge(req, res, next) : jsonSmall(req, res, next)));
+// Meme adresse ecrite autrement (majuscules, barre finale) : Express la sert
+// par la meme route, elle suit donc la meme regle.
+const routeOf = (p) => p.toLowerCase().replace(/\/+$/, '');
+app.use((req, res, next) => (LARGE_BODY.has(routeOf(req.path)) ? next() : jsonSmall(req, res, next)));
 // Anti-force brute : 20 tentatives par IP toutes les 15 minutes, par formulaire.
 const loginLimiter = rateLimit({ name: 'login', windowMs: 15 * 60 * 1000, max: 20 });
 const registerLimiter = rateLimit({ name: 'register', windowMs: 15 * 60 * 1000, max: 20 });
@@ -501,7 +535,7 @@ function saveFiles(input) {
   });
 }
 
-app.post('/api/quote', contactLimiter, (req, res) => {
+app.post('/api/quote', contactLimiter, jsonLarge, (req, res) => {
   const b = req.body || {};
   if (b.website) return res.json({ ok: true }); // champ piege
 
@@ -600,7 +634,7 @@ function cleanParcels(input) {
 // =========================================================================
 //  Demandes d'estimation
 // =========================================================================
-app.post('/api/estimations', estimationLimiter, safe(async (req, res) => {
+app.post('/api/estimations', estimationLimiter, jsonLarge, safe(async (req, res) => {
   const b = req.body || {};
   // Champ piege (honeypot) : invisible pour un humain, souvent rempli par les
   // robots. S'il est rempli, on ignore la demande en simulant un succes.
@@ -922,7 +956,7 @@ app.use((err, req, res, next) => {
 initDb()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`API VitiAero prete sur http://localhost:${PORT}`);
+      console.log(`API VitiAero prete sur http://localhost:${PORT} (mode ${IS_PRODUCTION ? 'en ligne' : 'developpement'})`);
     });
   })
   .catch((err) => {
@@ -930,8 +964,11 @@ initDb()
     process.exit(1);
   });
 
-// Sauvegarde propre a l'arret
-process.on('SIGINT', () => {
-  persist();
-  process.exit(0);
-});
+// Sauvegarde propre a l'arret : Ctrl+C en local (SIGINT), arret ou
+// redeploiement chez l'hebergeur (SIGTERM).
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => {
+    persist();
+    process.exit(0);
+  });
+}

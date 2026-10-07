@@ -41,14 +41,27 @@ if (OFFLINE) handleSectionLinks();
 const Router = OFFLINE ? HashRouter : BrowserRouter;
 const routerProps = OFFLINE ? {} : { basename: BASE_PATH.replace(/\/$/, '') || '/' };
 
+// Site affiche dans le cadre d'une autre page (clickjacking : faire cliquer a
+// son insu sur « Se connecter » ou un bouton de l'administration). GitHub Pages
+// ne permet pas d'envoyer l'en-tete qui l'interdit (frame-ancestors), sans effet
+// dans une balise meta : le site compile refuse donc de s'afficher encadre et
+// propose de s'ouvrir normalement. Developpement et version hors ligne : non concernes.
+const FRAMED = import.meta.env.PROD && !OFFLINE && window.top !== window.self;
+
 createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <Router {...routerProps}>
-      <LangProvider>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </LangProvider>
-    </Router>
-  </React.StrictMode>
+  FRAMED ? (
+    <p style={{ padding: '2rem', fontFamily: 'system-ui, sans-serif' }}>
+      <a href={window.location.href} target="_blank" rel="noopener noreferrer">Ouvrir VitiAero</a>
+    </p>
+  ) : (
+    <React.StrictMode>
+      <Router {...routerProps}>
+        <LangProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </LangProvider>
+      </Router>
+    </React.StrictMode>
+  )
 );

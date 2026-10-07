@@ -298,7 +298,11 @@ const MapDraw = forwardRef(function MapDraw({ value = [], onChange, readOnly = f
         fillColor: LIME,
         fillOpacity: 0.3,
       }).addTo(group);
-      poly.bindTooltip(parcel.label || m.parcel(idx + 1), { sticky: true });
+      // Libelle en texte brut : Leaflet insere une chaine comme du HTML, et le
+      // libelle vient d'un service externe (geo.admin.ch).
+      const tip = document.createElement('span');
+      tip.textContent = parcel.label || m.parcel(idx + 1);
+      poly.bindTooltip(tip, { sticky: true });
     });
   }
 

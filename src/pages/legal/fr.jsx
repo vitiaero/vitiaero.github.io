@@ -104,8 +104,8 @@ function Confidentialite() {
         Les demandes sans suite sont conservées 24 mois. Les données de compte sont
         conservées tant que le compte est actif, puis supprimées ou anonymisées. Les
         documents liés à une facturation éventuelle sont conservés selon les délais légaux
-        (10 ans). Les compteurs techniques de sécurité (limitation par IP) sont effacés
-        après quelques minutes.
+        (10 ans). Les compteurs techniques de sécurité (limitation par IP) restent en
+        mémoire seulement et sont effacés au plus tard après deux heures.
       </p>
 
       <h2 className="h3">8. Communication à des tiers et transferts à l'étranger</h2>
