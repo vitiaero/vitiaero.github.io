@@ -1,0 +1,4 @@
+Contact: mailto:contact@vitiaero.ch
+Expires: 2027-04-05T00:00:00.000Z
+Preferred-Languages: fr, de, en
+Canonical: https://vitiaero.github.io/.well-known/security.txt

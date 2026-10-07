@@ -1,0 +1,3 @@
+# VitiAero est en pre-lancement : aucune page ne doit etre indexee.
+User-agent: *
+Disallow: /
