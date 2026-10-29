@@ -47,6 +47,8 @@ export default {
     skip: 'Skip to content',
     loading: 'Loading...',
     requestEstimate: 'Request an estimate',
+    slogan: 'Leave the slope to us.',
+    sloganAccent: 'the slope',
     playVideo: 'Play the video',
     pauseVideo: 'Pause the video',
     backHome: 'Back to home',

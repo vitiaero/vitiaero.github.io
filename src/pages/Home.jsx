@@ -8,6 +8,7 @@ import Kicker from '../components/Kicker.jsx';
 import WordRise from '../components/WordRise.jsx';
 import ScrollWords from '../components/ScrollWords.jsx';
 import BtnArrow from '../components/BtnArrow.jsx';
+import Slogan from '../components/Slogan.jsx';
 import { useParallax } from '../components/useParallax.js';
 import { asset } from '../config.js';
 import { videos, film } from '../content.js';
@@ -33,6 +34,7 @@ function Hero() {
         <div className="hm-hero-body">
           <Kicker tone="light">{h.eyebrow}</Kicker>
           <h1 id="hm-title" className="hm-hero-title"><WordRise text={h.title} delay={200} /></h1>
+          <Slogan className="hm-hero-slogan" />
           <p className="hm-hero-lead">{h.lead}</p>
           <div className="hm-hero-actions">
             <Link to="/estimation" className="btn btn-primary btn-arrow">{t.common.requestEstimate}<BtnArrow /></Link>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { asset } from '../config.js';
 import { company } from '../content.js';
 import { useI18n } from '../i18n/index.jsx';
+import Slogan from './Slogan.jsx';
 
 export default function Footer() {
   const { t } = useI18n();
@@ -13,6 +14,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <img src={asset('/images/logo-vitiaero.png')} alt="VitiAero" width="120" height="40" loading="lazy" />
+            <Slogan className="footer-slogan" />
             <p>{t.footer.tagline}</p>
           </div>
           <div>

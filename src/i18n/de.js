@@ -47,6 +47,8 @@ export default {
     skip: 'Zum Inhalt springen',
     loading: 'Wird geladen...',
     requestEstimate: 'Schätzung anfragen',
+    slogan: 'Überlassen Sie uns den Hang.',
+    sloganAccent: 'den Hang.',
     playVideo: 'Video abspielen',
     pauseVideo: 'Video anhalten',
     backHome: 'Zurück zur Startseite',

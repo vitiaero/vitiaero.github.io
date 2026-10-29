@@ -37,6 +37,9 @@
 }
 .hm-hero-body .kicker { animation: fadeUp 0.7s var(--ease) 0.15s backwards; }
 .hm-hero-title { font-size: clamp(2.6rem, 6vw, 5.4rem); font-weight: 600; line-height: 0.98; letter-spacing: -0.045em; text-wrap: balance; }
+/* Slogan de la marque sous le titre (module 4) : vert anis sur fond sombre */
+.hm-hero-slogan { margin-top: 18px; font-size: clamp(1.25rem, 2.1vw, 1.75rem); font-weight: 600; letter-spacing: -0.02em; color: #fff; animation: fadeUp 0.8s var(--ease) 0.55s backwards; }
+.hm-hero-slogan .slogan-accent { color: var(--lime); }
 .hm-hero-lead { max-width: 540px; margin-top: 22px; font-size: clamp(1.02rem, 1.3vw, 1.15rem); line-height: 1.6; color: rgba(255, 255, 255, 0.92); animation: fadeUp 0.8s var(--ease) 0.7s backwards; }
 .hm-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; animation: fadeUp 0.8s var(--ease) 0.9s backwards; }
 /* Lien discret vers la demande rapide (page Devis, sans carte) */

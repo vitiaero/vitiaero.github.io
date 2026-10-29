@@ -380,6 +380,10 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-heig
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
 .footer-brand img { height: 40px; width: auto; mix-blend-mode: multiply; }
 .footer-brand p { margin-top: 16px; max-width: 38ch; font-size: 14px; line-height: 1.6; color: var(--muted); }
+/* Slogan sous le logo (bloc-marque du module 4) : sur fond clair, l'accent passe en vert */
+.footer-brand .footer-slogan { margin-top: 14px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.footer-brand .footer-slogan .slogan-accent { color: var(--green); }
+.footer-brand .footer-slogan + p { margin-top: 8px; }
 .footer-h { margin-bottom: 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 14px; }
 .footer a { transition: color 0.2s; }

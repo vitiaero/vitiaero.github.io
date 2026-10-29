@@ -48,6 +48,9 @@ export default {
     skip: 'Aller au contenu',
     loading: 'Chargement...',
     requestEstimate: 'Demander une estimation',
+    // Slogan de la marque (module 4) ; « sloganAccent » est la partie mise en couleur.
+    slogan: 'Laissez-nous la pente.',
+    sloganAccent: 'la pente.',
     playVideo: 'Lire la vidéo',
     pauseVideo: 'Mettre la vidéo en pause',
     backHome: 'Retour à l\'accueil',
